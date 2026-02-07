@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+@layer base {
+  :root {
+    --background: 230 20% 4%;
+    --foreground: 0 0% 95%;
+    --card: 230 15% 6%;
+    --card-foreground: 0 0% 95%;
+    --popover: 230 15% 6%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 0 0% 3%;
+    --secondary: 230 10% 12%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 230 10% 12%;
+    --muted-foreground: 230 5% 50%;
+    --accent: 230 10% 12%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 230 10% 12%;
+    --input: 230 10% 12%;
+    --ring: 38 92% 50%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-[#08080d] text-white antialiased;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Smooth page transitions */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+}
