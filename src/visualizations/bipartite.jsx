@@ -1,55 +1,45 @@
 import { useState, useMemo } from "react";
 
-/* ─── Problem Inputs ─── */
-const EXAMPLES = {
-  bipartite: {
-    label: "Bipartite ✓", n: 6,
-    edges: [[0,1],[0,3],[1,2],[2,5],[3,4],[4,5]],
-    positions: [{x:60,y:60},{x:200,y:60},{x:340,y:60},{x:60,y:220},{x:200,y:220},{x:340,y:220}],
-    expectedResult: true,
-    expectedGroups: { A: [0, 2, 4], B: [1, 3, 5] },
-  },
-  not_bipartite: {
-    label: "Not Bipartite ✗", n: 5,
-    edges: [[0,1],[1,2],[2,0],[2,3],[3,4]],
-    positions: [{x:100,y:50},{x:260,y:50},{x:200,y:170},{x:100,y:280},{x:260,y:280}],
-    expectedResult: false,
-    expectedConflict: [0, 2],
-  },
-};
+/* ═══════════════════════════════════════════════════════════
+   Bipartite Check — Algorithm + 2 Problem Showcase
+   1. Algorithm               — 2-coloring BFS (bipartite / not toggle)
+   2. LC 785 — Is Graph Bipartite? — adjacency list, odd cycle detection
+   3. LC 886 — Possible Bipartition — dislike pairs, group splitting
+   ═══════════════════════════════════════════════════════════ */
 
-/* ─── Build adjacency list ─── */
-function buildAdj(n, edges) {
-  const adj = Array.from({ length: n }, () => []);
+/* ─── Shared helpers ─── */
+function buildAdj(n, edges, start) {
+  const s = start || 0;
+  const adj = Array.from({ length: n + s }, () => []);
   for (const [u, v] of edges) { adj[u].push(v); adj[v].push(u); }
   return adj;
 }
 
-/* ─── Build simulation steps ─── */
-function buildSteps(ex) {
-  const { n, edges } = ex;
-  const adj = buildAdj(n, edges);
-  const color = new Array(n).fill(-1);
+/* ─── Generic BFS 2-coloring step builder ─── */
+function buildColoringSteps(n, edges, start, codeHL_init, codeHL_start, codeHL_proc, codeHL_color, codeHL_conflict, codeHL_done, codeHL_fail) {
+  const s = start || 0;
+  const adj = buildAdj(n, edges, s);
+  const color = new Array(n + s).fill(-1);
   const steps = [];
-  const queue = [];
-  const coloredSoFar = [];
+  const colored = [];
 
   steps.push({
-    title: "Initialize – All Nodes Uncolored",
-    detail: `${n} nodes, ${edges.length} edges. Try to assign 2 colors so no adjacent nodes share a color. Use BFS coloring.`,
+    title: "Initialize \u2014 All Nodes Uncolored",
+    detail: `${n} nodes, ${edges.length} edges. Try to assign 2 colors so no adjacent nodes share a color.`,
     color: [...color], queue: [], current: null, neighbor: null,
-    conflict: null, phase: "init", codeHL: [0, 1, 2],
-    coloredSoFar: [...coloredSoFar],
+    conflict: null, phase: "init", codeHL: codeHL_init, coloredSoFar: [],
   });
 
-  color[0] = 0; queue.push(0);
-  coloredSoFar.push({ node: 0, c: 0 });
+  const first = s;
+  color[first] = 0;
+  const queue = [first];
+  colored.push({ node: first, c: 0 });
+
   steps.push({
-    title: "Color Node 0 → Red (Color 0)",
-    detail: "Start BFS from node 0. Assign color 0 (red). Enqueue node 0.",
+    title: `Color Node ${first} \u2192 Red (0)`,
+    detail: `Start BFS from node ${first}. Assign color 0 (Red). Enqueue.`,
     color: [...color], queue: [...queue], current: null, neighbor: null,
-    conflict: null, phase: "color", codeHL: [3, 4, 5],
-    coloredSoFar: [...coloredSoFar],
+    conflict: null, phase: "color", codeHL: codeHL_start, coloredSoFar: [...colored],
   });
 
   let conflictFound = false;
@@ -57,32 +47,29 @@ function buildSteps(ex) {
     const u = queue.shift();
     steps.push({
       title: `Process Node ${u} (${color[u] === 0 ? "Red" : "Blue"})`,
-      detail: `Dequeue node ${u}. Check neighbors: [${adj[u].join(", ")}]. Assign opposite color (${color[u] === 0 ? "Blue" : "Red"}) to uncolored neighbors.`,
+      detail: `Dequeue ${u}. Neighbors: [${adj[u].join(", ")}]. Assign opposite color to uncolored.`,
       color: [...color], queue: [...queue], current: u, neighbor: null,
-      conflict: null, phase: "process", codeHL: [7, 8],
-      coloredSoFar: [...coloredSoFar],
+      conflict: null, phase: "process", codeHL: codeHL_proc, coloredSoFar: [...colored],
     });
 
     for (const v of adj[u]) {
       if (color[v] === -1) {
         color[v] = 1 - color[u];
         queue.push(v);
-        coloredSoFar.push({ node: v, c: color[v] });
+        colored.push({ node: v, c: color[v] });
         steps.push({
-          title: `Color Node ${v} → ${color[v] === 0 ? "Red" : "Blue"}`,
-          detail: `Node ${v} uncolored. Assign opposite of node ${u}: ${color[v] === 0 ? "Red" : "Blue"}. Enqueue.`,
+          title: `Color Node ${v} \u2192 ${color[v] === 0 ? "Red" : "Blue"}`,
+          detail: `Node ${v} uncolored. Assign opposite of ${u}: ${color[v] === 0 ? "Red" : "Blue"}. Enqueue.`,
           color: [...color], queue: [...queue], current: u, neighbor: v,
-          conflict: null, phase: "color", codeHL: [9, 10, 11, 12],
-          coloredSoFar: [...coloredSoFar],
+          conflict: null, phase: "color", codeHL: codeHL_color, coloredSoFar: [...colored],
         });
       } else if (color[v] === color[u]) {
         conflictFound = true;
         steps.push({
-          title: `Conflict! Nodes ${u} and ${v} Same Color`,
-          detail: `Node ${v} already ${color[v] === 0 ? "Red" : "Blue"} — same as node ${u}! Adjacent nodes share a color. NOT bipartite.`,
+          title: `\u2717 Conflict! Nodes ${u} and ${v} Same Color`,
+          detail: `Node ${v} already ${color[v] === 0 ? "Red" : "Blue"} \u2014 same as ${u}! Adjacent nodes share a color. NOT bipartite.`,
           color: [...color], queue: [...queue], current: u, neighbor: v,
-          conflict: [u, v], phase: "conflict", codeHL: [13, 14],
-          coloredSoFar: [...coloredSoFar],
+          conflict: [u, v], phase: "conflict", codeHL: codeHL_conflict, coloredSoFar: [...colored],
         });
         break;
       }
@@ -91,46 +78,184 @@ function buildSteps(ex) {
 
   if (!conflictFound) {
     const g0 = [], g1 = [];
-    color.forEach((c, i) => { if (c === 0) g0.push(i); else g1.push(i); });
+    for (let i = s; i < n + s; i++) { if (color[i] === 0) g0.push(i); else g1.push(i); }
     steps.push({
-      title: "✓ Graph Is Bipartite",
+      title: "\u2713 Graph Is Bipartite",
       detail: `All nodes colored with no conflicts. Group A (Red): {${g0.join(",")}}. Group B (Blue): {${g1.join(",")}}. Return true.`,
       color: [...color], queue: [], current: null, neighbor: null,
-      conflict: null, phase: "done", codeHL: [16],
-      coloredSoFar: [...coloredSoFar], groups: { A: g0, B: g1 },
+      conflict: null, phase: "done", codeHL: codeHL_done,
+      coloredSoFar: [...colored], groups: { A: g0, B: g1 },
     });
   } else {
     steps.push({
-      title: "✗ Graph Is NOT Bipartite",
-      detail: "An odd-length cycle exists — impossible to 2-color. Return false.",
+      title: "\u2717 Graph Is NOT Bipartite",
+      detail: "An odd-length cycle exists \u2014 impossible to 2-color. Return false.",
       color: [...color], queue: [], current: null, neighbor: null,
-      conflict: null, phase: "fail", codeHL: [14],
-      coloredSoFar: [...coloredSoFar],
+      conflict: null, phase: "fail", codeHL: codeHL_fail, coloredSoFar: [...colored],
     });
   }
   return steps;
 }
 
-/* ─── Graph SVG ─── */
-function GraphView({ example, step }) {
-  const { positions, edges } = example;
+/* ─────────────────────────────────────────────
+   ALGORITHM TAB: bipartite / not-bipartite toggle
+   ───────────────────────────────────────────── */
+const ALG_YES = {
+  n: 6,
+  edges: [[0,1],[0,3],[1,2],[2,5],[3,4],[4,5]],
+  positions: [{x:60,y:60},{x:200,y:60},{x:340,y:60},{x:60,y:220},{x:200,y:220},{x:340,y:220}],
+  expected: true, expectedGroups: { A:[0,2,4], B:[1,3,5] },
+};
+const ALG_NO = {
+  n: 5,
+  edges: [[0,1],[1,2],[2,0],[2,3],[3,4]],
+  positions: [{x:100,y:50},{x:260,y:50},{x:200,y:170},{x:100,y:280},{x:260,y:280}],
+  expected: false, expectedConflict: [0,2],
+};
+
+function buildAlgSteps(variant) {
+  const ex = variant === "yes" ? ALG_YES : ALG_NO;
+  return buildColoringSteps(ex.n, ex.edges, 0, [0,1,2], [3,4,5], [7,8], [9,10,11,12], [13,14], [16], [14]);
+}
+
+/* ─────────────────────────────────────────────
+   LC 785: Is Graph Bipartite?
+   graph = [[1,2,3],[0,2],[0,1,3],[0,2]] → NOT bipartite
+   ───────────────────────────────────────────── */
+const P1_GRAPH = [[1,2,3],[0,2],[0,1,3],[0,2]];
+const P1_N = 4;
+const P1_EDGES_FLAT = [];
+{
+  const seen = new Set();
+  P1_GRAPH.forEach((nbs, u) => {
+    for (const v of nbs) {
+      const key = Math.min(u, v) + "-" + Math.max(u, v);
+      if (!seen.has(key)) { seen.add(key); P1_EDGES_FLAT.push([u, v]); }
+    }
+  });
+}
+const P1_POS = [{x:80,y:60},{x:280,y:60},{x:280,y:220},{x:80,y:220}];
+
+function buildP1Steps() {
+  return buildColoringSteps(P1_N, P1_EDGES_FLAT, 0, [0,1,2], [3,4], [5,6], [7,8,9], [10,11], [13], [11]);
+}
+
+/* ─────────────────────────────────────────────
+   LC 886: Possible Bipartition
+   n=4, dislikes=[[1,2],[1,3],[2,4]] → bipartite: {1,4} and {2,3}
+   ───────────────────────────────────────────── */
+const P2_N = 4;
+const P2_DISLIKES = [[1,2],[1,3],[2,4]];
+const P2_POS = [null, {x:80,y:60},{x:280,y:60},{x:280,y:220},{x:80,y:220}];
+
+function buildP2Steps() {
+  return buildColoringSteps(P2_N, P2_DISLIKES, 1, [0,1,2,3], [4,5], [6,7], [8,9,10], [11,12], [14], [12]);
+}
+
+/* ═══════════════════════════════════════════
+   PROBLEM DEFINITIONS
+   ═══════════════════════════════════════════ */
+const PROBLEMS = {
+  algorithm: {
+    title: "Algorithm", lc: null, difficulty: null, tag: "2-Coloring",
+    coreIdea: "A graph is bipartite if nodes can be split into two groups where every edge crosses groups. BFS assigns Red/Blue colors level by level \u2014 if a neighbor already has the same color, an odd cycle exists and the graph isn't bipartite.",
+    hasVariant: true,
+    getSteps: (v) => buildAlgSteps(v),
+    getGraph: (v) => v === "yes" ? ALG_YES : ALG_NO,
+    code: [
+      {id:0,text:"from collections import deque"},{id:1,text:""},
+      {id:2,text:"def is_bipartite(adj, n):"},
+      {id:3,text:"    color = [-1] * n"},
+      {id:4,text:"    color[0] = 0"},
+      {id:5,text:"    queue = deque([0])"},{id:6,text:""},
+      {id:7,text:"    while queue:"},
+      {id:8,text:"        u = queue.popleft()"},
+      {id:9,text:"        for v in adj[u]:"},
+      {id:10,text:"            if color[v] == -1:"},
+      {id:11,text:"                color[v] = 1 - color[u]"},
+      {id:12,text:"                queue.append(v)"},
+      {id:13,text:"            elif color[v] == color[u]:"},
+      {id:14,text:"                return False"},{id:15,text:""},
+      {id:16,text:"    return True"},
+    ],
+  },
+  isBipartite: {
+    title: "Is Graph Bipartite?", lc: "785", difficulty: "Medium", tag: "Adj List",
+    coreIdea: "Given an adjacency list, determine if the graph is bipartite. BFS 2-coloring from any node: assign opposite colors to neighbors. If any neighbor already has the same color, an odd cycle exists \u2014 return false.",
+    hasVariant: false,
+    getSteps: () => buildP1Steps(),
+    getGraph: () => ({ n: P1_N, edges: P1_EDGES_FLAT, positions: P1_POS, expected: false, expectedConflict: [1,2] }),
+    code: [
+      {id:0,text:"def isBipartite(graph):"},
+      {id:1,text:"    n = len(graph)"},
+      {id:2,text:"    color = [-1] * n"},
+      {id:3,text:"    for start in range(n):"},
+      {id:4,text:"        if color[start] != -1: continue"},
+      {id:5,text:"        color[start] = 0"},
+      {id:6,text:"        q = deque([start])"},
+      {id:7,text:"        while q:"},
+      {id:8,text:"            u = q.popleft()"},
+      {id:9,text:"            for v in graph[u]:"},
+      {id:10,text:"                if color[v] == -1:"},
+      {id:11,text:"                    color[v] = 1 - color[u]"},
+      {id:12,text:"                    q.append(v)"},
+      {id:13,text:"                elif color[v] == color[u]:"},
+      {id:14,text:"                    return False"},{id:15,text:""},
+      {id:16,text:"    return True"},
+    ],
+  },
+  bipartition: {
+    title: "Possible Bipartition", lc: "886", difficulty: "Medium", tag: "Dislikes",
+    coreIdea: "Split N people into two groups so that no two people who dislike each other are in the same group. Build a graph from dislike pairs and check if it's bipartite \u2014 if yes, the 2-coloring gives a valid partition.",
+    hasVariant: false,
+    getSteps: () => buildP2Steps(),
+    getGraph: () => ({ n: P2_N, edges: P2_DISLIKES, positions: P2_POS, expected: true, expectedGroups: { A:[1,4], B:[2,3] } }),
+    code: [
+      {id:0,text:"def possibleBipartition(n, dislikes):"},
+      {id:1,text:"    adj = [[] for _ in range(n+1)]"},
+      {id:2,text:"    for a,b in dislikes:"},
+      {id:3,text:"        adj[a].append(b); adj[b].append(a)"},
+      {id:4,text:"    color = [-1]*(n+1)"},
+      {id:5,text:"    for s in range(1, n+1):"},
+      {id:6,text:"        if color[s] != -1: continue"},
+      {id:7,text:"        color[s] = 0; q = deque([s])"},
+      {id:8,text:"        while q:"},
+      {id:9,text:"            u = q.popleft()"},
+      {id:10,text:"            for v in adj[u]:"},
+      {id:11,text:"                if color[v] == -1:"},
+      {id:12,text:"                    color[v] = 1-color[u]"},
+      {id:13,text:"                    q.append(v)"},
+      {id:14,text:"                elif color[v]==color[u]:"},
+      {id:15,text:"                    return False"},{id:16,text:""},
+      {id:17,text:"    return True"},
+    ],
+  },
+};
+
+/* ═══════════════════════════════════════════
+   GRAPH SVG
+   ═══════════════════════════════════════════ */
+function GraphView({ graphData, step }) {
+  const { positions, edges } = graphData;
   const { color, current, neighbor, conflict } = step;
   const conflictSet = new Set(conflict || []);
 
   return (
     <svg viewBox="0 0 400 300" className="w-full" style={{ maxHeight: 230 }}>
       {edges.map(([u, v], i) => {
-        const f = positions[u], t = positions[v];
-        const dx = t.x - f.x, dy = t.y - f.y, len = Math.sqrt(dx * dx + dy * dy);
+        const pu = positions[u], pv = positions[v];
+        if (!pu || !pv) return null;
+        const dx = pv.x - pu.x, dy = pv.y - pu.y, len = Math.sqrt(dx * dx + dy * dy);
         const r = 20;
-        const sx = f.x + (dx / len) * r, sy = f.y + (dy / len) * r;
-        const ex = t.x - (dx / len) * r, ey = t.y - (dy / len) * r;
+        const sx = pu.x + (dx / len) * r, sy = pu.y + (dy / len) * r;
+        const ex = pv.x - (dx / len) * r, ey = pv.y - (dy / len) * r;
         const isConflict = conflict && ((conflict[0] === u && conflict[1] === v) || (conflict[0] === v && conflict[1] === u));
         const isActive = (current === u && neighbor === v) || (current === v && neighbor === u);
         const edgeColor = isConflict ? "#ef4444" : isActive ? "#f59e0b" : "#3f3f46";
         return <line key={i} x1={sx} y1={sy} x2={ex} y2={ey} stroke={edgeColor} strokeWidth={isConflict ? 3 : isActive ? 2.5 : 1.5} />;
       })}
       {positions.map((pos, id) => {
+        if (!pos) return null;
         const c = color[id];
         const isCurr = current === id;
         const isNb = neighbor === id;
@@ -148,114 +273,72 @@ function GraphView({ example, step }) {
   );
 }
 
-/* ─── Python Code ─── */
-const CODE = [
-  { id: 0,  text: `from collections import deque` },
-  { id: 1,  text: `` },
-  { id: 2,  text: `def is_bipartite(adj, n):` },
-  { id: 3,  text: `    color = [-1] * n` },
-  { id: 4,  text: `    color[0] = 0` },
-  { id: 5,  text: `    queue = deque([0])` },
-  { id: 6,  text: `` },
-  { id: 7,  text: `    while queue:` },
-  { id: 8,  text: `        u = queue.popleft()` },
-  { id: 9,  text: `        for v in adj[u]:` },
-  { id: 10, text: `            if color[v] == -1:` },
-  { id: 11, text: `                color[v] = 1 - color[u]` },
-  { id: 12, text: `                queue.append(v)` },
-  { id: 13, text: `            elif color[v] == color[u]:` },
-  { id: 14, text: `                return False` },
-  { id: 15, text: `` },
-  { id: 16, text: `    return True` },
-];
-
-/* ─── Input / Output Panel ─── */
-function IOPanel({ example, step }) {
-  const { n, edges, expectedResult, expectedGroups, expectedConflict } = example;
+/* ═══════════════════════════════════════════
+   IO PANEL
+   ═══════════════════════════════════════════ */
+function IOPanel({ graphData, step, pKey }) {
+  const { n, edges, expected, expectedGroups, expectedConflict } = graphData;
   const { phase, color, coloredSoFar, groups } = step;
-  const adj = buildAdj(n, edges);
   const done = phase === "done" || phase === "fail";
   const result = phase === "done" ? true : phase === "fail" ? false : null;
-  const matchesExpected = done && result === expectedResult;
+  const matchesExpected = done && result === expected;
+  const start = pKey === "bipartition" ? 1 : 0;
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-3">
-      {/* Input */}
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 space-y-2.5">
       <div>
-        <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1.5">Input</div>
-        <div className="font-mono text-xs text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
-          <div><span className="text-zinc-500">n</span> = <span className="text-blue-400">{n}</span></div>
-          <div><span className="text-zinc-500">adj</span> = {"{"}</div>
-          {adj.map((neighbors, node) => (
-            <div key={node} className="pl-4">
-              <span className="text-zinc-500">{node}:</span>{" "}
-              <span className="text-zinc-300">[{neighbors.join(", ")}]{node < n - 1 ? "," : ""}</span>
-            </div>
-          ))}
-          <div>{"}"}</div>
+        <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
+        <div className="font-mono text-[11px] text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
+          <div><span className="text-zinc-500">n    </span>= <span className="text-blue-400">{n}</span></div>
+          <div><span className="text-zinc-500">{pKey === "bipartition" ? "dislike" : "edges"}</span>= <span className="text-zinc-300">{edges.length}</span></div>
         </div>
       </div>
 
-      {/* Expected Output */}
-      <div className="border-t border-zinc-800 pt-3">
-        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1.5">Expected Output</div>
-        <div className="font-mono text-xs space-y-0.5">
+      <div className="border-t border-zinc-800 pt-2.5">
+        <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">Expected</div>
+        <div className="font-mono text-[11px] space-y-0.5">
           <div>
-            <span className="text-zinc-500">bipartite = </span>
-            <span className={expectedResult ? "text-emerald-300" : "text-red-300"}>{expectedResult ? "True" : "False"}</span>
+            <span className="text-zinc-500">{pKey === "bipartition" ? "possible" : "bipartite"} = </span>
+            <span className={expected ? "text-emerald-300" : "text-red-300"}>{expected ? "True" : "False"}</span>
           </div>
           {expectedGroups && (
             <>
-              <div><span className="text-zinc-500">group_A = </span><span className="text-red-300">{`{${expectedGroups.A.join(",")}}`}</span></div>
-              <div><span className="text-zinc-500">group_B = </span><span className="text-blue-300">{`{${expectedGroups.B.join(",")}}`}</span></div>
+              <div><span className="text-zinc-500">A = </span><span className="text-red-300">{`{${expectedGroups.A.join(",")}}`}</span></div>
+              <div><span className="text-zinc-500">B = </span><span className="text-blue-300">{`{${expectedGroups.B.join(",")}}`}</span></div>
             </>
           )}
           {expectedConflict && (
-            <div><span className="text-zinc-500">conflict = </span><span className="text-red-300">({expectedConflict.join(", ")})</span></div>
+            <div><span className="text-zinc-500">conflict = </span><span className="text-red-300">({expectedConflict.join(",")})</span></div>
           )}
         </div>
       </div>
 
-      {/* Progressive Output */}
-      <div className="border-t border-zinc-800 pt-3">
-        <div className="flex items-center gap-2 mb-1.5">
-          <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matchesExpected && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
+      <div className="border-t border-zinc-800 pt-2.5">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output</div>
+          {matchesExpected && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">{"\u2713"} MATCH</span>}
         </div>
-        <div className="font-mono text-xs flex items-center gap-0.5">
-          <span className="text-zinc-500">color = [</span>
-          {color.map((c, i) => (
-            <span key={i} className="flex items-center">
-              <span className={
-                c === 0 ? "text-red-300 font-bold" :
-                c === 1 ? "text-blue-300 font-bold" :
-                "text-zinc-600"
-              }>
-                {c === -1 ? "?" : c}
+        <div className="font-mono text-[11px] flex items-center gap-0.5 flex-wrap">
+          <span className="text-zinc-500">color=[</span>
+          {Array.from({ length: n }).map((_, idx) => {
+            const i = idx + start;
+            const c = color[i];
+            return (
+              <span key={i} className="flex items-center">
+                <span className={c === 0 ? "text-red-300 font-bold" : c === 1 ? "text-blue-300 font-bold" : "text-zinc-600"}>
+                  {c === -1 ? "?" : c}
+                </span>
+                {idx < n - 1 && <span className="text-zinc-600">,</span>}
               </span>
-              {i < color.length - 1 && <span className="text-zinc-600">, </span>}
-            </span>
-          ))}
+            );
+          })}
           <span className="text-zinc-500">]</span>
         </div>
-        {coloredSoFar.length > 0 && (
-          <div className="mt-2 space-y-0.5">
-            {coloredSoFar.map((entry, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                <span className="text-zinc-600 font-mono">node {entry.node}:</span>
-                <span className={entry.c === 0 ? "text-red-400/80" : "text-blue-400/80"}>
-                  {entry.c === 0 ? "Red" : "Blue"}
-                </span>
-                <span className="text-emerald-600">✓</span>
-              </div>
-            ))}
-          </div>
-        )}
         {done && (
-          <div className="mt-1.5">
+          <div className="mt-1">
             <span className="text-zinc-500 text-[10px]">result = </span>
             <span className={`text-[10px] font-bold ${result ? "text-emerald-300" : "text-red-300"}`}>
-              {result ? "True (bipartite)" : "False (odd cycle)"}
+              {result ? "True" : "False (odd cycle)"}
             </span>
           </div>
         )}
@@ -264,21 +347,18 @@ function IOPanel({ example, step }) {
   );
 }
 
-/* ─── Code Panel ─── */
-function CodePanel({ highlightLines }) {
+/* ═══════════════════════════════════════════
+   SHARED COMPONENTS
+   ═══════════════════════════════════════════ */
+function CodePanel({ code, highlightLines }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 h-full">
       <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 px-2">Python</div>
       <div className="font-mono text-[11px] leading-[1.7]" style={{ whiteSpace: "pre" }}>
-        {CODE.map((line) => {
+        {code.map(line => {
           const hl = highlightLines.includes(line.id);
           return (
-            <div
-              key={line.id}
-              className={`px-2 rounded-sm ${
-                hl ? "bg-blue-500/15 text-blue-300" : line.text === "" ? "" : "text-zinc-500"
-              }`}
-            >
+            <div key={line.id} className={`px-2 rounded-sm ${hl ? "bg-blue-500/15 text-blue-300" : line.text === "" ? "" : "text-zinc-500"}`}>
               <span className="inline-block w-5 text-right mr-3 text-zinc-700 select-none" style={{ userSelect: "none" }}>
                 {line.text !== "" ? line.id + 1 : ""}
               </span>
@@ -291,55 +371,69 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
-      <button
-        onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
-        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >← Prev</button>
-      <div className="flex gap-1.5">
-        {Array.from({ length: total }).map((_, i) => (
-          <button key={i} onClick={() => setSi(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-all ${i === si ? "bg-blue-500 scale-125" : "bg-zinc-700 hover:bg-zinc-500"}`} />
-        ))}
+      <button onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
+        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">{"\u2190"} Prev</button>
+      <div className="flex gap-1.5 items-center">
+        {total <= 20
+          ? Array.from({ length: total }).map((_, i) => (
+              <button key={i} onClick={() => setSi(i)}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${i === si ? "bg-blue-500 scale-125" : "bg-zinc-700 hover:bg-zinc-500"}`} />
+            ))
+          : <>
+              <button onClick={() => setSi(0)} className={`px-2 py-0.5 text-xs rounded ${si === 0 ? "bg-blue-600 text-white" : "bg-zinc-800 text-zinc-400"}`}>Start</button>
+              <input type="range" min={0} max={total - 1} value={si} onChange={e => setSi(Number(e.target.value))} className="w-32 accent-blue-500" />
+              <span className="text-[10px] text-zinc-600 font-mono w-12 text-center">{si + 1}/{total}</span>
+              <button onClick={() => setSi(total - 1)} className={`px-2 py-0.5 text-xs rounded ${si === total - 1 ? "bg-blue-600 text-white" : "bg-zinc-800 text-zinc-400"}`}>End</button>
+            </>
+        }
       </div>
-      <button
-        onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
-        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next →</button>
+      <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next {"\u2192"}</button>
     </div>
   );
 }
 
-/* ─── Main Component ─── */
+/* ═══════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════ */
 export default function BipartiteViz() {
-  const [exKey, setExKey] = useState("bipartite");
+  const [pKey, setPKey] = useState("algorithm");
+  const [variant, setVariant] = useState("yes");
   const [si, setSi] = useState(0);
-  const example = EXAMPLES[exKey];
-  const steps = useMemo(() => buildSteps(example), [exKey]);
-  const step = steps[si];
-  const switchEx = (k) => { setExKey(k); setSi(0); };
+  const problem = PROBLEMS[pKey];
+
+  const steps = useMemo(() => {
+    if (problem.hasVariant) return problem.getSteps(variant);
+    return problem.getSteps();
+  }, [pKey, variant]);
+
+  const graphData = useMemo(() => {
+    if (problem.hasVariant) return problem.getGraph(variant);
+    return problem.getGraph();
+  }, [pKey, variant]);
+
+  const step = steps[Math.min(si, steps.length - 1)];
+  const switchProblem = (k) => { setPKey(k); setSi(0); setVariant("yes"); };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-end justify-between mb-3">
+        {/* Header + Tabs */}
+        <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Bipartite Check</h1>
             <p className="text-zinc-500 text-sm mt-0.5">Graph 2-Coloring with BFS</p>
           </div>
-          <div className="flex gap-2">
-            {Object.entries(EXAMPLES).map(([k, v]) => (
-              <button key={k} onClick={() => switchEx(k)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  exKey === k
-                    ? (k === "bipartite" ? "bg-emerald-600 text-white" : "bg-red-600 text-white")
-                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+          <div className="flex gap-2 flex-wrap">
+            {Object.entries(PROBLEMS).map(([k, p]) => (
+              <button key={k} onClick={() => switchProblem(k)}
+                className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                  pKey === k ? "bg-blue-600 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
                 }`}>
-                {v.label}
+                {p.lc ? <><span className="opacity-60">LC {p.lc}</span> </> : null}{p.title}
               </button>
             ))}
           </div>
@@ -347,27 +441,41 @@ export default function BipartiteViz() {
 
         {/* Core Idea */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
-          <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
-          <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            A graph is <strong className="text-zinc-300">bipartite</strong> if its nodes can be split into two groups where every edge connects a node from one group to the other. BFS assigns <strong className="text-red-400">Red</strong>/<strong className="text-blue-400">Blue</strong> colors level by level — if a neighbor already has the <strong className="text-zinc-300">same color</strong>, an odd cycle exists and the graph isn't bipartite. This is the foundation for matching problems, scheduling, and conflict detection.
-          </p>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
+            {problem.difficulty && <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-amber-900/50 text-amber-400">{problem.difficulty}</span>}
+            <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium">{problem.tag}</span>
+            {/* Variant toggle for algorithm tab */}
+            {problem.hasVariant && (
+              <div className="ml-auto flex gap-1.5">
+                <button onClick={() => { setVariant("yes"); setSi(0); }}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                    variant === "yes" ? "bg-emerald-600 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                  }`}>Bipartite {"\u2713"}</button>
+                <button onClick={() => { setVariant("no"); setSi(0); }}
+                  className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                    variant === "no" ? "bg-red-600 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                  }`}>Not Bipartite {"\u2717"}</button>
+              </div>
+            )}
+          </div>
+          <p className="text-sm text-zinc-400 leading-relaxed mt-1">{problem.coreIdea}</p>
         </div>
 
         {/* Navigation */}
         <div className="mb-3">
-          <NavBar si={si} setSi={setSi} total={steps.length} />
+          <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* ═══ 3-COLUMN GRID ═══ */}
+        {/* 3-COLUMN GRID */}
         <div className="grid grid-cols-12 gap-3">
-
-          {/* ── COL 1: IO + Graph ── */}
+          {/* COL 1: IO + Graph */}
           <div className="col-span-3 space-y-3">
-            <IOPanel example={example} step={step} />
+            <IOPanel graphData={graphData} step={step} pKey={pKey} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{example.n}N, {example.edges.length}E</div>
-              <GraphView example={example} step={step} />
+              <div className="text-[10px] text-zinc-500 mb-1">{graphData.n}N, {graphData.edges.length}E</div>
+              <GraphView graphData={graphData} step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" />Red (0)</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />Blue (1)</span>
@@ -376,7 +484,7 @@ export default function BipartiteViz() {
             </div>
           </div>
 
-          {/* ── COL 2: Steps + State ── */}
+          {/* COL 2: Steps + State */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -385,7 +493,7 @@ export default function BipartiteViz() {
               "bg-zinc-900 border-zinc-800"
             }`}>
               <div className="flex items-center gap-3 mb-1.5">
-                <span className="text-xs text-zinc-600 font-mono">Step {si + 1}/{steps.length}</span>
+                <span className="text-xs text-zinc-600 font-mono">Step {Math.min(si, steps.length - 1) + 1}/{steps.length}</span>
                 <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded ${
                   step.phase === "conflict" || step.phase === "fail" ? "bg-red-900 text-red-300" :
                   step.phase === "color" ? "bg-blue-900 text-blue-300" :
@@ -401,8 +509,11 @@ export default function BipartiteViz() {
             {/* color[] array */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">color[]</div>
-              <div className="flex gap-1.5">
-                {step.color.map((c, i) => {
+              <div className="flex gap-1.5 flex-wrap">
+                {Array.from({ length: graphData.n }).map((_, idx) => {
+                  const nodeStart = pKey === "bipartition" ? 1 : 0;
+                  const i = idx + nodeStart;
+                  const c = step.color[i];
                   const isDone = step.phase === "done";
                   return (
                     <div key={i} className="flex flex-col items-center gap-1">
@@ -412,7 +523,7 @@ export default function BipartiteViz() {
                         c === 1 ? (isDone ? "bg-blue-950/40 border-blue-800 text-blue-300" : "bg-blue-950 border-blue-800 text-blue-300") :
                         "bg-zinc-900 border-zinc-700 text-zinc-600"
                       }`}>
-                        {c === -1 ? "–" : c}
+                        {c === -1 ? "\u2014" : c}
                       </div>
                     </div>
                   );
@@ -425,17 +536,31 @@ export default function BipartiteViz() {
               <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Queue</div>
               <div className="flex gap-1 flex-wrap min-h-[28px] items-center">
                 {step.queue.length > 0
-                  ? step.queue.map((n, i) => (
+                  ? step.queue.map((nd, i) => (
                       <span key={i} className={`inline-flex items-center justify-center w-7 h-7 rounded-md font-mono font-bold text-xs ${
-                        step.color[n] === 0 ? "bg-red-950 border border-red-800 text-red-300" :
+                        step.color[nd] === 0 ? "bg-red-950 border border-red-800 text-red-300" :
                         "bg-blue-950 border border-blue-800 text-blue-300"
-                      }`}>{n}</span>
+                      }`}>{nd}</span>
                     ))
                   : <span className="text-[10px] text-zinc-600 italic">empty</span>}
               </div>
             </div>
 
-            {/* Groups (shown at end for bipartite) */}
+            {/* Coloring log */}
+            {step.coloredSoFar && step.coloredSoFar.length > 0 && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
+                <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Coloring Log</div>
+                <div className="flex gap-1.5 flex-wrap">
+                  {step.coloredSoFar.map((entry, i) => (
+                    <span key={i} className={`inline-flex items-center gap-1 px-2 h-6 rounded-md text-[10px] font-mono font-bold ${
+                      entry.c === 0 ? "bg-red-950 border border-red-800 text-red-300" : "bg-blue-950 border border-blue-800 text-blue-300"
+                    }`}>{entry.node}{"\u2192"}{entry.c === 0 ? "R" : "B"}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Groups (bipartite result) */}
             {step.groups && (
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Partition Groups</div>
@@ -443,16 +568,16 @@ export default function BipartiteViz() {
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-red-400 font-mono font-bold w-14">Group A:</span>
                     <div className="flex gap-1">
-                      {step.groups.A.map(n => (
-                        <span key={n} className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-red-950 border border-red-800 text-red-300 font-mono font-bold text-xs">{n}</span>
+                      {step.groups.A.map(nd => (
+                        <span key={nd} className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-red-950 border border-red-800 text-red-300 font-mono font-bold text-xs">{nd}</span>
                       ))}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-blue-400 font-mono font-bold w-14">Group B:</span>
                     <div className="flex gap-1">
-                      {step.groups.B.map(n => (
-                        <span key={n} className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-blue-950 border border-blue-800 text-blue-300 font-mono font-bold text-xs">{n}</span>
+                      {step.groups.B.map(nd => (
+                        <span key={nd} className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-blue-950 border border-blue-800 text-blue-300 font-mono font-bold text-xs">{nd}</span>
                       ))}
                     </div>
                   </div>
@@ -461,43 +586,39 @@ export default function BipartiteViz() {
             )}
           </div>
 
-          {/* ── COL 3: Code ── */}
+          {/* COL 3: Code */}
           <div className="col-span-4">
-            <CodePanel highlightLines={step.codeHL} />
+            <CodePanel code={problem.code} highlightLines={step.codeHL} />
           </div>
-
         </div>
 
-        {/* ═══ BOTTOM ROW: When to Use + Classic Problems ═══ */}
+        {/* BOTTOM ROW */}
         <div className="grid grid-cols-2 gap-3 mt-3">
-          {/* When to Use */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Check if a graph can be 2-colored (no odd cycles)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Prerequisite for bipartite matching (Hungarian, Hopcroft-Karp)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Conflict/scheduling problems — "can tasks be split into two shifts?"</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Detecting odd cycles in undirected graphs</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">{"\u203a"}</span>Check if a graph can be 2-colored (no odd cycles)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">{"\u203a"}</span>Prerequisite for bipartite matching (Hungarian, Hopcroft-Karp)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">{"\u203a"}</span>Conflict/scheduling {"\u2014"} "can tasks be split into two shifts?"</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">{"\u203a"}</span>Detecting odd cycles in undirected graphs</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) — standard BFS</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) {"\u2014"} standard BFS</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V) for color array + queue</div>
                 <div><span className="text-zinc-500 font-semibold">Note:</span> For disconnected graphs, run BFS from every unvisited node</div>
               </div>
             </div>
           </div>
-
-          {/* Classic Problems */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 785 — Is Graph Bipartite?</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 886 — Possible Bipartition</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 207 — Course Schedule (cycle variant)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1042 — Flower Planting With No Adjacent</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1349 — Max Students Taking Exam</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 765 — Couples Holding Hands</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 785 {"\u2014"} Is Graph Bipartite?</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 886 {"\u2014"} Possible Bipartition</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 1042 {"\u2014"} Flower Planting With No Adjacent</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 1349 {"\u2014"} Max Students Taking Exam</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 765 {"\u2014"} Couples Holding Hands</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">{"\u2022"}</span><span className="text-zinc-400">LC 207 {"\u2014"} Course Schedule (cycle variant)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>
