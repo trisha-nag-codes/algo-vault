@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════════════════
    TRIE (PREFIX TREE)  —  3 Classic Problems
    LC 208 Implement Trie · LC 211 Add & Search Words · LC 212 Word Search II
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════════════════ */
 
 /* ─── Problem Definitions ─── */
 const PROBLEMS = {
@@ -24,9 +24,9 @@ const PROBLEMS = {
   },
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    CODE PANELS
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 const CODES = {
   implement: [
     { id: 0,  text: `class TrieNode:` },
@@ -112,9 +112,9 @@ const CODES = {
   ],
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    TRIE UTILITIES
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 let _nodeId = 0;
 function makeNode(ch) { return { char: ch, children: {}, isEnd: false, id: _nodeId++, word: null }; }
 
@@ -137,9 +137,9 @@ function collectWords(node, prefix) {
   return words;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    BUILD STEPS — LC 208 Implement Trie
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function buildImplementSteps() {
   _nodeId = 0;
   const root = makeNode("∅");
@@ -234,9 +234,9 @@ function buildImplementSteps() {
   return steps;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    BUILD STEPS — LC 211 Add & Search Words (wildcard)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function buildWildcardSteps() {
   _nodeId = 0;
   const root = makeNode("∅");
@@ -343,9 +343,9 @@ function buildWildcardSteps() {
   return steps;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    BUILD STEPS — LC 212 Word Search II (Trie + Grid)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function buildWordSearchSteps() {
   _nodeId = 0;
   const root = makeNode("∅");
@@ -478,9 +478,9 @@ function buildWordSearchSteps() {
   return steps;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    STEP BUILDER DISPATCH
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function buildStepsFor(key) {
   switch (key) {
     case "implement": return buildImplementSteps();
@@ -490,9 +490,9 @@ function buildStepsFor(key) {
   }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    TREE VISUALIZATION
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function TreeView({ step }) {
   const { flat, currentPath, highlightNode, newNodes } = step;
   const pathSet = new Set(currentPath || []);
@@ -553,9 +553,9 @@ function TreeView({ step }) {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    GRID VIEW (for LC 212)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function GridView({ step }) {
   if (!step.board) return null;
   const { board, gridHighlight } = step;
@@ -603,9 +603,9 @@ function GridView({ step }) {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    IO PANEL
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function IOPanel({ pKey, step }) {
   const done = step.phase === "done";
   return (
@@ -687,9 +687,9 @@ function IOPanel({ pKey, step }) {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    CODE PANEL
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function CodePanel({ pKey, highlightLines }) {
   const code = CODES[pKey] || [];
   return (
@@ -715,16 +715,16 @@ function CodePanel({ pKey, highlightLines }) {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    NAV BAR
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function NavBar({ si, setSi, total }) {
   const useDots = total <= 25;
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
       <button onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
         className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >â† Prev</button>
+      >← Prev</button>
       <div className="flex gap-1.5 flex-wrap justify-center max-w-[60%]">
         {useDots
           ? Array.from({ length: total }).map((_, i) => (
@@ -747,9 +747,9 @@ function NavBar({ si, setSi, total }) {
   );
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    PHASE BADGE
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function phaseStyle(phase) {
   switch (phase) {
     case "insert": return "bg-violet-900 text-violet-300";
@@ -761,9 +761,9 @@ function phaseStyle(phase) {
   }
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    STATE PANEL
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 function StatePanel({ pKey, step }) {
   if (pKey === "implement") {
     return (
@@ -847,9 +847,9 @@ function StatePanel({ pKey, step }) {
   return null;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════
    MAIN COMPONENT
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════ */
 export default function TrieViz() {
   const [pKey, setPKey] = useState("implement");
   const [si, setSi] = useState(0);
@@ -862,7 +862,7 @@ export default function TrieViz() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
 
-        {/* â•â•â• 1. HEADER â•â•â• */}
+        {/* ═══ 1. HEADER ═══ */}
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Trie (Prefix Tree)</h1>
@@ -880,18 +880,18 @@ export default function TrieViz() {
           </div>
         </div>
 
-        {/* â•â•â• 2. CORE IDEA â•â•â• */}
+        {/* ═══ 2. CORE IDEA ═══ */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">{problem.coreIdea}</p>
         </div>
 
-        {/* â•â•â• 3. NAVIGATION â•â•â• */}
+        {/* ═══ 3. NAVIGATION ═══ */}
         <div className="mb-3">
           <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
+        {/* ═══ 4. 3-COLUMN GRID ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* ── COL 1: IO + Visualization ── */}
@@ -900,7 +900,7 @@ export default function TrieViz() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] text-zinc-500 mb-1">
                 {pKey === "wordsearch" ? "Board (4×4)" : "Trie Structure"}
-                {pKey !== "wordsearch" && " â€¢ â— = word-end"}
+                {pKey !== "wordsearch" && " • ● = word-end"}
               </div>
               {pKey === "wordsearch" ? (
                 <GridView step={step} />
@@ -918,7 +918,7 @@ export default function TrieViz() {
             {/* Show trie below grid for word search */}
             {pKey === "wordsearch" && (
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-                <div className="text-[10px] text-zinc-500 mb-1">Trie â€¢ â— = word-end</div>
+                <div className="text-[10px] text-zinc-500 mb-1">Trie • ● = word-end</div>
                 <TreeView step={step} />
               </div>
             )}
@@ -967,7 +967,7 @@ export default function TrieViz() {
 
         </div>
 
-        {/* â•â•â• 5. BOTTOM ROW: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ 5. BOTTOM ROW: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>

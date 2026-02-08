@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â•â•â• Heap helpers â•â•â• */
+/* ═══ Heap helpers ═══ */
 function minPush(h, v) { h.push(v); let i = h.length - 1; while (i > 0) { const p = (i-1)>>1; if (h[p] > h[i]) { [h[p],h[i]] = [h[i],h[p]]; i = p; } else break; } }
 function minPop(h) { if (!h.length) return undefined; const top = h[0]; h[0] = h[h.length-1]; h.pop(); let i = 0; while (true) { let s=i; const l=2*i+1,r=2*i+2; if (l<h.length&&h[l]<h[s]) s=l; if (r<h.length&&h[r]<h[s]) s=r; if (s!==i) { [h[s],h[i]]=[h[i],h[s]]; i=s; } else break; } return top; }
 function maxPush(h, v) { h.push(v); let i = h.length - 1; while (i > 0) { const p = (i-1)>>1; if (h[p] < h[i]) { [h[p],h[i]] = [h[i],h[p]]; i = p; } else break; } }
@@ -12,7 +12,7 @@ function tMinPop(h) { if(!h.length)return; const t=h[0];h[0]=h[h.length-1];h.pop
 function tMaxPush(h, v) { h.push(v); let i=h.length-1; while(i>0){const p=(i-1)>>1;if(h[p][0]<h[i][0]){[h[p],h[i]]=[h[i],h[p]];i=p;}else break;} }
 function tMaxPop(h) { if(!h.length)return; const t=h[0];h[0]=h[h.length-1];h.pop();let i=0;while(true){let s=i;const l=2*i+1,r=2*i+2;if(l<h.length&&h[l][0]>h[s][0])s=l;if(r<h.length&&h[r][0]>h[s][0])s=r;if(s!==i){[h[s],h[i]]=[h[i],h[s]];i=s;}else break;}return t; }
 
-/* â•â•â• Problem Definitions â•â•â• */
+/* ═══ Problem Definitions ═══ */
 const PROBLEMS = {
   kthLargest: {
     title: "Kth Largest",
@@ -46,7 +46,7 @@ const PROBLEMS = {
   },
 };
 
-/* â•â•â• Problem Data â•â•â• */
+/* ═══ Problem Data ═══ */
 const DATA_KTH = { arr: [3, 2, 1, 5, 6, 4], k: 2, expected: 5 };
 const DATA_MERGE = { lists: [[1, 4, 7], [2, 5, 8], [3, 6, 9]], expected: [1,2,3,4,5,6,7,8,9] };
 const DATA_CLOSEST = { points: [[3,3],[5,-1],[-2,4],[1,1],[0,2],[-1,-1],[4,0]], k: 3 };
@@ -56,7 +56,7 @@ const DATA_SCHED = { tasks: ["A","A","A","B","B","B"], n: 2, expected: 8 };
 const DISTS = DATA_CLOSEST.points.map(([x,y])=>x*x+y*y);
 const EXPECTED_CLOSEST = DATA_CLOSEST.points.map((p,i)=>({p,d:DISTS[i]})).sort((a,b)=>a.d-b.d).slice(0,DATA_CLOSEST.k).map(e=>e.p);
 
-/* â•â•â• Step Builders â•â•â• */
+/* ═══ Step Builders ═══ */
 function buildKthSteps() {
   const { arr, k, expected } = DATA_KTH;
   const n = arr.length, steps = [], heap = [], log = [];
@@ -173,7 +173,7 @@ function buildSteps(pKey) {
   return buildSchedulerSteps();
 }
 
-/* â•â•â• Python Codes â•â•â• */
+/* ═══ Python Codes ═══ */
 const CODES = {
   kthLargest: [
     {id:0,text:`import heapq`},{id:1,text:``},{id:2,text:`def kth_largest(nums, k):`},{id:3,text:`    heap = []`},{id:4,text:`    for num in nums:`},{id:5,text:`        if len(heap) < k:`},{id:6,text:`            heapq.heappush(heap, num)`},{id:7,text:`        elif num > heap[0]:`},{id:8,text:`            heapq.heapreplace(heap, num)`},{id:9,text:`    return heap[0]`},
@@ -192,7 +192,7 @@ const CODES = {
   ],
 };
 
-/* â•â•â• Heap Tree SVG â•â•â• */
+/* ═══ Heap Tree SVG ═══ */
 function HeapTreeView({ values, highlighted, phase, labels }) {
   const hlSet = new Set(highlighted || []);
   const n = values.length;
@@ -219,7 +219,7 @@ function HeapTreeView({ values, highlighted, phase, labels }) {
   );
 }
 
-/* â•â•â• IO Panel â•â•â• */
+/* ═══ IO Panel ═══ */
 function IOPanel({ step, pKey }) {
   const { phase, extra } = step;
   const done = phase === "done";
@@ -259,7 +259,7 @@ function IOPanel({ step, pKey }) {
   );
 }
 
-/* â•â•â• Heap Viz Panel (COL1 bottom) â•â•â• */
+/* ═══ Heap Viz Panel (COL1 bottom) ═══ */
 function HeapVizPanel({ step, pKey }) {
   const { phase } = step;
   if (pKey === "median") {
@@ -290,7 +290,7 @@ function HeapVizPanel({ step, pKey }) {
   );
 }
 
-/* â•â•â• Code Panel â•â•â• */
+/* ═══ Code Panel ═══ */
 function CodePanel({ highlightLines, pKey }) {
   const CODE = CODES[pKey];
   return (
@@ -306,18 +306,18 @@ function CodePanel({ highlightLines, pKey }) {
   );
 }
 
-/* â•â•â• NavBar â•â•â• */
+/* ═══ NavBar ═══ */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
-      <button onClick={()=>setSi(Math.max(0,si-1))} disabled={si===0} className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">â† Prev</button>
+      <button onClick={()=>setSi(Math.max(0,si-1))} disabled={si===0} className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">← Prev</button>
       <div className="flex gap-1.5">{Array.from({length:total}).map((_,i)=><button key={i} onClick={()=>setSi(i)} className={`w-2.5 h-2.5 rounded-full transition-all ${i===si?"bg-blue-500 scale-125":"bg-zinc-700 hover:bg-zinc-500"}`}/>)}</div>
       <button onClick={()=>setSi(Math.min(total-1,si+1))} disabled={si>=total-1} className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next →</button>
     </div>
   );
 }
 
-/* â•â•â• COL 2: Middle Panel â•â•â• */
+/* ═══ COL 2: Middle Panel ═══ */
 function MiddlePanel({ step, pKey, si, totalSteps }) {
   const { phase, extra } = step;
   const sidx = Math.min(si, totalSteps-1);
@@ -371,7 +371,7 @@ function MiddlePanel({ step, pKey, si, totalSteps }) {
   );
 }
 
-/* â•â•â• Main Component â•â•â• */
+/* ═══ Main Component ═══ */
 export default function HeapViz() {
   const [pKey, setPKey] = useState("kthLargest");
   const [si, setSi] = useState(0);

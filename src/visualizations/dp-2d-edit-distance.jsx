@@ -5,7 +5,7 @@ const PROBLEMS = {
   edit: {
     title: "Edit Distance",
     subtitle: "dp[i][j] = min ops to convert word1[:i] → word2[:j]",
-    coreIdea: "At each cell (i,j) compare characters: if they match, take the diagonal for free. Otherwise pick the cheapest of three operations â€” insert (â†), delete (â†‘), or replace (â†–), each costing 1. The matrix fills row by row, and the answer sits at dp[m][n]. This two-string DP pattern is the backbone of spell checkers, diff tools, and DNA sequence alignment.",
+    coreIdea: "At each cell (i,j) compare characters: if they match, take the diagonal for free. Otherwise pick the cheapest of three operations — insert (←), delete (↑), or replace (↖), each costing 1. The matrix fills row by row, and the answer sits at dp[m][n]. This two-string DP pattern is the backbone of spell checkers, diff tools, and DNA sequence alignment.",
     s1: "horse", s2: "ros",
     s1Label: "word1", s2Label: "word2",
     expectedResult: 3,
@@ -147,7 +147,7 @@ function buildEditSteps(prob) {
 
         steps.push({
           title: `(${i},${j}): '${s1[i-1]}' ≠ '${s2[j-1]}' — ${op[i][j]} = ${dp[i][j]}`,
-          detail: `Insert(â†): ${dp[i][j-1]}+1=${ins}. Delete(â†‘): ${dp[i-1][j]}+1=${del}. Replace(â†–): ${dp[i-1][j-1]}+1=${rep}. Best: ${op[i][j]}.`,
+          detail: `Insert(←): ${dp[i][j-1]}+1=${ins}. Delete(↑): ${dp[i-1][j]}+1=${del}. Replace(↖): ${dp[i-1][j-1]}+1=${rep}. Best: ${op[i][j]}.`,
           dp: snap(), op: snapOp(), current: [i, j], phase: "fill", codeHL: [12, 13, 14, 15],
           path: [], candidates: { ins, del, rep }, changedCell: [i, j], finalized: new Set(finalized),
         });
@@ -219,8 +219,8 @@ function buildLCSSteps(prob) {
         op[i][j] = up >= left ? "skip-s1" : "skip-s2";
         finalized.add(k(i, j));
         steps.push({
-          title: `(${i},${j}): '${s1[i-1]}' â‰  '${s2[j-1]}' â€” max(â†‘${up}, â†${left}) = ${dp[i][j]}`,
-          detail: `Skip s1 char(â†‘): ${up}. Skip s2 char(â†): ${left}. Best: ${dp[i][j]}.`,
+          title: `(${i},${j}): '${s1[i-1]}' ≠ '${s2[j-1]}' — max(↑${up}, ←${left}) = ${dp[i][j]}`,
+          detail: `Skip s1 char(↑): ${up}. Skip s2 char(←): ${left}. Best: ${dp[i][j]}.`,
           dp: snap(), op: snapOp(), current: [i, j], phase: "fill", codeHL: [9, 10, 11],
           path: [], candidates: { up, left }, changedCell: [i, j], finalized: new Set(finalized),
         });
@@ -273,7 +273,7 @@ function MatrixView({ step, prob, exKey }) {
 
   const arrow = (o) => {
     if (o === "match" || o === "replace") return "↖";
-    if (o === "insert" || o === "skip-s2") return "â†";
+    if (o === "insert" || o === "skip-s2") return "←";
     if (o === "delete" || o === "skip-s1") return "↑";
     return "";
   };
@@ -457,7 +457,7 @@ function EditState({ step, prob }) {
           <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Three Choices</div>
           <div className="flex gap-2 justify-center">
             {[
-              { label: "Insert â†", val: step.candidates.ins, key: "ins" },
+              { label: "Insert ←", val: step.candidates.ins, key: "ins" },
               { label: "Delete ↑", val: step.candidates.del, key: "del" },
               { label: "Replace ↖", val: step.candidates.rep, key: "rep" },
             ].map((c) => {
@@ -467,7 +467,7 @@ function EditState({ step, prob }) {
                 <div key={c.key} className={`flex-1 text-center p-2 rounded-xl border ${chosen ? "bg-blue-950/50 border-blue-800" : "border-zinc-800"}`}>
                   <div className="text-[10px] text-zinc-500 mb-0.5">{c.label}</div>
                   <div className={`text-lg font-bold font-mono ${chosen ? "text-blue-300" : "text-zinc-600"}`}>{c.val}</div>
-                  {chosen && <div className="text-[8px] text-blue-500 mt-0.5">â† best</div>}
+                  {chosen && <div className="text-[8px] text-blue-500 mt-0.5">← best</div>}
                 </div>
               );
             })}
@@ -511,7 +511,7 @@ function LCSState({ step }) {
             </div>
             <div className="flex items-center text-zinc-600 font-bold text-sm">vs</div>
             <div className={`flex-1 text-center p-2.5 rounded-xl border ${step.candidates.left > step.candidates.up ? "bg-amber-950/50 border-amber-800" : "border-zinc-800"}`}>
-              <div className="text-[10px] text-amber-400 mb-1">Skip s2 (â†)</div>
+              <div className="text-[10px] text-amber-400 mb-1">Skip s2 (←)</div>
               <div className={`text-xl font-bold font-mono ${step.candidates.left > step.candidates.up ? "text-amber-300" : "text-zinc-600"}`}>{step.candidates.left}</div>
             </div>
           </div>
@@ -559,7 +559,7 @@ function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
       <button onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
-        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">â† Prev</button>
+        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">← Prev</button>
       <div className="flex gap-1.5 items-center">
         {total <= 25
           ? Array.from({ length: total }).map((_, i) => (
@@ -592,7 +592,7 @@ export default function DP2DViz() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
-        {/* â•â•â• 1. Header â•â•â• */}
+        {/* ═══ 1. Header ═══ */}
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">2D Dynamic Programming</h1>
@@ -608,18 +608,18 @@ export default function DP2DViz() {
           </div>
         </div>
 
-        {/* â•â•â• 2. Core Idea (violet card) â•â•â• */}
+        {/* ═══ 2. Core Idea (violet card) ═══ */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">{prob.coreIdea}</p>
         </div>
 
-        {/* â•â•â• 3. Navigation â•â•â• */}
+        {/* ═══ 3. Navigation ═══ */}
         <div className="mb-3">
           <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
+        {/* ═══ 4. 3-COLUMN GRID ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* —— COL 1: IO + Matrix —— */}
@@ -629,7 +629,7 @@ export default function DP2DViz() {
               : <LCSIOPanel step={step} prob={prob} />}
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">Îµ = empty â€¢ â†– diag â€¢ â† left â€¢ â†‘ up</div>
+              <div className="text-[10px] text-zinc-500 mb-1">ε = empty • ↖ diag • ← left • ↑ up</div>
               <MatrixView step={step} prob={prob} exKey={exKey} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-blue-800 inline-block" />Current</span>
@@ -698,7 +698,7 @@ export default function DP2DViz() {
 
         </div>
 
-        {/* â•â•â• 5. BOTTOM ROW: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ 5. BOTTOM ROW: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>

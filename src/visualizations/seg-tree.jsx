@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â•â•â• Problem Definitions â•â•â• */
+/* ═══ Problem Definitions ═══ */
 const PROBLEMS = {
   rangeSum: {
     title: "Range Sum Query",
@@ -35,7 +35,7 @@ const PROBLEMS = {
   },
 };
 
-/* â•â•â• Build simulation steps â•â•â• */
+/* ═══ Build simulation steps ═══ */
 function buildSteps(problem) {
   const { arr: INIT, merge, identity, mergeLabel, ops } = problem;
   const n = INIT.length;
@@ -185,7 +185,7 @@ function buildSteps(problem) {
   return steps;
 }
 
-/* â•â•â• Precompute expected outputs â•â•â• */
+/* ═══ Precompute expected outputs ═══ */
 function computeExpected(problem) {
   const { arr: INIT, merge, identity, ops } = problem;
   const n = INIT.length;
@@ -226,7 +226,7 @@ function computeExpected(problem) {
   return results;
 }
 
-/* â•â•â• Segment Tree SVG â•â•â• */
+/* ═══ Segment Tree SVG ═══ */
 function SegTreeView({ step, n }) {
   const { tree, highlighted } = step;
   const hlSet = new Set(highlighted || []);
@@ -297,7 +297,7 @@ function SegTreeView({ step, n }) {
   );
 }
 
-/* â•â•â• Python Code â€” line-ID mapped â•â•â• */
+/* ═══ Python Code — line-ID mapped ═══ */
 const CODE_SUM = [
   { id: 0,  text: `def build(node, start, end):` },
   { id: 1,  text: `    if start == end:` },
@@ -366,7 +366,7 @@ const CODE_MIN = [
 
 const CODE_MAP = { rangeSum: CODE_SUM, rangeMin: CODE_MIN };
 
-/* â•â•â• IO Panel â•â•â• */
+/* ═══ IO Panel ═══ */
 function IOPanel({ step, problem, expected, pKey }) {
   const { phase, opResults, arr } = step;
   const done = phase === "done";
@@ -445,7 +445,7 @@ function IOPanel({ step, problem, expected, pKey }) {
   );
 }
 
-/* â•â•â• Code Panel â•â•â• */
+/* ═══ Code Panel ═══ */
 function CodePanel({ highlightLines, pKey }) {
   const CODE = CODE_MAP[pKey];
   return (
@@ -473,14 +473,14 @@ function CodePanel({ highlightLines, pKey }) {
   );
 }
 
-/* â•â•â• Navigation Bar â•â•â• */
+/* ═══ Navigation Bar ═══ */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
       <button
         onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
         className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >â† Prev</button>
+      >← Prev</button>
       <div className="flex gap-1.5">
         {Array.from({ length: total }).map((_, i) => (
           <button key={i} onClick={() => setSi(i)}
@@ -495,7 +495,7 @@ function NavBar({ si, setSi, total }) {
   );
 }
 
-/* â•â•â• Main Component â•â•â• */
+/* ═══ Main Component ═══ */
 export default function SegTreeViz() {
   const [pKey, setPKey] = useState("rangeSum");
   const [si, setSi] = useState(0);
@@ -511,7 +511,7 @@ export default function SegTreeViz() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
 
-        {/* â•â•â• 1. Header â•â•â• */}
+        {/* ═══ 1. Header ═══ */}
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Segment Tree</h1>
@@ -527,18 +527,18 @@ export default function SegTreeViz() {
           </div>
         </div>
 
-        {/* â•â•â• 2. Core Idea â•â•â• */}
+        {/* ═══ 2. Core Idea ═══ */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">{problem.coreIdea}</p>
         </div>
 
-        {/* â•â•â• 3. Navigation â•â•â• */}
+        {/* ═══ 3. Navigation ═══ */}
         <div className="mb-3">
           <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 4. 3-Column Grid â•â•â• */}
+        {/* ═══ 4. 3-Column Grid ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* — COL 1: IO + Tree Viz — */}
@@ -670,7 +670,7 @@ export default function SegTreeViz() {
 
         </div>
 
-        {/* â•â•â• 5. Bottom Row: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ 5. Bottom Row: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           {/* When to Use */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">

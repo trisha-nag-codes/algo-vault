@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════════════════════════
    LINKED LISTS — Multi-Problem Visualizer
    Patterns: Pointer Reversal · Floyd's Cycle · Heap Merge
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════════════════════════ */
 
 /* ——— Problem Definitions ——— */
 const PROBLEMS = {
@@ -91,9 +91,9 @@ const CODES = {
   ],
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════
    Build Steps — LC 206 Reverse
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════ */
 function buildReverse() {
   const vals = [1, 2, 3, 4, 5];
   const steps = [];
@@ -145,9 +145,9 @@ function buildReverse() {
   return steps;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════
    Build Steps — LC 142 Cycle II
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════ */
 function buildCycle() {
   const vals = [3, 2, 0, -4];
   const cyclePos = 1; // index where cycle starts
@@ -243,9 +243,9 @@ function buildCycle() {
   return steps;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════
    Build Steps — LC 23 Merge K Sorted
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════ */
 function buildMergeK() {
   const lists = [[1,4,5],[1,3,4],[2,6]];
   const steps = [];
@@ -314,9 +314,9 @@ const BUILDERS = {
   mergeK: buildMergeK,
 };
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* ═══════════════════════════════════════
    Linked List SVG Visualizations
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   ═══════════════════════════════════════ */
 function ListViz({ step, probKey }) {
   if (probKey === "reverse") return <ListVizReverse step={step} />;
   if (probKey === "cycle") return <ListVizCycle step={step} />;
@@ -373,7 +373,7 @@ function ListVizReverse({ step }) {
       {/* Null after first reversed node in done state */}
       {phase === "done" && (
         <text x={padX + 0 * (nodeW + gap) + nodeW + 12} y={padY + nodeH + 22}
-          fill="#52525b" fontSize="9" fontFamily="monospace">None â†</text>
+          fill="#52525b" fontSize="9" fontFamily="monospace">None ←</text>
       )}
       {/* Nodes */}
       {vals.map((v, i) => {
@@ -590,7 +590,7 @@ function ListVizMergeK({ step }) {
   );
 }
 
-/* â•â•â• IO Panel â•â•â• */
+/* ═══ IO Panel ═══ */
 function IOPanel({ step, probKey }) {
   const prob = PROBLEMS[probKey];
   if (probKey === "reverse") return <IOReverse step={step} prob={prob} />;
@@ -759,7 +759,7 @@ function IOMergeK({ step, prob }) {
   );
 }
 
-/* â•â•â• Code Panel â•â•â• */
+/* ═══ Code Panel ═══ */
 function CodePanel({ highlightLines, probKey }) {
   const code = CODES[probKey];
   return (
@@ -783,12 +783,12 @@ function CodePanel({ highlightLines, probKey }) {
   );
 }
 
-/* â•â•â• Navigation Bar â•â•â• */
+/* ═══ Navigation Bar ═══ */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
       <button onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
-        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">â† Prev</button>
+        className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">← Prev</button>
       <div className="flex gap-1.5">
         {Array.from({ length: total }).map((_, i) => (
           <button key={i} onClick={() => setSi(i)}
@@ -801,7 +801,7 @@ function NavBar({ si, setSi, total }) {
   );
 }
 
-/* â•â•â• State Panel â•â•â• */
+/* ═══ State Panel ═══ */
 function StatePanel({ step, probKey }) {
   if (probKey === "reverse") return <StateReverse step={step} />;
   if (probKey === "cycle") return <StateCycle step={step} />;
@@ -954,7 +954,7 @@ function StateMergeK({ step }) {
   );
 }
 
-/* â•â•â• Main Component â•â•â• */
+/* ═══ Main Component ═══ */
 export default function LinkedListViz() {
   const [probKey, setProbKey] = useState("reverse");
   const [si, setSi] = useState(0);
@@ -967,7 +967,7 @@ export default function LinkedListViz() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
 
-        {/* â•â•â• 1. Header â•â•â• */}
+        {/* ═══ 1. Header ═══ */}
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Linked Lists</h1>
@@ -988,7 +988,7 @@ export default function LinkedListViz() {
           </div>
         </div>
 
-        {/* â•â•â• 2. Core Idea â•â•â• */}
+        {/* ═══ 2. Core Idea ═══ */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <div className="flex items-center gap-3 mb-1">
             <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
@@ -997,12 +997,12 @@ export default function LinkedListViz() {
           <p className="text-sm text-zinc-400 leading-relaxed">{prob.coreIdea}</p>
         </div>
 
-        {/* â•â•â• 3. Navigation â•â•â• */}
+        {/* ═══ 3. Navigation ═══ */}
         <div className="mb-3">
           <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 4. 3-Column Grid â•â•â• */}
+        {/* ═══ 4. 3-Column Grid ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* —— COL 1: IO + List Viz —— */}
@@ -1122,7 +1122,7 @@ export default function LinkedListViz() {
           </div>
         </div>
 
-        {/* â•â•â• 5. Bottom Row: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ 5. Bottom Row: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use Linked Lists</div>

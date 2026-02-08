@@ -10,7 +10,7 @@ const ARROWS = [
   [ 0, 0, 1, 3, 0, 0, 0],
   [ 0, 0, 0, 0, 0, 0, 0],
 ];
-const DIR_NAMES = ["â†’", "â†“", "â†", "â†‘"];
+const DIR_NAMES = ["→", "↓", "←", "↑"];
 const DIR_DELTAS = [[0,1],[1,0],[0,-1],[-1,0]];
 const key = (r, c) => `${r},${c}`;
 const START = [0, 0], GOAL = [5, 6];
@@ -385,7 +385,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
         className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >â† Prev</button>
+      >← Prev</button>
       <div className="flex gap-1.5 items-center">
         {total <= 25
           ? Array.from({ length: total }).map((_, i) => (
@@ -418,13 +418,13 @@ export default function ZeroOneBFSViz() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
       <div className="max-w-7xl mx-auto">
-        {/* â•â•â• 1. Header â•â•â• */}
+        {/* ═══ 1. Header ═══ */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">0-1 BFS</h1>
           <p className="text-zinc-500 text-sm mt-0.5">Deque-Based Shortest Path for Binary Edge Weights • O(V+E)</p>
         </div>
 
-        {/* â•â•â• 2. Core Idea â•â•â• */}
+        {/* ═══ 2. Core Idea ═══ */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
@@ -432,12 +432,12 @@ export default function ZeroOneBFSViz() {
           </p>
         </div>
 
-        {/* â•â•â• 3. Navigation â•â•â• */}
+        {/* ═══ 3. Navigation ═══ */}
         <div className="mb-3">
           <NavBar si={Math.min(si, steps.length - 1)} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 4. 3-Column Grid â•â•â• */}
+        {/* ═══ 4. 3-Column Grid ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* ── COL 1: IO + Grid ── */}
@@ -545,7 +545,7 @@ export default function ZeroOneBFSViz() {
 
         </div>
 
-        {/* â•â•â• 5. Bottom Row: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ 5. Bottom Row: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           {/* When to Use */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">

@@ -298,7 +298,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.max(0, si - 1))} disabled={si === 0}
         className="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >â† Prev</button>
+      >← Prev</button>
       <div className="flex gap-1.5">
         {Array.from({ length: total }).map((_, i) => (
           <button key={i} onClick={() => setSi(i)}
@@ -358,7 +358,7 @@ export default function BipartiteViz() {
           <NavBar si={si} setSi={setSi} total={steps.length} />
         </div>
 
-        {/* â•â•â• 3-COLUMN GRID â•â•â• */}
+        {/* ═══ 3-COLUMN GRID ═══ */}
         <div className="grid grid-cols-12 gap-3">
 
           {/* ── COL 1: IO + Graph ── */}
@@ -468,7 +468,7 @@ export default function BipartiteViz() {
 
         </div>
 
-        {/* â•â•â• BOTTOM ROW: When to Use + Classic Problems â•â•â• */}
+        {/* ═══ BOTTOM ROW: When to Use + Classic Problems ═══ */}
         <div className="grid grid-cols-2 gap-3 mt-3">
           {/* When to Use */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
