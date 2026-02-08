@@ -1,26 +1,26 @@
 import { useState, useMemo } from "react";
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   TRIE (PREFIX TREE)  â€”  3 Classic Problems
-   LC 208 Implement Trie Â· LC 211 Add & Search Words Â· LC 212 Word Search II
+   TRIE (PREFIX TREE)  —  3 Classic Problems
+   LC 208 Implement Trie · LC 211 Add & Search Words · LC 212 Word Search II
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ Problem Definitions â”€â”€â”€ */
+/* ─── Problem Definitions ─── */
 const PROBLEMS = {
   implement: {
     title: "Implement Trie",
-    subtitle: "LC 208 Â· insert / search / startsWith",
-    coreIdea: "A trie stores strings character-by-character in a tree. Each node has up to 26 children. Shared prefixes share nodes â€” \"apple\" and \"app\" share the first 3 nodes. Insert walks/creates nodes and marks the last node as a word-end. Search follows the path and checks the end flag. startsWith just checks the path exists. All operations are O(word length).",
+    subtitle: "LC 208 · insert / search / startsWith",
+    coreIdea: "A trie stores strings character-by-character in a tree. Each node has up to 26 children. Shared prefixes share nodes — \"apple\" and \"app\" share the first 3 nodes. Insert walks/creates nodes and marks the last node as a word-end. Search follows the path and checks the end flag. startsWith just checks the path exists. All operations are O(word length).",
   },
   wildcard: {
     title: "Add & Search Words",
-    subtitle: "LC 211 Â· search with '.' wildcard",
-    coreIdea: "Same trie structure, but search(\"b.d\") must handle '.' which matches any character. When we hit a '.', we can't follow a single path â€” instead we DFS through ALL children at that level. If any branch reaches the end with is_end=True, return True. This is backtracking on the trie itself.",
+    subtitle: "LC 211 · search with '.' wildcard",
+    coreIdea: "Same trie structure, but search(\"b.d\") must handle '.' which matches any character. When we hit a '.', we can't follow a single path — instead we DFS through ALL children at that level. If any branch reaches the end with is_end=True, return True. This is backtracking on the trie itself.",
   },
   wordsearch: {
     title: "Word Search II",
-    subtitle: "LC 212 Â· Trie + Grid DFS",
-    coreIdea: "Build a trie from the word list, then DFS from every cell in the grid. At each cell, check if the current character exists as a trie child. If yes, move to that trie node and explore all 4 neighbors. When a trie node is marked as a word-end, record the word. This replaces searching each word independently â€” the trie prunes impossible prefixes immediately.",
+    subtitle: "LC 212 · Trie + Grid DFS",
+    coreIdea: "Build a trie from the word list, then DFS from every cell in the grid. At each cell, check if the current character exists as a trie child. If yes, move to that trie node and explore all 4 neighbors. When a trie node is marked as a word-end, record the word. This replaces searching each word independently — the trie prunes impossible prefixes immediately.",
   },
 };
 
@@ -138,11 +138,11 @@ function collectWords(node, prefix) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” LC 208 Implement Trie
+   BUILD STEPS — LC 208 Implement Trie
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildImplementSteps() {
   _nodeId = 0;
-  const root = makeNode("âˆ…");
+  const root = makeNode("∅");
   const WORDS = ["apple", "app", "apt", "bat", "bar"];
   const steps = [];
   const inserted = [];
@@ -159,7 +159,7 @@ function buildImplementSteps() {
     });
   }
 
-  snap("Initialize â€” Empty trie with root node",
+  snap("Initialize — Empty trie with root node",
     `Insert words: [${WORDS.map(w => `"${w}"`).join(", ")}], then test search and startsWith queries.`,
     "init", [0, 1, 2, 3], null, [], -1, [], null);
 
@@ -181,9 +181,9 @@ function buildImplementSteps() {
     inserted.push(word);
 
     snap(
-      `Insert "${word}" â€” ${newNodes.length > 0 ? `${newNodes.length} new node(s)` : "all nodes shared"}`,
+      `Insert "${word}" — ${newNodes.length > 0 ? `${newNodes.length} new node(s)` : "all nodes shared"}`,
       newNodes.length > 0
-        ? `Traverse/create path: ${word.split("").join("â†’")}. Created ${newNodes.length} new node(s). Marked '${word[word.length - 1]}' as word-end. ${inserted.length}/${WORDS.length} inserted.`
+        ? `Traverse/create path: ${word.split("").join("→")}. Created ${newNodes.length} new node(s). Marked '${word[word.length - 1]}' as word-end. ${inserted.length}/${WORDS.length} inserted.`
         : `Path "${word}" already exists (shared prefix). Just mark '${word[word.length - 1]}' as word-end.`,
       "insert", [5, 6, 7, 8, 9, 10, 11], word, pathIds, node.id, newNodes, null
     );
@@ -211,13 +211,13 @@ function buildImplementSteps() {
     const words = found ? collectWords(node, q) : [];
 
     snap(
-      `${op}("${q}") â†’ ${result}`,
+      `${op}("${q}") → ${result}`,
       op === "search"
-        ? (isWord ? `"${q}" found â€” path exists and node is marked as word-end.` :
-           found ? `Path "${q}" exists but is_end=False â€” it's a prefix, not a stored word.` :
-           `"${q}" not found â€” path breaks at '${q[pathIds.length - 1]}'.`)
+        ? (isWord ? `"${q}" found — path exists and node is marked as word-end.` :
+           found ? `Path "${q}" exists but is_end=False — it's a prefix, not a stored word.` :
+           `"${q}" not found — path breaks at '${q[pathIds.length - 1]}'.`)
         : (found ? `Prefix "${q}" exists. Matching words: [${words.map(w => `"${w}"`).join(", ")}].` :
-           `Prefix "${q}" not found â€” no words start with "${q}".`),
+           `Prefix "${q}" not found — no words start with "${q}".`),
       result ? "searchHit" : "searchMiss",
       op === "search" ? [13, 14, 15, 16, 17, 18, 19] : [21, 22, 23, 24, 25, 26, 27],
       q, pathIds, found ? node.id : -1, [],
@@ -226,7 +226,7 @@ function buildImplementSteps() {
   }
 
   snap(
-    `âœ“ Complete â€” ${WORDS.length} words, ${_nodeId} nodes`,
+    `✓ Complete — ${WORDS.length} words, ${_nodeId} nodes`,
     `Shared prefixes: "ap" (apple, app, apt), "ba" (bat, bar). Insert O(k), search O(k), startsWith O(k) where k = word length.`,
     "done", [0, 1, 2, 3], null, [], -1, [], null
   );
@@ -235,11 +235,11 @@ function buildImplementSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” LC 211 Add & Search Words (wildcard)
+   BUILD STEPS — LC 211 Add & Search Words (wildcard)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildWildcardSteps() {
   _nodeId = 0;
-  const root = makeNode("âˆ…");
+  const root = makeNode("∅");
   const WORDS = ["bad", "dad", "mad", "pad", "bat"];
   const steps = [];
   const inserted = [];
@@ -257,7 +257,7 @@ function buildWildcardSteps() {
     });
   }
 
-  snap("Initialize â€” Empty trie",
+  snap("Initialize — Empty trie",
     `Insert words: [${WORDS.map(w => `"${w}"`).join(", ")}], then search with '.' wildcards.`,
     "init", [0, 1, 2, 3], null, [], -1, [], null, []);
 
@@ -278,8 +278,8 @@ function buildWildcardSteps() {
     inserted.push(word);
 
     snap(
-      `addWord("${word}") â€” ${newNodes.length} new node(s)`,
-      `Path: ${word.split("").join("â†’")}. ${newNodes.length > 0 ? `Created ${newNodes.length} node(s).` : "Shared prefix."} Mark end. ${inserted.length}/${WORDS.length} inserted.`,
+      `addWord("${word}") — ${newNodes.length} new node(s)`,
+      `Path: ${word.split("").join("→")}. ${newNodes.length > 0 ? `Created ${newNodes.length} node(s).` : "Shared prefix."} Mark end. ${inserted.length}/${WORDS.length} inserted.`,
       "insert", [5, 6, 7, 8, 9, 10, 11], word, pathIds, node.id, newNodes, null, []
     );
   }
@@ -287,11 +287,11 @@ function buildWildcardSteps() {
   // Wildcard search queries
   const wildcardQueries = [
     { q: "bad", expect: true, desc: "exact match, no wildcard" },
-    { q: ".ad", expect: true, desc: "'.' matches b/d/m/p â†’ bad, dad, mad, pad all match" },
-    { q: "b..", expect: true, desc: "'b' then any two â†’ bad, bat both match" },
-    { q: "b.d", expect: true, desc: "b?d â†’ bad matches" },
-    { q: "..t", expect: true, desc: "??t â†’ bat matches" },
-    { q: "..x", expect: false, desc: "??x â†’ no word ends with 'x'" },
+    { q: ".ad", expect: true, desc: "'.' matches b/d/m/p → bad, dad, mad, pad all match" },
+    { q: "b..", expect: true, desc: "'b' then any two → bad, bat both match" },
+    { q: "b.d", expect: true, desc: "b?d → bad matches" },
+    { q: "..t", expect: true, desc: "??t → bat matches" },
+    { q: "..x", expect: false, desc: "??x → no word ends with 'x'" },
   ];
 
   for (const { q, expect, desc } of wildcardQueries) {
@@ -324,8 +324,8 @@ function buildWildcardSteps() {
     const visitedIds = dfsVisited.map(d => d.id);
 
     snap(
-      `search("${q}") â†’ ${result}`,
-      `${desc}. DFS visited ${dfsVisited.length} node(s). ${q.includes(".") ? `'.' branches to ALL children at that level.` : "No wildcards â€” direct path follow."}`,
+      `search("${q}") → ${result}`,
+      `${desc}. DFS visited ${dfsVisited.length} node(s). ${q.includes(".") ? `'.' branches to ALL children at that level.` : "No wildcards — direct path follow."}`,
       result ? "searchHit" : "searchMiss",
       q.includes(".") ? [13, 14, 15, 16, 17, 18, 19, 20, 21] : [13, 14, 15, 16, 22, 23, 24],
       q, visitedIds, -1, [],
@@ -335,7 +335,7 @@ function buildWildcardSteps() {
   }
 
   snap(
-    `âœ“ Complete â€” Wildcard search demonstrated`,
+    `✓ Complete — Wildcard search demonstrated`,
     `'.' triggers DFS through all children. Worst case O(26^k) for all-dots, but in practice the trie prunes aggressively. Standard search remains O(k).`,
     "done", [0, 1, 2, 3], null, [], -1, [], null, []
   );
@@ -344,11 +344,11 @@ function buildWildcardSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” LC 212 Word Search II (Trie + Grid)
+   BUILD STEPS — LC 212 Word Search II (Trie + Grid)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildWordSearchSteps() {
   _nodeId = 0;
-  const root = makeNode("âˆ…");
+  const root = makeNode("∅");
   const BOARD = [
     ["o", "a", "a", "n"],
     ["e", "t", "a", "e"],
@@ -386,41 +386,41 @@ function buildWordSearchSteps() {
   }
 
   snap(
-    "Initialize â€” Build trie from word list",
-    `Words: [${WORDS.map(w => `"${w}"`).join(", ")}]. Trie built with ${_nodeId} nodes. Now DFS from every cell, following trie branches. If trie node has word â†’ record it.`,
+    "Initialize — Build trie from word list",
+    `Words: [${WORDS.map(w => `"${w}"`).join(", ")}]. Trie built with ${_nodeId} nodes. Now DFS from every cell, following trie branches. If trie node has word → record it.`,
     "init", [0, 1, 2], [], [], -1
   );
 
-  // Simulate DFS â€” we'll show key discoveries, not every cell
-  // Trace "oath": (0,0)o â†’ (1,0)e... no, let's trace the actual path
-  // oath: o(0,0) â†’ a(0,1) â†’ t(1,1) â†’ h(2,1)
+  // Simulate DFS — we'll show key discoveries, not every cell
+  // Trace "oath": (0,0)o → (1,0)e... no, let's trace the actual path
+  // oath: o(0,0) → a(0,1) → t(1,1) → h(2,1)
   const oathPath = [[0, 0], [0, 1], [1, 1], [2, 1]];
   const oathTrieIds = [root.id];
   let n = root;
   for (const ch of "oath") { n = n.children[ch]; oathTrieIds.push(n.id); }
 
   snap(
-    'DFS from (0,0)="o" â€” following trie',
-    `board[0][0]='o' is a child of trie root. Start DFS. Path: oâ†’aâ†’tâ†’h traces through the trie.`,
+    'DFS from (0,0)="o" — following trie',
+    `board[0][0]='o' is a child of trie root. Start DFS. Path: o→a→t→h traces through the trie.`,
     "explore", [4, 5, 6, 7, 18, 19, 20], oathPath.slice(0, 1), oathTrieIds.slice(0, 2), oathTrieIds[1]
   );
 
   snap(
-    'Path oâ†’aâ†’tâ†’h â€” found "oath"!',
-    `(0,0)o â†’ (0,1)a â†’ (1,1)t â†’ (2,1)h. Trie node for 'h' has word="oath". Record it and set word=None to de-duplicate.`,
+    'Path o→a→t→h — found "oath"!',
+    `(0,0)o → (0,1)a → (1,1)t → (2,1)h. Trie node for 'h' has word="oath". Record it and set word=None to de-duplicate.`,
     "found", [8, 9, 10], oathPath, oathTrieIds, oathTrieIds[4]
   );
   found.push("oath");
   // De-dup in trie
   n.word = null; n.isEnd = false;
 
-  // Trace "eat": e(1,0) â†’ a(0,1) â†’ t(1,1)
-  const eatPath = [[1, 0], [0, 0]]; // start from e, need to find eâ†’aâ†’t
+  // Trace "eat": e(1,0) → a(0,1) → t(1,1)
+  const eatPath = [[1, 0], [0, 0]]; // start from e, need to find e→a→t
   // Actually eat: e is at (1,0), a at (1,2) or (0,1), t at (1,1)
-  // e(1,0) â†’ ... we need aâ†’t. From e(1,0), neighbors are o(0,0), t(1,1), i(2,0). t is in trie under eâ†’aâ†’t, but we need 'a' first.
-  // Actually let's trace: e(1,3) â†’ a(0,3)... no. eâ†’aâ†’t:
-  // e at (1,0): neighbors are o(0,0), t(1,1), i(2,0) â€” none is 'a' child of 'e' in trie? 
-  // Wait â€” trie has eâ†’aâ†’t. From e(1,0) we need neighbor 'a'. (0,1) is 'a' but not adjacent to (1,0). 
+  // e(1,0) → ... we need a→t. From e(1,0), neighbors are o(0,0), t(1,1), i(2,0). t is in trie under e→a→t, but we need 'a' first.
+  // Actually let's trace: e(1,3) → a(0,3)... no. e→a→t:
+  // e at (1,0): neighbors are o(0,0), t(1,1), i(2,0) — none is 'a' child of 'e' in trie? 
+  // Wait — trie has e→a→t. From e(1,0) we need neighbor 'a'. (0,1) is 'a' but not adjacent to (1,0). 
   // e at (1,3): neighbors are n(0,3), a(1,2)... hmm (1,2) is 'a'. Then from a(1,2) neighbors include t(1,1)? No, (1,2) neighbors are (0,2)a, (1,1)t, (1,3)e, (2,2)k. Yes! t at (1,1).
   const eatPathReal = [[1, 3], [1, 2], [1, 1]];
   const eatTrieIds = [root.id];
@@ -428,41 +428,41 @@ function buildWordSearchSteps() {
   for (const ch of "eat") { n = n.children[ch]; eatTrieIds.push(n.id); }
 
   snap(
-    'DFS from (1,3)="e" â€” exploring',
+    'DFS from (1,3)="e" — exploring',
     `board[1][3]='e' matches trie. Neighbor (1,2)='a' is a trie child of 'e'. Continue.`,
     "explore", [4, 5, 6, 7, 12, 13, 14, 15], eatPathReal.slice(0, 2), eatTrieIds.slice(0, 3), eatTrieIds[2]
   );
 
   snap(
-    'Path eâ†’aâ†’t â€” found "eat"!',
-    `(1,3)e â†’ (1,2)a â†’ (1,1)t. Trie node for 't' has word="eat". Record it.`,
+    'Path e→a→t — found "eat"!',
+    `(1,3)e → (1,2)a → (1,1)t. Trie node for 't' has word="eat". Record it.`,
     "found", [8, 9, 10], eatPathReal, eatTrieIds, eatTrieIds[3]
   );
   found.push("eat");
 
-  // Try "rain" â€” r at (2,3): râ†’aâ†’iâ†’n? a at (1,2) or (0,2)
-  // r(2,3) â†’ a(1,3)? No, (1,3) is 'e'. Neighbors of (2,3): (1,3)e, (3,3)v, (2,2)k. No 'a'. 
+  // Try "rain" — r at (2,3): r→a→i→n? a at (1,2) or (0,2)
+  // r(2,3) → a(1,3)? No, (1,3) is 'e'. Neighbors of (2,3): (1,3)e, (3,3)v, (2,2)k. No 'a'. 
   // Hmm. Actually board: row2 = [i, h, k, r]. r is at (2,3). neighbors: (1,3)=e, (3,3)=v, (2,2)=k. No 'a' neighbor.
   // So "rain" can't be found. Let me verify: r only at (2,3). Its neighbors don't have 'a'. Correct.
   snap(
-    'DFS from (2,3)="r" â€” trie has râ†’aâ†’iâ†’n',
-    `board[2][3]='r' matches trie root child. But neighbors of (2,3) are 'e','v','k' â€” none is 'a'. Trie prunes immediately. No "rain" path exists.`,
+    'DFS from (2,3)="r" — trie has r→a→i→n',
+    `board[2][3]='r' matches trie root child. But neighbors of (2,3) are 'e','v','k' — none is 'a'. Trie prunes immediately. No "rain" path exists.`,
     "prune", [4, 5, 6, 12, 13, 14], [[2, 3]], [root.id, root.children["r"].id], root.children["r"].id
   );
 
-  // Try "hike" â€” h at (2,1): hâ†’iâ†’kâ†’e
+  // Try "hike" — h at (2,1): h→i→k→e
   // h(2,1) neighbors: (1,1)t, (3,1)f, (2,0)i, (2,2)k
-  // i at (2,0)! then from i(2,0): neighbors (1,0)e, (3,0)i, (2,1)h(visited). Need 'k' â€” not adjacent.
-  // What about h(2,1) â†’ i? Trie: hâ†’iâ†’kâ†’e. From h(2,1), neighbor i is at (2,0) or (3,0).
+  // i at (2,0)! then from i(2,0): neighbors (1,0)e, (3,0)i, (2,1)h(visited). Need 'k' — not adjacent.
+  // What about h(2,1) → i? Trie: h→i→k→e. From h(2,1), neighbor i is at (2,0) or (3,0).
   // i(2,0): neighbors (1,0)e, (3,0)i, (2,1)h. No 'k'. 
   // i(3,0): neighbors (2,0)i, (3,1)f. No 'k'.
-  // Actually wait â€” from h(2,1), (2,2) is 'k'. But trie needs hâ†’i first, not hâ†’k.
-  // So we can't spell hike starting from h. Let me check other 'h' â€” there's no other h.
+  // Actually wait — from h(2,1), (2,2) is 'k'. But trie needs h→i first, not h→k.
+  // So we can't spell hike starting from h. Let me check other 'h' — there's no other h.
   // "hike" is not findable. Good, that matches the classic LC 212 example.
 
   snap(
-    'DFS from (2,1)="h" â€” trie has hâ†’iâ†’kâ†’e',
-    `board[2][1]='h' matches trie. Need 'i' next â€” neighbors are t(1,1), f(3,1), i(2,0), k(2,2). Follow i(2,0), but from i, need 'k' â€” neighbors are e(1,0), i(3,0), h(2,1). No 'k'. Dead end. "hike" not found on this board.`,
+    'DFS from (2,1)="h" — trie has h→i→k→e',
+    `board[2][1]='h' matches trie. Need 'i' next — neighbors are t(1,1), f(3,1), i(2,0), k(2,2). Follow i(2,0), but from i, need 'k' — neighbors are e(1,0), i(3,0), h(2,1). No 'k'. Dead end. "hike" not found on this board.`,
     "prune", [4, 5, 6, 7, 12, 13, 14],
     [[2, 1], [2, 0]],
     [root.id, root.children["h"].id, root.children["h"].children["i"].id],
@@ -470,8 +470,8 @@ function buildWordSearchSteps() {
   );
 
   snap(
-    `âœ“ Complete â€” Found ${found.length}/${WORDS.length} words`,
-    `Found: [${found.map(w => `"${w}"`).join(", ")}]. Not found: [${WORDS.filter(w => !found.includes(w)).map(w => `"${w}"`).join(", ")}]. Trie prunes impossible prefixes at each DFS step â€” far faster than searching each word independently.`,
+    `✓ Complete — Found ${found.length}/${WORDS.length} words`,
+    `Found: [${found.map(w => `"${w}"`).join(", ")}]. Not found: [${WORDS.filter(w => !found.includes(w)).map(w => `"${w}"`).join(", ")}]. Trie prunes impossible prefixes at each DFS step — far faster than searching each word independently.`,
     "done", [21], [], [], -1
   );
 
@@ -623,7 +623,7 @@ function IOPanel({ pKey, step }) {
             <div className="pl-8"><span className="text-zinc-300">"pad","bat"]</span></div>
           </>}
           {pKey === "wordsearch" && <>
-            <div><span className="text-zinc-500">board</span> = <span className="text-zinc-300">4Ã—4</span></div>
+            <div><span className="text-zinc-500">board</span> = <span className="text-zinc-300">4×4</span></div>
             <div><span className="text-zinc-500">words</span> = <span className="text-zinc-300">["oath","eat",</span></div>
             <div className="pl-8"><span className="text-zinc-300">"rain","hike"]</span></div>
           </>}
@@ -644,7 +644,7 @@ function IOPanel({ pKey, step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           {(pKey === "implement" || pKey === "wildcard") && (
@@ -742,7 +742,7 @@ function NavBar({ si, setSi, total }) {
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -812,7 +812,7 @@ function StatePanel({ pKey, step }) {
               {step.searchResult.query.split("").map((ch, i) => (
                 <span key={i} className={ch === "." ? "text-amber-400 font-bold" : "text-zinc-300"}>{ch}</span>
               ))}
-              <span className="text-zinc-400">") â†’ </span>
+              <span className="text-zinc-400">") → </span>
               <span className={step.searchResult.result ? "text-emerald-300 font-bold" : "text-red-400"}>
                 {step.searchResult.result ? "True" : "False"}
               </span>
@@ -833,7 +833,7 @@ function StatePanel({ pKey, step }) {
             return (
               <div key={i} className="flex items-center gap-2 font-mono text-xs">
                 <span className={`w-4 text-center ${isFound ? "text-emerald-400" : "text-zinc-600"}`}>
-                  {isFound ? "âœ“" : "Â·"}
+                  {isFound ? "✓" : "·"}
                 </span>
                 <span className={isFound ? "text-emerald-300" : "text-zinc-500"}>{w}</span>
               </div>
@@ -866,7 +866,7 @@ export default function TrieViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Trie (Prefix Tree)</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Insert / Search / Prefix Match â€¢ O(word length) Operations</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Insert / Search / Prefix Match • O(word length) Operations</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -894,12 +894,12 @@ export default function TrieViz() {
         {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Visualization â”€â”€ */}
+          {/* ── COL 1: IO + Visualization ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] text-zinc-500 mb-1">
-                {pKey === "wordsearch" ? "Board (4Ã—4)" : "Trie Structure"}
+                {pKey === "wordsearch" ? "Board (4×4)" : "Trie Structure"}
                 {pKey !== "wordsearch" && " â€¢ â— = word-end"}
               </div>
               {pKey === "wordsearch" ? (
@@ -924,7 +924,7 @@ export default function TrieViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -960,7 +960,7 @@ export default function TrieViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -972,16 +972,16 @@ export default function TrieViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Prefix matching â€” autocomplete, spell check, IP routing</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Word dictionaries with startsWith queries â€” hash sets can't do this</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Grid + word list problems â€” trie prunes invalid prefixes during DFS</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Wildcard / regex-like pattern matching on word sets</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Prefix matching — autocomplete, spell check, IP routing</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Word dictionaries with startsWith queries — hash sets can't do this</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Grid + word list problems — trie prunes invalid prefixes during DFS</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Wildcard / regex-like pattern matching on word sets</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
                 <div><span className="text-zinc-500 font-semibold">Insert:</span> O(word length)</div>
                 <div><span className="text-zinc-500 font-semibold">Search:</span> O(word length)</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(total chars Ã— alphabet) â€” children can be dict or array[26]</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(total chars × alphabet) — children can be dict or array[26]</div>
               </div>
             </div>
           </div>
@@ -989,14 +989,14 @@ export default function TrieViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 208 â€” Implement Trie</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 211 â€” Add and Search Words</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 212 â€” Word Search II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 648 â€” Replace Words</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1268 â€” Search Suggestions System</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 421 â€” Maximum XOR of Two Numbers</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 472 â€” Concatenated Words</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 745 â€” Prefix and Suffix Search</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 208 — Implement Trie</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 211 — Add and Search Words</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 212 — Word Search II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 648 — Replace Words</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1268 — Search Suggestions System</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 421 — Maximum XOR of Two Numbers</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 472 — Concatenated Words</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 745 — Prefix and Suffix Search</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

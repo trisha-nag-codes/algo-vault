@@ -1,24 +1,24 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Input â€”â€”â€” */
+/* ——— Problem Input ——— */
 const N = 7;
 const EDGES = [[0,1],[1,2],[2,0],[2,3],[3,4],[4,5],[5,3],[5,6]];
 const POS = [{x:80,y:60},{x:200,y:60},{x:140,y:170},{x:300,y:170},{x:420,y:100},{x:420,y:240},{x:540,y:170}];
 
-/* â€”â€”â€” Adjacency list for display â€”â€”â€” */
+/* ——— Adjacency list for display ——— */
 const ADJ = (() => {
   const g = Array.from({ length: N }, () => []);
   for (const [u, v] of EDGES) g[u].push(v);
   return g;
 })();
 
-/* â€”â€”â€” Expected Output (precomputed) â€”â€”â€” */
+/* ——— Expected Output (precomputed) ——— */
 const EXPECTED_SCCS = [[2, 1, 0], [5, 4, 3], [6]];
 
-/* â€”â€”â€” SCC colors â€”â€”â€” */
+/* ——— SCC colors ——— */
 const SCC_COLORS = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
 
-/* â€”â€”â€” Build simulation steps â€”â€”â€” */
+/* ——— Build simulation steps ——— */
 function buildSteps() {
   const adj = Array.from({ length: N }, () => []);
   for (const [u, v] of EDGES) adj[u].push(v);
@@ -33,7 +33,7 @@ function buildSteps() {
   const finalized = new Set(); // nodes assigned to an SCC
 
   steps.push({
-    title: "Initialize â€” All Nodes Undiscovered",
+    title: "Initialize — All Nodes Undiscovered",
     detail: `${N} nodes, ${EDGES.length} directed edges. DFS from node 0. Track disc[] (discovery time) and low[] (lowest reachable disc via back edges).`,
     disc: [...disc], low: [...low], stack: [...stack], onStack: [...onStack],
     sccs: sccs.map(s => [...s]),
@@ -48,7 +48,7 @@ function buildSteps() {
     onStack[u] = true;
 
     steps.push({
-      title: `Discover Node ${u} â€” disc[${u}]=${disc[u]}, low[${u}]=${low[u]}`,
+      title: `Discover Node ${u} — disc[${u}]=${disc[u]}, low[${u}]=${low[u]}`,
       detail: `Push ${u} onto stack. Set disc[${u}] = low[${u}] = ${disc[u]}. Stack: [${stack.join(", ")}].`,
       disc: [...disc], low: [...low], stack: [...stack], onStack: [...onStack],
       sccs: sccs.map(s => [...s]),
@@ -60,7 +60,7 @@ function buildSteps() {
     for (const v of adj[u]) {
       if (disc[v] === -1) {
         steps.push({
-          title: `Edge ${u}â†’${v} â€” Tree Edge (Unvisited)`,
+          title: `Edge ${u}→${v} — Tree Edge (Unvisited)`,
           detail: `Node ${v} not yet discovered. Recurse into DFS(${v}).`,
           disc: [...disc], low: [...low], stack: [...stack], onStack: [...onStack],
           sccs: sccs.map(s => [...s]),
@@ -86,8 +86,8 @@ function buildSteps() {
         const prevLow = low[u];
         low[u] = Math.min(low[u], disc[v]);
         steps.push({
-          title: `Edge ${u}â†’${v} â€” Back Edge (On Stack)`,
-          detail: `Node ${v} is on stack â€” part of current path. low[${u}] = min(${prevLow}, disc[${v}]=${disc[v]}) = ${low[u]}. This back edge reveals a cycle!`,
+          title: `Edge ${u}→${v} — Back Edge (On Stack)`,
+          detail: `Node ${v} is on stack — part of current path. low[${u}] = min(${prevLow}, disc[${v}]=${disc[v]}) = ${low[u]}. This back edge reveals a cycle!`,
           disc: [...disc], low: [...low], stack: [...stack], onStack: [...onStack],
           sccs: sccs.map(s => [...s]),
           current: u, neighbor: v, activeEdge: [u, v],
@@ -96,7 +96,7 @@ function buildSteps() {
         });
       } else {
         steps.push({
-          title: `Edge ${u}â†’${v} â€” Cross Edge (Already Processed)`,
+          title: `Edge ${u}→${v} — Cross Edge (Already Processed)`,
           detail: `Node ${v} already processed and not on stack. Belongs to a different SCC. Ignore.`,
           disc: [...disc], low: [...low], stack: [...stack], onStack: [...onStack],
           sccs: sccs.map(s => [...s]),
@@ -132,7 +132,7 @@ function buildSteps() {
   for (let i = 0; i < N; i++) { if (disc[i] === -1) dfs(i); }
 
   steps.push({
-    title: `âœ“ Complete â€” ${sccs.length} SCCs Found`,
+    title: `✓ Complete — ${sccs.length} SCCs Found`,
     detail: `Strongly connected components: ${sccs.map((s, i) => `SCC${i + 1}{${s.join(",")}}`).join(", ")}.`,
     disc: [...disc], low: [...low], stack: [], onStack: [...onStack],
     sccs: sccs.map(s => [...s]),
@@ -144,7 +144,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â€”â€”â€” Graph SVG â€”â€”â€” */
+/* ——— Graph SVG ——— */
 function GraphView({ step }) {
   const { current, neighbor, activeEdge, sccs, disc } = step;
   const nodeToSCC = {};
@@ -191,7 +191,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â€”â€”â€” Python Code (clean function only) â€”â€”â€” */
+/* ——— Python Code (clean function only) ——— */
 const CODE = [
   { id: 0,  text: `def tarjan_scc(adj, n):` },
   { id: 1,  text: `    disc = [-1]*n; low = [-1]*n` },
@@ -215,7 +215,7 @@ const CODE = [
   { id: 19, text: `    return sccs` },
 ];
 
-/* â€”â€”â€” Input / Output Panel with progressive output â€”â€”â€” */
+/* ——— Input / Output Panel with progressive output ——— */
 function IOPanel({ step }) {
   const { phase, sccs, finalized } = step;
   const done = phase === "done";
@@ -254,7 +254,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs">
           <div className="flex items-center gap-1 flex-wrap">
@@ -276,7 +276,7 @@ function IOPanel({ step }) {
         {finalized.size > 0 && (
           <div className="mt-2 text-[10px] text-zinc-600">
             Nodes assigned: {[...finalized].sort((a, b) => a - b).map(n => (
-              <span key={n} className="text-emerald-600 mr-1">{n} âœ“</span>
+              <span key={n} className="text-emerald-600 mr-1">{n} ✓</span>
             ))}
             <span className="ml-1 text-zinc-700">({finalized.size}/{N})</span>
           </div>
@@ -286,7 +286,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -313,7 +313,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -330,12 +330,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function TarjanViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -347,14 +347,14 @@ export default function TarjanViz() {
         {/* Header */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">Tarjan's SCC Algorithm</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Strongly Connected Components â€¢ Single DFS Pass</p>
+          <p className="text-zinc-500 text-sm mt-0.5">Strongly Connected Components • Single DFS Pass</p>
         </div>
 
         {/* Core Idea */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            Tarjan's finds all strongly connected components in a single DFS pass. Each node tracks its discovery time (disc) and the lowest disc reachable through back edges (low). When a node's disc equals its low, it's the root of an SCC â€” pop the stack to extract the component. Back edges reveal cycles; cross edges to already-processed nodes are ignored. Used in compiler optimization, 2-SAT, and dependency analysis.
+            Tarjan's finds all strongly connected components in a single DFS pass. Each node tracks its discovery time (disc) and the lowest disc reachable through back edges (low). When a node's disc equals its low, it's the root of an SCC — pop the stack to extract the component. Back edges reveal cycles; cross edges to already-processed nodes are ignored. Used in compiler optimization, 2-SAT, and dependency analysis.
           </p>
         </div>
 
@@ -366,12 +366,12 @@ export default function TarjanViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Graph â€”â€” */}
+          {/* —— COL 1: IO + Graph —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges â€¢ directed</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges • directed</div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />Current</span>
@@ -380,7 +380,7 @@ export default function TarjanViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -423,7 +423,7 @@ export default function TarjanViz() {
                             d === -1 ? "bg-zinc-900 border-zinc-800 text-zinc-700" :
                             step.current === i ? "bg-blue-950 border-blue-700 text-blue-300" :
                             "bg-zinc-900 border-zinc-700 text-zinc-300"
-                          }`}>{d === -1 ? "â€”" : d}</div>
+                          }`}>{d === -1 ? "—" : d}</div>
                         </div>
                       );
                     })}
@@ -446,7 +446,7 @@ export default function TarjanViz() {
                             isLowered ? "bg-amber-950 border-amber-800 text-amber-300" :
                             step.current === i ? "bg-blue-950 border-blue-700 text-blue-300" :
                             "bg-zinc-900 border-zinc-700 text-zinc-300"
-                          }`}>{l === -1 ? "â€”" : l}</div>
+                          }`}>{l === -1 ? "—" : l}</div>
                         </div>
                       );
                     })}
@@ -489,7 +489,7 @@ export default function TarjanViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -502,10 +502,10 @@ export default function TarjanViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Find all strongly connected components in a directed graph</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Single DFS pass â€” more efficient than Kosaraju (no transpose)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>2-SAT solving â€” implication graph SCC condensation</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Dependency cycles, compiler dead-code detection, circuit analysis</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Find all strongly connected components in a directed graph</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Single DFS pass — more efficient than Kosaraju (no transpose)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>2-SAT solving — implication graph SCC condensation</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Dependency cycles, compiler dead-code detection, circuit analysis</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
@@ -520,12 +520,12 @@ export default function TarjanViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1192 â€” Critical Connections in a Network</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 332 â€” Reconstruct Itinerary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 207 â€” Course Schedule (cycle detection)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 802 â€” Find Eventual Safe States</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1568 â€” Min Days to Disconnect Island</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2360 â€” Longest Cycle in a Graph</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1192 — Critical Connections in a Network</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 332 — Reconstruct Itinerary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 207 — Course Schedule (cycle detection)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 802 — Find Eventual Safe States</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1568 — Min Days to Disconnect Island</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2360 — Longest Cycle in a Graph</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

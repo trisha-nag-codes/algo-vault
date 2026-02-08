@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const N = 6;
 const OPS = [
   { type: "union", a: 1, b: 2 },
@@ -11,18 +11,18 @@ const OPS = [
   { type: "find", node: 5 },
 ];
 
-/* â”€â”€â”€ Expected Output (precomputed) â”€â”€â”€ */
+/* ─── Expected Output (precomputed) ─── */
 const EXPECTED_PARENT = [1, 1, 1, 1, 3, 1];
 const EXPECTED_COMPONENTS = 1;
 const EXPECTED_FIND_5 = 1;
 
-/* â”€â”€â”€ Node positions for graph â”€â”€â”€ */
+/* ─── Node positions for graph ─── */
 const POS = [
   { x: 60, y: 60 }, { x: 180, y: 60 }, { x: 300, y: 60 },
   { x: 60, y: 200 }, { x: 180, y: 200 }, { x: 300, y: 200 },
 ];
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps() {
   const parent = Array.from({ length: N }, (_, i) => i);
   const rank = new Array(N).fill(0);
@@ -42,7 +42,7 @@ function buildSteps() {
   };
 
   steps.push({
-    title: "Initialize â€“ Each Node Is Its Own Root",
+    title: "Initialize – Each Node Is Its Own Root",
     detail: `parent[i] = i for all nodes. rank[i] = 0. Every node starts as an isolated component (${N} total).`,
     parent: [...parent], rank: [...rank],
     highlight: [], findPath: [], compressed: [], phase: "init",
@@ -58,8 +58,8 @@ function buildSteps() {
       const fb = find(b);
 
       steps.push({
-        title: `Union(${a}, ${b}) â€“ Find Roots`,
-        detail: `find(${a}): path [${fa.path.join("â†’")}], root = ${fa.root}. find(${b}): path [${fb.path.join("â†’")}], root = ${fb.root}.`,
+        title: `Union(${a}, ${b}) – Find Roots`,
+        detail: `find(${a}): path [${fa.path.join("→")}], root = ${fa.root}. find(${b}): path [${fb.path.join("→")}], root = ${fb.root}.`,
         parent: [...parent], rank: [...rank],
         highlight: [a, b], findPath: [...fa.path, ...fb.path], compressed: [],
         phase: "find", codeHL: [5, 6, 7, 8, 11],
@@ -70,8 +70,8 @@ function buildSteps() {
       if (fa.root === fb.root) {
         completedOps.push({ op: `union(${a},${b})`, result: "skip" });
         steps.push({
-          title: `Union(${a}, ${b}) â€“ Already Connected`,
-          detail: `Both have root ${fa.root}. Skip â€” they're in the same set.`,
+          title: `Union(${a}, ${b}) – Already Connected`,
+          detail: `Both have root ${fa.root}. Skip — they're in the same set.`,
           parent: [...parent], rank: [...rank],
           highlight: [a, b], findPath: [], compressed: [],
           phase: "skip", codeHL: [11, 12],
@@ -90,9 +90,9 @@ function buildSteps() {
           parent[fb.root] = fa.root; rank[fa.root]++;
           attachedFrom = fb.root; attachedTo = fa.root;
         }
-        completedOps.push({ op: `union(${a},${b})`, result: `${attachedFrom}â†’${attachedTo}` });
+        completedOps.push({ op: `union(${a},${b})`, result: `${attachedFrom}→${attachedTo}` });
         steps.push({
-          title: `Union(${a}, ${b}) â€“ Merge by Rank`,
+          title: `Union(${a}, ${b}) – Merge by Rank`,
           detail: `rank[${fa.root}]=${prevRank[fa.root]}, rank[${fb.root}]=${prevRank[fb.root]}. Attach ${attachedFrom} under ${attachedTo}.${rank[attachedTo] !== prevRank[attachedTo] ? ` rank[${attachedTo}] incremented to ${rank[attachedTo]}.` : ""}`,
           parent: [...parent], rank: [...rank],
           highlight: [attachedFrom, attachedTo], findPath: [], compressed: [],
@@ -109,8 +109,8 @@ function buildSteps() {
       const { root, path } = find(node);
 
       steps.push({
-        title: `Find(${node}) â€“ Traverse to Root`,
-        detail: `Follow parent pointers: ${path.join(" â†’ ")}. Root = ${root}.`,
+        title: `Find(${node}) – Traverse to Root`,
+        detail: `Follow parent pointers: ${path.join(" → ")}. Root = ${root}.`,
         parent: [...parent], rank: [...rank],
         highlight: [node], findPath: [...path], compressed: [],
         phase: "find", codeHL: [5, 6, 8],
@@ -125,7 +125,7 @@ function buildSteps() {
       if (compressedNodes.length > 0) {
         completedOps.push({ op: `find(${node})`, result: `root=${root}, compressed [${compressedNodes}]` });
         steps.push({
-          title: `Find(${node}) â€“ Path Compression`,
+          title: `Find(${node}) – Path Compression`,
           detail: `Point all nodes on path directly to root ${root}. Compressed: [${compressedNodes.join(", ")}]. Future finds will be O(1).`,
           parent: [...parent], rank: [...rank],
           highlight: [node, root], findPath: [], compressed: compressedNodes,
@@ -140,8 +140,8 @@ function buildSteps() {
   }
 
   steps.push({
-    title: "âœ“ Complete â€“ Final Union-Find State",
-    detail: `${countComponents()} connected component(s). Path compression has flattened the trees for O(Î±(n)) future operations.`,
+    title: "✓ Complete – Final Union-Find State",
+    detail: `${countComponents()} connected component(s). Path compression has flattened the trees for O(α(n)) future operations.`,
     parent: [...parent], rank: [...rank],
     highlight: [], findPath: [], compressed: [], phase: "done",
     codeHL: [21, 22, 23],
@@ -152,7 +152,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ Graph SVG â”€â”€â”€ */
+/* ─── Graph SVG ─── */
 function GraphView({ step }) {
   const { parent, highlight, findPath, compressed } = step;
   return (
@@ -201,7 +201,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (class wrapper) â”€â”€â”€ */
+/* ─── Python Code (class wrapper) ─── */
 const CODE = [
   { id: 0,  text: `class UnionFind:` },
   { id: 1,  text: `    def __init__(self, n):` },
@@ -229,7 +229,7 @@ const CODE = [
   { id: 23, text: `uf.find(2)  # returns root of 2` },
 ];
 
-/* â”€â”€â”€ Input / Output Panel with progressive output â”€â”€â”€ */
+/* ─── Input / Output Panel with progressive output ─── */
 function IOPanel({ step }) {
   const { phase, parent, components, completedOps } = step;
   const done = phase === "done";
@@ -269,7 +269,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs space-y-1">
           <div className="flex items-center gap-0.5">
@@ -307,7 +307,7 @@ function IOPanel({ step }) {
                 <span className={op.result === "skip" ? "text-red-400/60" : "text-emerald-400/80"}>
                   {op.result === "skip" ? "skipped" : op.result}
                 </span>
-                <span className="text-emerald-600">âœ“</span>
+                <span className="text-emerald-600">✓</span>
               </div>
             ))}
           </div>
@@ -317,7 +317,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -344,7 +344,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -361,12 +361,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function UnionFindViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -385,7 +385,7 @@ export default function UnionFindViz() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            Union-Find maintains a forest where each tree is a connected component. <strong className="text-zinc-300">find(x)</strong> walks up to the root (with path compression flattening the tree), and <strong className="text-zinc-300">union(x, y)</strong> merges two components by rank so trees stay shallow. Together these achieve nearly O(1) amortized â€” O(Î±(n)) â€” per operation, powering Kruskal's MST, connected components, and cycle detection.
+            Union-Find maintains a forest where each tree is a connected component. <strong className="text-zinc-300">find(x)</strong> walks up to the root (with path compression flattening the tree), and <strong className="text-zinc-300">union(x, y)</strong> merges two components by rank so trees stay shallow. Together these achieve nearly O(1) amortized — O(α(n)) — per operation, powering Kruskal's MST, connected components, and cycle detection.
           </p>
         </div>
 
@@ -397,12 +397,12 @@ export default function UnionFindViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Graph â”€â”€ */}
+          {/* ── COL 1: IO + Graph ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes â€¢ {OPS.length} operations</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes • {OPS.length} operations</div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />Root</span>
@@ -413,7 +413,7 @@ export default function UnionFindViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -514,7 +514,7 @@ export default function UnionFindViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -527,14 +527,14 @@ export default function UnionFindViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Dynamic connectivity â€” "are X and Y in the same group?"</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Kruskal's MST â€” sort edges, union if not in same component</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Cycle detection in undirected graphs â€” union returns false â†’ cycle</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Online/streaming connectivity â€” add edges incrementally</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Dynamic connectivity — "are X and Y in the same group?"</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Kruskal's MST — sort edges, union if not in same component</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Cycle detection in undirected graphs — union returns false → cycle</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Online/streaming connectivity — add edges incrementally</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(Î±(n)) â‰ˆ O(1) amortized per operation</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(α(n)) ≈ O(1) amortized per operation</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(n)</div>
                 <div><span className="text-zinc-500 font-semibold">Won't work:</span> Deletion of edges (no un-union without rollback)</div>
               </div>
@@ -545,12 +545,12 @@ export default function UnionFindViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 323 â€” Number of Connected Components</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 684 â€” Redundant Connection</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 721 â€” Accounts Merge</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 990 â€” Satisfiability of Equality Equations</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 305 â€” Number of Islands II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 399 â€” Evaluate Division (Weighted UF)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 323 — Number of Connected Components</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 684 — Redundant Connection</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 721 — Accounts Merge</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 990 — Satisfiability of Equality Equations</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 305 — Number of Islands II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 399 — Evaluate Division (Weighted UF)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

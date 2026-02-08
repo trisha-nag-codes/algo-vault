@@ -7,36 +7,36 @@ import { useState, useMemo } from "react";
 const PROBLEMS = {
   firstLast: {
     title: "First & Last Position",
-    lc: "LC 34 Â· Medium",
+    lc: "LC 34 · Medium",
     coreIdea:
-      "Two binary searches â€” bisect_left finds the first index where nums[mid] â‰¥ target (keep going left even when equal), bisect_right finds the first index where nums[mid] > target. If the element at bisect_left isn't the target, it doesn't exist. This is the foundational template for all boundary binary searches. O(log n).",
+      "Two binary searches — bisect_left finds the first index where nums[mid] ≥ target (keep going left even when equal), bisect_right finds the first index where nums[mid] > target. If the element at bisect_left isn't the target, it doesn't exist. This is the foundational template for all boundary binary searches. O(log n).",
     arr: [1, 2, 3, 4, 5, 5, 5, 5, 6, 7, 8, 9],
     target: 5,
     category: "boundary",
   },
   rotated: {
     title: "Search Rotated Array",
-    lc: "LC 33 Â· Medium",
+    lc: "LC 33 · Medium",
     coreIdea:
-      "In a rotated sorted array, one half is always sorted. Compare mid to lo: if nums[lo] â‰¤ nums[mid], the left half is sorted â€” check if target falls in that range; otherwise the right half is sorted. This lets us decide which half to discard at each step. Same O(log n) but with a twist on the condition.",
+      "In a rotated sorted array, one half is always sorted. Compare mid to lo: if nums[lo] ≤ nums[mid], the left half is sorted — check if target falls in that range; otherwise the right half is sorted. This lets us decide which half to discard at each step. Same O(log n) but with a twist on the condition.",
     arr: [6, 7, 8, 9, 0, 1, 2, 3, 4, 5],
     target: 3,
     category: "modified",
   },
   koko: {
     title: "Koko Eating Bananas",
-    lc: "LC 875 Â· Medium",
+    lc: "LC 875 · Medium",
     coreIdea:
-      "Binary search on the answer space, not the input. The answer k (eating speed) is in [1, max(piles)]. For a given k, we can compute hours = Î£âŒˆpile/kâŒ‰ in O(n). If hours â‰¤ h, k might work (search left for smaller k); otherwise search right. This 'feasibility check + binary search' pattern applies to hundreds of problems.",
+      "Binary search on the answer space, not the input. The answer k (eating speed) is in [1, max(piles)]. For a given k, we can compute hours = Σ⌈pile/k⌉ in O(n). If hours ≤ h, k might work (search left for smaller k); otherwise search right. This 'feasibility check + binary search' pattern applies to hundreds of problems.",
     piles: [3, 6, 7, 11],
     h: 8,
     category: "answer-space",
   },
   median: {
     title: "Median of Two Sorted",
-    lc: "LC 4 Â· Hard",
+    lc: "LC 4 · Hard",
     coreIdea:
-      "Binary search on the partition of the smaller array. We need i elements from A and j = (m+n+1)/2 âˆ’ i elements from B such that A[iâˆ’1] â‰¤ B[j] and B[jâˆ’1] â‰¤ A[i]. If A[iâˆ’1] > B[j], we took too many from A â€” search left. If B[jâˆ’1] > A[i], too few â€” search right. O(log min(m,n)).",
+      "Binary search on the partition of the smaller array. We need i elements from A and j = (m+n+1)/2 − i elements from B such that A[i−1] ≤ B[j] and B[j−1] ≤ A[i]. If A[i−1] > B[j], we took too many from A — search left. If B[j−1] > A[i], too few — search right. O(log min(m,n)).",
     nums1: [1, 3, 5, 7],
     nums2: [2, 4, 6, 8, 9, 10],
     category: "partition",
@@ -173,7 +173,7 @@ function computeExpected(key) {
 const EXPECTED = Object.fromEntries(Object.keys(PROBLEMS).map(k => [k, computeExpected(k)]));
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” FIRST & LAST POSITION
+   BUILD STEPS — FIRST & LAST POSITION
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildFirstLastSteps() {
@@ -183,8 +183,8 @@ function buildFirstLastSteps() {
   const eliminated = new Set();
 
   steps.push({
-    title: "Phase 1: bisect_left â€” Find First Occurrence",
-    detail: `Searching for first index where nums[mid] â‰¥ ${target}. lo=0, hi=${n}.`,
+    title: "Phase 1: bisect_left — Find First Occurrence",
+    detail: `Searching for first index where nums[mid] ≥ ${target}. lo=0, hi=${n}.`,
     arr: [...arr], lo: 0, hi: n, mid: -1, target,
     phase: "init-left", codeHL: [0, 1, 2],
     eliminated: new Set(), searchPhase: "left", foundLeft: -1, foundRight: -1,
@@ -198,11 +198,11 @@ function buildFirstLastSteps() {
 
     steps.push({
       title: goRight
-        ? `mid=${mid}, nums[${mid}]=${arr[mid]} < ${target} â†’ lo = ${mid + 1}`
-        : `mid=${mid}, nums[${mid}]=${arr[mid]} â‰¥ ${target} â†’ hi = ${mid}`,
+        ? `mid=${mid}, nums[${mid}]=${arr[mid]} < ${target} → lo = ${mid + 1}`
+        : `mid=${mid}, nums[${mid}]=${arr[mid]} ≥ ${target} → hi = ${mid}`,
       detail: goRight
-        ? `${arr[mid]} is too small â€” target must be to the right. Eliminate [${lo}..${mid}].`
-        : `${arr[mid]} â‰¥ target â€” this could be the first, or answer is further left. Eliminate (${mid}..${hi}).`,
+        ? `${arr[mid]} is too small — target must be to the right. Eliminate [${lo}..${mid}].`
+        : `${arr[mid]} ≥ target — this could be the first, or answer is further left. Eliminate (${mid}..${hi}).`,
       arr: [...arr], lo: goRight ? mid + 1 : lo, hi: goRight ? hi : mid, mid, target,
       phase: goRight ? "go-right" : "go-left",
       codeHL: goRight ? [3, 4, 5, 6] : [3, 4, 7, 8],
@@ -223,10 +223,10 @@ function buildFirstLastSteps() {
 
   steps.push({
     title: leftFound
-      ? `bisect_left = ${leftResult} â†’ nums[${leftResult}]=${arr[leftResult]} == ${target} âœ“`
-      : `bisect_left = ${leftResult} â†’ Target Not Found`,
+      ? `bisect_left = ${leftResult} → nums[${leftResult}]=${arr[leftResult]} == ${target} ✓`
+      : `bisect_left = ${leftResult} → Target Not Found`,
     detail: leftFound
-      ? `First occurrence at index ${leftResult}. Now find the last with bisect_left(target+1) âˆ’ 1.`
+      ? `First occurrence at index ${leftResult}. Now find the last with bisect_left(target+1) − 1.`
       : `Element at position ${leftResult} is ${leftResult < n ? arr[leftResult] : "out of bounds"}, not ${target}. Return [-1, -1].`,
     arr: [...arr], lo: leftResult, hi: leftResult, mid: leftResult, target,
     phase: leftFound ? "found-left" : "not-found",
@@ -237,7 +237,7 @@ function buildFirstLastSteps() {
 
   if (!leftFound) {
     steps.push({
-      title: "âœ“ Complete â€” Target Not Found â†’ [-1, -1]",
+      title: "✓ Complete — Target Not Found → [-1, -1]",
       detail: `${target} does not exist in the array.`,
       arr: [...arr], lo: -1, hi: -1, mid: -1, target,
       phase: "done", codeHL: [12, 13],
@@ -250,8 +250,8 @@ function buildFirstLastSteps() {
   // bisect_left for target+1
   const eliminated2 = new Set();
   steps.push({
-    title: `Phase 2: bisect_left(${target + 1}) â€” Find Last Occurrence`,
-    detail: `Searching for first index where nums[mid] â‰¥ ${target + 1}. Then subtract 1 for last ${target}.`,
+    title: `Phase 2: bisect_left(${target + 1}) — Find Last Occurrence`,
+    detail: `Searching for first index where nums[mid] ≥ ${target + 1}. Then subtract 1 for last ${target}.`,
     arr: [...arr], lo: 0, hi: n, mid: -1, target,
     phase: "init-right", codeHL: [14],
     eliminated: new Set(), searchPhase: "right",
@@ -265,11 +265,11 @@ function buildFirstLastSteps() {
 
     steps.push({
       title: goRight
-        ? `mid=${mid}, nums[${mid}]=${arr[mid]} < ${target + 1} â†’ lo = ${mid + 1}`
-        : `mid=${mid}, nums[${mid}]=${arr[mid]} â‰¥ ${target + 1} â†’ hi = ${mid}`,
+        ? `mid=${mid}, nums[${mid}]=${arr[mid]} < ${target + 1} → lo = ${mid + 1}`
+        : `mid=${mid}, nums[${mid}]=${arr[mid]} ≥ ${target + 1} → hi = ${mid}`,
       detail: goRight
         ? `${arr[mid]} < ${target + 1}. Search right half.`
-        : `${arr[mid]} â‰¥ ${target + 1}. Could be boundary â€” search left.`,
+        : `${arr[mid]} ≥ ${target + 1}. Could be boundary — search left.`,
       arr: [...arr], lo: goRight ? mid + 1 : lo, hi: goRight ? hi : mid, mid, target,
       phase: goRight ? "go-right" : "go-left",
       codeHL: goRight ? [3, 4, 5, 6] : [3, 4, 7, 8],
@@ -289,8 +289,8 @@ function buildFirstLastSteps() {
   const rightResult = lo - 1;
 
   steps.push({
-    title: `âœ“ Complete â€” Range = [${leftResult}, ${rightResult}]`,
-    detail: `bisect_left(${target})=${leftResult}, bisect_left(${target + 1})=${lo} â†’ last = ${lo}âˆ’1 = ${rightResult}. Target ${target} appears at indices ${leftResult}..${rightResult}.`,
+    title: `✓ Complete — Range = [${leftResult}, ${rightResult}]`,
+    detail: `bisect_left(${target})=${leftResult}, bisect_left(${target + 1})=${lo} → last = ${lo}−1 = ${rightResult}. Target ${target} appears at indices ${leftResult}..${rightResult}.`,
     arr: [...arr], lo: leftResult, hi: rightResult, mid: -1, target,
     phase: "done", codeHL: [14, 15],
     eliminated: new Set(), searchPhase: "done",
@@ -301,7 +301,7 @@ function buildFirstLastSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” SEARCH ROTATED SORTED ARRAY
+   BUILD STEPS — SEARCH ROTATED SORTED ARRAY
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildRotatedSteps() {
@@ -324,7 +324,7 @@ function buildRotatedSteps() {
 
     if (arr[mid] === target) {
       steps.push({
-        title: `âœ“ Found! nums[${mid}] = ${arr[mid]} == ${target}`,
+        title: `✓ Found! nums[${mid}] = ${arr[mid]} == ${target}`,
         detail: `Target found at index ${mid}.`,
         arr: [...arr], lo, hi, mid, target,
         phase: "found", codeHL: [3, 4, 5, 6],
@@ -332,7 +332,7 @@ function buildRotatedSteps() {
       });
 
       steps.push({
-        title: `âœ“ Complete â€” Return ${mid}`,
+        title: `✓ Complete — Return ${mid}`,
         detail: `nums[${mid}] = ${target}. Found in O(log n) with rotated binary search.`,
         arr: [...arr], lo: mid, hi: mid, mid, target,
         phase: "done", codeHL: [5, 6],
@@ -348,8 +348,8 @@ function buildRotatedSteps() {
       const inLeft = arr[lo] <= target && target < arr[mid];
       if (inLeft) {
         steps.push({
-          title: `mid=${mid}(${arr[mid]}): Left sorted [${lo}..${mid}], ${target} in [${arr[lo]}..${arr[mid]}) â†’ hi=${mid - 1}`,
-          detail: `nums[${lo}]=${arr[lo]} â‰¤ nums[${mid}]=${arr[mid]} â†’ left half sorted. ${arr[lo]} â‰¤ ${target} < ${arr[mid]} â†’ target is in left half.`,
+          title: `mid=${mid}(${arr[mid]}): Left sorted [${lo}..${mid}], ${target} in [${arr[lo]}..${arr[mid]}) → hi=${mid - 1}`,
+          detail: `nums[${lo}]=${arr[lo]} ≤ nums[${mid}]=${arr[mid]} → left half sorted. ${arr[lo]} ≤ ${target} < ${arr[mid]} → target is in left half.`,
           arr: [...arr], lo, hi: mid - 1, mid, target,
           phase: "go-left", codeHL: [8, 9, 10],
           eliminated: new Set(eliminated), foundIdx: -1, sortedHalf,
@@ -358,8 +358,8 @@ function buildRotatedSteps() {
         hi = mid - 1;
       } else {
         steps.push({
-          title: `mid=${mid}(${arr[mid]}): Left sorted [${lo}..${mid}], ${target} not in range â†’ lo=${mid + 1}`,
-          detail: `nums[${lo}]=${arr[lo]} â‰¤ nums[${mid}]=${arr[mid]} â†’ left half sorted. ${target} is outside [${arr[lo]}..${arr[mid]}), must be in right half.`,
+          title: `mid=${mid}(${arr[mid]}): Left sorted [${lo}..${mid}], ${target} not in range → lo=${mid + 1}`,
+          detail: `nums[${lo}]=${arr[lo]} ≤ nums[${mid}]=${arr[mid]} → left half sorted. ${target} is outside [${arr[lo]}..${arr[mid]}), must be in right half.`,
           arr: [...arr], lo: mid + 1, hi, mid, target,
           phase: "go-right", codeHL: [8, 11, 12],
           eliminated: new Set(eliminated), foundIdx: -1, sortedHalf,
@@ -371,8 +371,8 @@ function buildRotatedSteps() {
       const inRight = arr[mid] < target && target <= arr[hi];
       if (inRight) {
         steps.push({
-          title: `mid=${mid}(${arr[mid]}): Right sorted [${mid}..${hi}], ${target} in (${arr[mid]}..${arr[hi]}] â†’ lo=${mid + 1}`,
-          detail: `nums[${lo}]=${arr[lo]} > nums[${mid}]=${arr[mid]} â†’ right half sorted. ${arr[mid]} < ${target} â‰¤ ${arr[hi]} â†’ target is in right half.`,
+          title: `mid=${mid}(${arr[mid]}): Right sorted [${mid}..${hi}], ${target} in (${arr[mid]}..${arr[hi]}] → lo=${mid + 1}`,
+          detail: `nums[${lo}]=${arr[lo]} > nums[${mid}]=${arr[mid]} → right half sorted. ${arr[mid]} < ${target} ≤ ${arr[hi]} → target is in right half.`,
           arr: [...arr], lo: mid + 1, hi, mid, target,
           phase: "go-right", codeHL: [13, 14, 15],
           eliminated: new Set(eliminated), foundIdx: -1, sortedHalf,
@@ -381,8 +381,8 @@ function buildRotatedSteps() {
         lo = mid + 1;
       } else {
         steps.push({
-          title: `mid=${mid}(${arr[mid]}): Right sorted [${mid}..${hi}], ${target} not in range â†’ hi=${mid - 1}`,
-          detail: `nums[${lo}]=${arr[lo]} > nums[${mid}]=${arr[mid]} â†’ right half sorted. ${target} outside (${arr[mid]}..${arr[hi]}], must be in left half.`,
+          title: `mid=${mid}(${arr[mid]}): Right sorted [${mid}..${hi}], ${target} not in range → hi=${mid - 1}`,
+          detail: `nums[${lo}]=${arr[lo]} > nums[${mid}]=${arr[mid]} → right half sorted. ${target} outside (${arr[mid]}..${arr[hi]}], must be in left half.`,
           arr: [...arr], lo, hi: mid - 1, mid, target,
           phase: "go-left", codeHL: [13, 16, 17],
           eliminated: new Set(eliminated), foundIdx: -1, sortedHalf,
@@ -394,7 +394,7 @@ function buildRotatedSteps() {
   }
 
   steps.push({
-    title: "âœ— Complete â€” Target Not Found â†’ -1",
+    title: "✗ Complete — Target Not Found → -1",
     detail: `Exhausted search space. ${target} not in array.`,
     arr: [...arr], lo, hi, mid: -1, target,
     phase: "done", codeHL: [19],
@@ -405,7 +405,7 @@ function buildRotatedSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” KOKO EATING BANANAS
+   BUILD STEPS — KOKO EATING BANANAS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildKokoSteps() {
@@ -415,8 +415,8 @@ function buildKokoSteps() {
   let lo = 1, hi = maxP;
 
   steps.push({
-    title: `Search Answer Space: k âˆˆ [1, ${maxP}]`,
-    detail: `Binary search on eating speed k. For each k, compute total hours = Î£âŒˆpile/kâŒ‰. If â‰¤ ${h}, k is feasible (try smaller). Else, need faster.`,
+    title: `Search Answer Space: k ∈ [1, ${maxP}]`,
+    detail: `Binary search on eating speed k. For each k, compute total hours = Σ⌈pile/k⌉. If ≤ ${h}, k is feasible (try smaller). Else, need faster.`,
     lo: 1, hi: maxP, mid: -1,
     piles: [...piles], h, hours: null,
     phase: "init", codeHL: [2, 3],
@@ -429,10 +429,10 @@ function buildKokoSteps() {
     const feasible = hours <= h;
 
     steps.push({
-      title: `k=${mid}: hours = ${piles.map(p => `âŒˆ${p}/${mid}âŒ‰`).join("+")} = ${hours} ${feasible ? `â‰¤ ${h} âœ“` : `> ${h} âœ—`}`,
+      title: `k=${mid}: hours = ${piles.map(p => `⌈${p}/${mid}⌉`).join("+")} = ${hours} ${feasible ? `≤ ${h} ✓` : `> ${h} ✗`}`,
       detail: feasible
-        ? `${hours} hours â‰¤ ${h} limit â†’ k=${mid} is feasible. But maybe slower speed also works. hi = ${mid}.`
-        : `${hours} hours > ${h} limit â†’ k=${mid} is too slow. Need to eat faster. lo = ${mid + 1}.`,
+        ? `${hours} hours ≤ ${h} limit → k=${mid} is feasible. But maybe slower speed also works. hi = ${mid}.`
+        : `${hours} hours > ${h} limit → k=${mid} is too slow. Need to eat faster. lo = ${mid + 1}.`,
       lo: feasible ? lo : mid + 1, hi: feasible ? mid : hi, mid,
       piles: [...piles], h, hours,
       phase: feasible ? "feasible" : "too-slow",
@@ -444,8 +444,8 @@ function buildKokoSteps() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Minimum Speed = ${lo}`,
-    detail: `lo = hi = ${lo}. At speed ${lo}: ${piles.map(p => `âŒˆ${p}/${lo}âŒ‰`).join("+")} = ${piles.reduce((s, p) => s + Math.ceil(p / lo), 0)} hours â‰¤ ${h}.`,
+    title: `✓ Complete — Minimum Speed = ${lo}`,
+    detail: `lo = hi = ${lo}. At speed ${lo}: ${piles.map(p => `⌈${p}/${lo}⌉`).join("+")} = ${piles.reduce((s, p) => s + Math.ceil(p / lo), 0)} hours ≤ ${h}.`,
     lo, hi, mid: lo,
     piles: [...piles], h, hours: piles.reduce((s, p) => s + Math.ceil(p / lo), 0),
     phase: "done", codeHL: [15],
@@ -456,7 +456,7 @@ function buildKokoSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” MEDIAN OF TWO SORTED ARRAYS
+   BUILD STEPS — MEDIAN OF TWO SORTED ARRAYS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildMedianSteps() {
@@ -469,7 +469,7 @@ function buildMedianSteps() {
 
   steps.push({
     title: `Setup: A(${m}), B(${n}), half = ${half}`,
-    detail: `Search partition i in A: [0..${m}]. Then j = ${half} âˆ’ i from B. Need A[iâˆ’1]â‰¤B[j] and B[jâˆ’1]â‰¤A[i].`,
+    detail: `Search partition i in A: [0..${m}]. Then j = ${half} − i from B. Need A[i−1]≤B[j] and B[j−1]≤A[i].`,
     A: [...A], B: [...B], i: -1, j: -1,
     lo: 0, hi: m, aL: null, aR: null, bL: null, bR: null,
     phase: "init", codeHL: [0, 1, 2, 3, 4],
@@ -491,8 +491,8 @@ function buildMedianSteps() {
       const median = isOdd ? Math.max(aL, bL) : (Math.max(aL, bL) + Math.min(aR, bR)) / 2;
 
       steps.push({
-        title: `i=${i}, j=${j}: A[${i-1<0?'':i-1}]=${aL===Infinity?'âˆž':aL===-Infinity?'-âˆž':aL} â‰¤ B[${j}]=${bR===Infinity?'âˆž':bR} âœ“ and B[${j-1<0?'':j-1}]=${bL===-Infinity?'-âˆž':bL} â‰¤ A[${i}]=${aR===Infinity?'âˆž':aR} âœ“`,
-        detail: `Valid partition found! Left max = max(${aL===-Infinity?'-âˆž':aL}, ${bL===-Infinity?'-âˆž':bL}) = ${Math.max(aL, bL)}, Right min = min(${aR===Infinity?'âˆž':aR}, ${bR===Infinity?'âˆž':bR}) = ${Math.min(aR, bR)}.`,
+        title: `i=${i}, j=${j}: A[${i-1<0?'':i-1}]=${aL===Infinity?'∞':aL===-Infinity?'-∞':aL} ≤ B[${j}]=${bR===Infinity?'∞':bR} ✓ and B[${j-1<0?'':j-1}]=${bL===-Infinity?'-∞':bL} ≤ A[${i}]=${aR===Infinity?'∞':aR} ✓`,
+        detail: `Valid partition found! Left max = max(${aL===-Infinity?'-∞':aL}, ${bL===-Infinity?'-∞':bL}) = ${Math.max(aL, bL)}, Right min = min(${aR===Infinity?'∞':aR}, ${bR===Infinity?'∞':bR}) = ${Math.min(aR, bR)}.`,
         A: [...A], B: [...B], i, j,
         lo, hi, aL, aR, bL, bR,
         phase: "valid", codeHL: [6, 7, 8, 10, 11, 12, 13, 15, 16, 17, 18],
@@ -500,7 +500,7 @@ function buildMedianSteps() {
       });
 
       steps.push({
-        title: `âœ“ Complete â€” Median = ${median}`,
+        title: `✓ Complete — Median = ${median}`,
         detail: isOdd
           ? `Odd total (${m+n}): median = max(left) = ${Math.max(aL, bL)}.`
           : `Even total (${m+n}): median = (${Math.max(aL, bL)} + ${Math.min(aR, bR)}) / 2 = ${median}.`,
@@ -514,7 +514,7 @@ function buildMedianSteps() {
 
     if (aL > bR) {
       steps.push({
-        title: `i=${i}, j=${j}: A[${i-1}]=${aL} > B[${j}]=${bR} â†’ too many from A, hi = ${i - 1}`,
+        title: `i=${i}, j=${j}: A[${i-1}]=${aL} > B[${j}]=${bR} → too many from A, hi = ${i - 1}`,
         detail: `A's left element (${aL}) exceeds B's right element (${bR}). We took too many from A. Shrink i.`,
         A: [...A], B: [...B], i, j,
         lo, hi: i - 1, aL, aR, bL, bR,
@@ -524,7 +524,7 @@ function buildMedianSteps() {
       hi = i - 1;
     } else {
       steps.push({
-        title: `i=${i}, j=${j}: B[${j-1}]=${bL} > A[${i}]=${aR} â†’ too few from A, lo = ${i + 1}`,
+        title: `i=${i}, j=${j}: B[${j-1}]=${bL} > A[${i}]=${aR} → too few from A, lo = ${i + 1}`,
         detail: `B's left element (${bL}) exceeds A's right element (${aR}). We need more from A. Increase i.`,
         A: [...A], B: [...B], i, j,
         lo: i + 1, hi, aL, aR, bL, bR,
@@ -553,7 +553,7 @@ function buildSteps(key) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” FIRST & LAST POSITION (array cells)
+   VISUALIZATION — FIRST & LAST POSITION (array cells)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function FirstLastViz({ step }) {
@@ -604,7 +604,7 @@ function FirstLastViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” ROTATED ARRAY
+   VISUALIZATION — ROTATED ARRAY
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function RotatedViz({ step }) {
@@ -661,7 +661,7 @@ function RotatedViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” KOKO EATING BANANAS
+   VISUALIZATION — KOKO EATING BANANAS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function KokoViz({ step }) {
@@ -688,7 +688,7 @@ function KokoViz({ step }) {
             <text x={x + barW / 2} y={y - 5} textAnchor="middle" fill="#c4b5fd" fontSize="12" fontWeight="700" fontFamily="monospace">{p}</text>
             {mid > 0 && (
               <text x={x + barW / 2} y={y + barH / 2 + 1} textAnchor="middle" dominantBaseline="central"
-                fill="#e4e4e7" fontSize="10" fontWeight="600" fontFamily="monospace">âŒˆ{p}/{mid}âŒ‰={eats}</text>
+                fill="#e4e4e7" fontSize="10" fontWeight="600" fontFamily="monospace">⌈{p}/{mid}⌉={eats}</text>
             )}
             <text x={x + barW / 2} y={topPad + chartH + 12} textAnchor="middle" fill="#52525b" fontSize="9" fontFamily="monospace">pile[{i}]</text>
           </g>
@@ -720,7 +720,7 @@ function KokoViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” MEDIAN OF TWO SORTED ARRAYS
+   VISUALIZATION — MEDIAN OF TWO SORTED ARRAYS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function MedianViz({ step }) {
@@ -772,7 +772,7 @@ function MedianViz({ step }) {
       {phase !== "init" && aL !== null && (
         <g>
           <text x={pad + totalW / 2 - 80} y={totalH - 4} fill="#71717a" fontSize="9" fontFamily="monospace">
-            aL={aL===-Infinity?"-âˆž":aL} aR={aR===Infinity?"âˆž":aR} bL={bL===-Infinity?"-âˆž":bL} bR={bR===Infinity?"âˆž":bR}
+            aL={aL===-Infinity?"-∞":aL} aR={aR===Infinity?"∞":aR} bL={bL===-Infinity?"-∞":bL} bR={bR===Infinity?"∞":bR}
           </text>
         </g>
       )}
@@ -821,7 +821,7 @@ function FirstLastIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">first </span> = <span className={foundLeft >= 0 ? "text-emerald-300 font-bold" : "text-zinc-600"}>{foundLeft >= 0 ? foundLeft : "?"}</span>
@@ -860,7 +860,7 @@ function RotatedIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">found</span> = <span className={foundIdx >= 0 ? "text-emerald-300 font-bold" : "text-zinc-600"}>
@@ -900,7 +900,7 @@ function KokoIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div><span className="text-zinc-500">range </span> = <span className="text-zinc-300">[{lo}, {hi}]</span></div>
@@ -936,7 +936,7 @@ function MedianIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           {i >= 0 && <div><span className="text-zinc-500">i</span> = <span className="text-emerald-300">{i}</span> (A takes {i}), <span className="text-zinc-500">j</span> = <span className="text-blue-300">{j}</span> (B takes {j})</div>}
@@ -971,15 +971,15 @@ function FirstLastState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Binary Search State</div>
       <div className="flex gap-3">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{lo >= 0 ? lo : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{lo >= 0 ? lo : "–"}</div>
           <div className="text-[9px] text-zinc-600">lo</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-purple-400">{mid >= 0 ? mid : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-purple-400">{mid >= 0 ? mid : "–"}</div>
           <div className="text-[9px] text-zinc-600">mid</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-amber-400">{hi >= 0 && hi <= n ? hi : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-amber-400">{hi >= 0 && hi <= n ? hi : "–"}</div>
           <div className="text-[9px] text-zinc-600">hi</div>
         </div>
         <div className="border-l border-zinc-800 pl-3 flex gap-3">
@@ -1005,19 +1005,19 @@ function RotatedState({ step }) {
       <div className="flex gap-3">
         <div className="flex-1 text-center">
           <div className="text-lg font-bold font-mono text-blue-400">{lo}</div>
-          <div className="text-[9px] text-zinc-600">lo ({arr[lo] ?? "â€“"})</div>
+          <div className="text-[9px] text-zinc-600">lo ({arr[lo] ?? "–"})</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-purple-400">{mid >= 0 ? mid : "â€“"}</div>
-          <div className="text-[9px] text-zinc-600">mid ({mid >= 0 ? arr[mid] : "â€“"})</div>
+          <div className="text-lg font-bold font-mono text-purple-400">{mid >= 0 ? mid : "–"}</div>
+          <div className="text-[9px] text-zinc-600">mid ({mid >= 0 ? arr[mid] : "–"})</div>
         </div>
         <div className="flex-1 text-center">
           <div className="text-lg font-bold font-mono text-amber-400">{hi}</div>
-          <div className="text-[9px] text-zinc-600">hi ({arr[hi] ?? "â€“"})</div>
+          <div className="text-[9px] text-zinc-600">hi ({arr[hi] ?? "–"})</div>
         </div>
         <div className="border-l border-zinc-800 pl-3 text-center">
           <div className="text-lg font-bold font-mono text-emerald-400">
-            {foundIdx >= 0 ? foundIdx : "â€“"}
+            {foundIdx >= 0 ? foundIdx : "–"}
           </div>
           <div className="text-[9px] text-zinc-600">found</div>
         </div>
@@ -1043,7 +1043,7 @@ function KokoState({ step }) {
           <div className="text-[9px] text-zinc-600">lo</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-purple-400">{mid > 0 ? mid : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-purple-400">{mid > 0 ? mid : "–"}</div>
           <div className="text-[9px] text-zinc-600">mid (k)</div>
         </div>
         <div className="flex-1 text-center">
@@ -1067,7 +1067,7 @@ function KokoState({ step }) {
 
 function MedianState({ step }) {
   const { A, B, i, j, lo, hi, aL, aR, bL, bR } = step;
-  const fmt = v => v === Infinity ? "âˆž" : v === -Infinity ? "-âˆž" : v;
+  const fmt = v => v === Infinity ? "∞" : v === -Infinity ? "-∞" : v;
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Partition State</div>
@@ -1077,11 +1077,11 @@ function MedianState({ step }) {
           <div className="text-[9px] text-zinc-600">lo</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-emerald-400">{i >= 0 ? i : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-emerald-400">{i >= 0 ? i : "–"}</div>
           <div className="text-[9px] text-zinc-600">i (A cut)</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-300">{j >= 0 ? j : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-300">{j >= 0 ? j : "–"}</div>
           <div className="text-[9px] text-zinc-600">j (B cut)</div>
         </div>
         <div className="flex-1 text-center">
@@ -1092,16 +1092,16 @@ function MedianState({ step }) {
       {aL !== null && (
         <div className="mt-2 grid grid-cols-2 gap-1 text-[10px] font-mono text-center">
           <div className="bg-zinc-800/50 rounded px-1.5 py-0.5">
-            <span className="text-emerald-500">A[iâˆ’1]</span>=<span className="text-zinc-300">{fmt(aL)}</span>
-            {" â‰¤ "}
+            <span className="text-emerald-500">A[i−1]</span>=<span className="text-zinc-300">{fmt(aL)}</span>
+            {" ≤ "}
             <span className="text-blue-400">B[j]</span>=<span className="text-zinc-300">{fmt(bR)}</span>
-            {" "}{aL <= bR ? <span className="text-emerald-400">âœ“</span> : <span className="text-red-400">âœ—</span>}
+            {" "}{aL <= bR ? <span className="text-emerald-400">✓</span> : <span className="text-red-400">✗</span>}
           </div>
           <div className="bg-zinc-800/50 rounded px-1.5 py-0.5">
-            <span className="text-blue-400">B[jâˆ’1]</span>=<span className="text-zinc-300">{fmt(bL)}</span>
-            {" â‰¤ "}
+            <span className="text-blue-400">B[j−1]</span>=<span className="text-zinc-300">{fmt(bL)}</span>
+            {" ≤ "}
             <span className="text-emerald-500">A[i]</span>=<span className="text-zinc-300">{fmt(aR)}</span>
-            {" "}{bL <= aR ? <span className="text-emerald-400">âœ“</span> : <span className="text-red-400">âœ—</span>}
+            {" "}{bL <= aR ? <span className="text-emerald-400">✓</span> : <span className="text-red-400">✗</span>}
           </div>
         </div>
       )}
@@ -1170,7 +1170,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -1218,7 +1218,7 @@ export default function BinarySearchViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Binary Search</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Boundary, Rotated, Answer Space & Partition â€” O(log n) Patterns</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Boundary, Rotated, Answer Space & Partition — O(log n) Patterns</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -1249,7 +1249,7 @@ export default function BinarySearchViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Viz â”€â”€ */}
+          {/* ── COL 1: IO + Viz ── */}
           <div className="col-span-3 space-y-3">
             <IOPanelDispatch pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -1279,7 +1279,7 @@ export default function BinarySearchViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             <div className={`rounded-2xl border p-4 ${
               step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" :
@@ -1304,7 +1304,7 @@ export default function BinarySearchViz() {
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Result</div>
                 <div className="font-mono text-[11px] text-emerald-300">
                   {pKey === "firstLast" && `Range = [${step.foundLeft}, ${step.foundRight}]`}
-                  {pKey === "rotated" && (step.foundIdx >= 0 ? `Found at index ${step.foundIdx}` : "Not found â†’ -1")}
+                  {pKey === "rotated" && (step.foundIdx >= 0 ? `Found at index ${step.foundIdx}` : "Not found → -1")}
                   {pKey === "koko" && `Minimum eating speed = ${step.answer}`}
                   {pKey === "median" && `Median = ${step.result}`}
                 </div>
@@ -1312,7 +1312,7 @@ export default function BinarySearchViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -1324,17 +1324,17 @@ export default function BinarySearchViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use Binary Search</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Sorted array â€” find element, boundary, or insertion point</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Monotonic predicate â€” answer space where feasibility flips from âœ— to âœ“</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Rotated / bitonic arrays â€” one half always sorted</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Minimize maximum / maximize minimum problems</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Partition two sorted arrays (median, k-th element)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Sorted array — find element, boundary, or insertion point</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Monotonic predicate — answer space where feasibility flips from ✗ to ✓</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Rotated / bitonic arrays — one half always sorted</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Minimize maximum / maximize minimum problems</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Partition two sorted arrays (median, k-th element)</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(log n) per search Â· O(n log n) if combined with sort</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(log n) per search · O(n log n) if combined with sort</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(1) iterative</div>
-                <div><span className="text-zinc-500 font-semibold">Key insight:</span> lo &lt; hi (exclusive) for boundary; lo â‰¤ hi (inclusive) for exact match</div>
+                <div><span className="text-zinc-500 font-semibold">Key insight:</span> lo &lt; hi (exclusive) for boundary; lo ≤ hi (inclusive) for exact match</div>
               </div>
             </div>
           </div>
@@ -1342,14 +1342,14 @@ export default function BinarySearchViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 34 â€” Find First and Last Position</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 33 â€” Search in Rotated Sorted Array</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 875 â€” Koko Eating Bananas</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 4 â€” Median of Two Sorted Arrays</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 153 â€” Find Minimum in Rotated Array</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1011 â€” Capacity to Ship Packages</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 410 â€” Split Array Largest Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 162 â€” Find Peak Element</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 34 — Find First and Last Position</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 33 — Search in Rotated Sorted Array</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 875 — Koko Eating Bananas</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 4 — Median of Two Sorted Arrays</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 153 — Find Minimum in Rotated Array</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1011 — Capacity to Ship Packages</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 410 — Split Array Largest Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 162 — Find Peak Element</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

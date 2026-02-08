@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Grid Setup â”€â”€â”€ */
+/* ─── Grid Setup ─── */
 const ROWS = 8, COLS = 10;
 const START = [0, 0], GOAL = [7, 9];
 const WALLS = new Set([
@@ -11,7 +11,7 @@ const manhattan = (r, c) => Math.abs(r - GOAL[0]) + Math.abs(c - GOAL[1]);
 const key = (r, c) => `${r},${c}`;
 const DIRS = [[0,1],[1,0],[0,-1],[-1,0]];
 
-/* â”€â”€â”€ Precompute Expected Output â”€â”€â”€ */
+/* ─── Precompute Expected Output ─── */
 const EXPECTED = (() => {
   const g = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
   const parent = Array.from({ length: ROWS }, () => new Array(COLS).fill(null));
@@ -96,7 +96,7 @@ const EXPECTED_DIJKSTRA = (() => {
   return { path: [], cost: -1, expanded };
 })();
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps(useHeuristic) {
   const g = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
   const f = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
@@ -116,10 +116,10 @@ function buildSteps(useHeuristic) {
   const snapParent = () => parent.map(r => [...r]);
 
   steps.push({
-    title: "Initialize â€“ Set Start to g=0",
+    title: "Initialize – Set Start to g=0",
     detail: useHeuristic
       ? `g(0,0)=0, h(0,0)=${manhattan(sr, sc)}, f=g+h=${f[sr][sc]}. Push (f=${f[sr][sc]}, (0,0)) into the min-heap.`
-      : `dist(0,0)=0. Push (0, (0,0)) into the min-heap. No heuristic â€” expands uniformly.`,
+      : `dist(0,0)=0. Push (0, (0,0)) into the min-heap. No heuristic — expands uniformly.`,
     g: snapG(), f: snapF(), closed: new Set(closed), openSet: new Set(openSet),
     current: null, neighbors: [], pq: pq.map(x => [...x]),
     phase: "init", codeHL: useHeuristic ? [2, 3, 4, 5, 6] : [2, 3, 4, 5, 6],
@@ -150,8 +150,8 @@ function buildSteps(useHeuristic) {
       }
 
       steps.push({
-        title: `âœ“ Goal Reached at (${cr},${cc}) â€” Cost ${g[cr][cc]}`,
-        detail: `Path found with cost ${g[cr][cc]}. ${expanded} nodes expanded. ${useHeuristic ? "A*'s heuristic guided the search directly toward the goal." : "Dijkstra explored uniformly â€” many unnecessary nodes visited."}`,
+        title: `✓ Goal Reached at (${cr},${cc}) — Cost ${g[cr][cc]}`,
+        detail: `Path found with cost ${g[cr][cc]}. ${expanded} nodes expanded. ${useHeuristic ? "A*'s heuristic guided the search directly toward the goal." : "Dijkstra explored uniformly — many unnecessary nodes visited."}`,
         g: snapG(), f: snapF(), closed: new Set(closed), openSet: new Set(openSet),
         current: [cr, cc], neighbors: [], pq: pq.map(x => [...x]),
         phase: "done", codeHL: [11, 12], path,
@@ -163,8 +163,8 @@ function buildSteps(useHeuristic) {
 
     /* Pop step */
     steps.push({
-      title: `Pop (${cr},${cc}) â€” ${useHeuristic ? `f=${fv}, g=${g[cr][cc]}, h=${manhattan(cr, cc)}` : `dist=${g[cr][cc]}`}`,
-      detail: `Heap-pop â†’ (${fv}, (${cr},${cc})). Not in closed set, so add to closed and explore neighbors.`,
+      title: `Pop (${cr},${cc}) — ${useHeuristic ? `f=${fv}, g=${g[cr][cc]}, h=${manhattan(cr, cc)}` : `dist=${g[cr][cc]}`}`,
+      detail: `Heap-pop → (${fv}, (${cr},${cc})). Not in closed set, so add to closed and explore neighbors.`,
       g: snapG(), f: snapF(), closed: new Set(closed), openSet: new Set(openSet),
       current: [cr, cc], neighbors: [], pq: pq.map(x => [...x]),
       phase: "visit", codeHL: [8, 9, 10, 11, 13],
@@ -196,7 +196,7 @@ function buildSteps(useHeuristic) {
           useHeuristic
             ? `(${r},${c}): g=${gv}, h=${manhattan(r, c)}, f=${fval}`
             : `(${r},${c}): dist=${gv}`
-        ).join(" Â· ") + ".",
+        ).join(" · ") + ".",
         g: snapG(), f: snapF(), closed: new Set(closed), openSet: new Set(openSet),
         current: [cr, cc], neighbors: nbs.map(([r, c]) => [r, c]), pq: pq.map(x => [...x]),
         phase: "relax", codeHL: [15, 16, 17, 18, 19, 20],
@@ -217,7 +217,7 @@ function buildSteps(useHeuristic) {
   return steps;
 }
 
-/* â”€â”€â”€ Grid SVG â”€â”€â”€ */
+/* ─── Grid SVG ─── */
 function GridView({ step, showH }) {
   const { g, closed, openSet, current, neighbors, path } = step;
   const cellSize = 38;
@@ -276,7 +276,7 @@ function GridView({ step, showH }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (clean functions) â”€â”€â”€ */
+/* ─── Python Code (clean functions) ─── */
 const CODE_ASTAR = [
   { id: 0,  text: `import heapq` },
   { id: 1,  text: `` },
@@ -329,7 +329,7 @@ const CODE_DIJKSTRA_COMPARE = [
   { id: 22, text: `    return None  # no heuristic` },
 ];
 
-/* â”€â”€â”€ IO Panel â”€â”€â”€ */
+/* ─── IO Panel ─── */
 function IOPanel({ step, mode }) {
   const { phase, expanded, path, finalized } = step;
   const done = phase === "done";
@@ -342,10 +342,10 @@ function IOPanel({ step, mode }) {
       <div>
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
-          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}Ã—{COLS}</span> <span className="text-zinc-600">({WALLS.size} walls)</span></div>
+          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}×{COLS}</span> <span className="text-zinc-600">({WALLS.size} walls)</span></div>
           <div><span className="text-zinc-500">start</span> = <span className="text-violet-400">({START[0]},{START[1]})</span>  <span className="text-zinc-500">goal</span> = <span className="text-red-400">({GOAL[0]},{GOAL[1]})</span></div>
           {mode === "astar" && (
-            <div><span className="text-zinc-500">h(n) </span> = <span className="text-purple-400">|râˆ’gr|+|câˆ’gc|</span></div>
+            <div><span className="text-zinc-500">h(n) </span> = <span className="text-purple-400">|r−gr|+|c−gc|</span></div>
           )}
         </div>
       </div>
@@ -363,7 +363,7 @@ function IOPanel({ step, mode }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -384,7 +384,7 @@ function IOPanel({ step, mode }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines, code }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -411,7 +411,7 @@ function CodePanel({ highlightLines, code }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -437,12 +437,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function AStarViz() {
   const [mode, setMode] = useState("astar");
   const [si, setSi] = useState(0);
@@ -461,7 +461,7 @@ export default function AStarViz() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">A* Search</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Heuristic-Guided Pathfinding â€¢ f(n) = g(n) + h(n)</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Heuristic-Guided Pathfinding • f(n) = g(n) + h(n)</p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => switchMode("astar")}
@@ -480,8 +480,8 @@ export default function AStarViz() {
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
             {mode === "astar"
-              ? "A* combines Dijkstra's guaranteed shortest path with a heuristic h(n) that estimates remaining cost to the goal. By expanding the node with lowest f(n) = g(n) + h(n), A* steers exploration toward the goal â€” visiting far fewer nodes than Dijkstra while still finding the optimal path (given an admissible heuristic)."
-              : "Dijkstra's algorithm on a grid expands uniformly from the start node â€” every cell at distance d is explored before any cell at distance d+1. Without a heuristic, it has no sense of direction and explores many irrelevant nodes before reaching the goal. Compare node counts with A* to see the difference."
+              ? "A* combines Dijkstra's guaranteed shortest path with a heuristic h(n) that estimates remaining cost to the goal. By expanding the node with lowest f(n) = g(n) + h(n), A* steers exploration toward the goal — visiting far fewer nodes than Dijkstra while still finding the optimal path (given an admissible heuristic)."
+              : "Dijkstra's algorithm on a grid expands uniformly from the start node — every cell at distance d is explored before any cell at distance d+1. Without a heuristic, it has no sense of direction and explores many irrelevant nodes before reaching the goal. Compare node counts with A* to see the difference."
             }
           </p>
         </div>
@@ -494,12 +494,12 @@ export default function AStarViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Grid â”€â”€ */}
+          {/* ── COL 1: IO + Grid ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} mode={mode} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}Ã—{COLS} grid â€¢ {WALLS.size} walls â€¢ S=(0,0) G=(7,9)</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}×{COLS} grid • {WALLS.size} walls • S=(0,0) G=(7,9)</div>
               <GridView step={step} showH={mode === "astar"} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-[#7c3aed] inline-block" />Start</span>
@@ -513,7 +513,7 @@ export default function AStarViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -565,7 +565,7 @@ export default function AStarViz() {
                   <div className="text-[9px] text-zinc-600">closed</div>
                 </div>
                 <div className="flex-1 text-center">
-                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "â€”"}</div>
+                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "—"}</div>
                   <div className="text-[9px] text-zinc-600">path cost</div>
                 </div>
               </div>
@@ -574,9 +574,9 @@ export default function AStarViz() {
             {/* Final path (shown at end) */}
             {step.phase === "done" && step.path.length > 0 && (
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
-                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Shortest Path ({START[0]},{START[1]}) â†’ ({GOAL[0]},{GOAL[1]})</div>
+                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Shortest Path ({START[0]},{START[1]}) → ({GOAL[0]},{GOAL[1]})</div>
                 <div className="font-mono text-[10px] text-emerald-300">
-                  {step.path.map(([r, c]) => `(${r},${c})`).join(" â†’ ")}
+                  {step.path.map(([r, c]) => `(${r},${c})`).join(" → ")}
                 </div>
                 <div className="mt-2 flex gap-4 text-[10px]">
                   <span className="text-zinc-500">Cost: <span className="text-emerald-300 font-bold">{step.path.length - 1}</span></span>
@@ -596,7 +596,7 @@ export default function AStarViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} code={CODE} />
           </div>
@@ -609,14 +609,14 @@ export default function AStarViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Single-source single-target shortest path with a good heuristic</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Grid/map pathfinding â€” games, robotics, navigation</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>When you need Dijkstra's optimality but want to explore fewer nodes</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Admissible h(n) guarantees optimal path; consistent h(n) avoids re-expansion</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Single-source single-target shortest path with a good heuristic</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Grid/map pathfinding — games, robotics, navigation</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>When you need Dijkstra's optimality but want to explore fewer nodes</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Admissible h(n) guarantees optimal path; consistent h(n) avoids re-expansion</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O((V + E) log V) â€” same as Dijkstra worst case</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O((V + E) log V) — same as Dijkstra worst case</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V)</div>
                 <div><span className="text-zinc-500 font-semibold">Key insight:</span> h=0 reduces to Dijkstra; h=exact gives straight-line search</div>
               </div>
@@ -627,12 +627,12 @@ export default function AStarViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1091 â€” Shortest Path in Binary Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 773 â€” Sliding Puzzle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 675 â€” Cut Off Trees for Golf Event</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 752 â€” Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1263 â€” Min Moves to Move Box to Target</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 864 â€” Shortest Path to Get All Keys</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1091 — Shortest Path in Binary Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 773 — Sliding Puzzle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 675 — Cut Off Trees for Golf Event</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 752 — Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1263 — Min Moves to Move Box to Target</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 864 — Shortest Path to Get All Keys</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

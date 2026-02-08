@@ -4,8 +4,8 @@ import { useState, useMemo } from "react";
 const PROBLEMS = {
   rangeSum: {
     title: "Range Sum Query",
-    subtitle: "LC 307 Â· Range Sum Query Mutable",
-    coreIdea: "Build a binary tree where each node stores the sum of its range. A leaf holds one element; a parent holds sum of its two children. Point update walks rootâ†’leaf updating sums. Range query decomposes [l,r] into O(log n) disjoint tree nodes whose ranges fully cover the query â€” at most 2 nodes per level.",
+    subtitle: "LC 307 · Range Sum Query Mutable",
+    coreIdea: "Build a binary tree where each node stores the sum of its range. A leaf holds one element; a parent holds sum of its two children. Point update walks root→leaf updating sums. Range query decomposes [l,r] into O(log n) disjoint tree nodes whose ranges fully cover the query — at most 2 nodes per level.",
     arr: [1, 3, 5, 7, 9, 11],
     merge: (a, b) => a + b,
     identity: 0,
@@ -19,8 +19,8 @@ const PROBLEMS = {
   },
   rangeMin: {
     title: "Range Min Query",
-    subtitle: "LC 2286 Â· Segment Tree for Min",
-    coreIdea: "Same structure, different merge: each node stores the minimum of its range instead of sum. Update replaces a leaf then recomputes min up the path. Query decomposes [l,r] the same way â€” return min across the covering nodes. Swap the merge function and the segment tree handles any associative operation.",
+    subtitle: "LC 2286 · Segment Tree for Min",
+    coreIdea: "Same structure, different merge: each node stores the minimum of its range instead of sum. Update replaces a leaf then recomputes min up the path. Query decomposes [l,r] the same way — return min across the covering nodes. Swap the merge function and the segment tree handles any associative operation.",
     arr: [2, 5, 1, 4, 9, 3],
     merge: (a, b) => Math.min(a, b),
     identity: Infinity,
@@ -46,9 +46,9 @@ function buildSteps(problem) {
   const finalized = new Set();
 
   const snap = () => ({ tree: [...tree], arr: [...arr] });
-  const fmtVal = (v) => v === Infinity ? "âˆž" : v;
+  const fmtVal = (v) => v === Infinity ? "∞" : v;
 
-  /* â€” Collect tree structure for nodes â€” */
+  /* — Collect tree structure for nodes — */
   function nodeRange(node, start, end) {
     const ranges = {};
     function walk(nd, s, e) {
@@ -63,9 +63,9 @@ function buildSteps(problem) {
     return ranges;
   }
 
-  /* â€” BUILD PHASE â€” */
+  /* — BUILD PHASE — */
   steps.push({
-    title: "Initialize â€” Empty Tree",
+    title: "Initialize — Empty Tree",
     detail: `arr = [${INIT.join(", ")}], n = ${n}. Allocate tree[4n]. Build bottom-up: leaves hold single elements, parents hold ${mergeLabel} of children. O(n) total.`,
     ...snap(), phase: "init", codeHL: [0, 1, 2, 3],
     highlighted: [], queryRange: null, decomp: null, result: null,
@@ -90,7 +90,7 @@ function buildSteps(problem) {
   /* Show leaf steps grouped, then internal nodes up to root */
   const leaves = buildOrder.filter(b => b.leaf);
   steps.push({
-    title: `Build Leaves â€” ${leaves.length} Elements Placed`,
+    title: `Build Leaves — ${leaves.length} Elements Placed`,
     detail: `Each leaf node[i] = arr[j] for a single index j. Leaves: ${leaves.map(l => `node[${l.nd}]=${l.val}`).join(", ")}.`,
     ...snap(), phase: "build", codeHL: [2, 3, 4, 5],
     highlighted: leaves.map(l => l.nd), queryRange: null, decomp: null, result: null,
@@ -109,14 +109,14 @@ function buildSteps(problem) {
   }
 
   steps.push({
-    title: `âœ“ Build Complete â€” Root = ${fmtVal(tree[1])}`,
+    title: `✓ Build Complete — Root = ${fmtVal(tree[1])}`,
     detail: `Segment tree built in O(n). Root node[1] = ${fmtVal(tree[1])} (total ${mergeLabel}). Ready for queries and updates.`,
     ...snap(), phase: "ready", codeHL: [9],
     highlighted: [1], queryRange: null, decomp: null, result: null,
     finalized: new Set(finalized), opResults: [],
   });
 
-  /* â€” OPERATIONS PHASE â€” */
+  /* — OPERATIONS PHASE — */
   const opResults = [];
 
   for (let oi = 0; oi < ops.length; oi++) {
@@ -165,7 +165,7 @@ function buildSteps(problem) {
 
       steps.push({
         title: `Update arr[${op.idx}] = ${op.val} (was ${oldVal})`,
-        detail: `Set arr[${op.idx}] from ${oldVal} to ${op.val}. Walk leafâ†’root updating ${updated.length} nodes: [${updated.join(",")}]. Each parent recomputes ${mergeLabel}. O(log n).`,
+        detail: `Set arr[${op.idx}] from ${oldVal} to ${op.val}. Walk leaf→root updating ${updated.length} nodes: [${updated.join(",")}]. Each parent recomputes ${mergeLabel}. O(log n).`,
         ...snap(), phase: "update", codeHL: [20, 21, 22, 23, 24, 25, 26, 27, 28],
         highlighted: updated,
         queryRange: null, decomp: null, result: null,
@@ -175,8 +175,8 @@ function buildSteps(problem) {
   }
 
   steps.push({
-    title: `âœ“ All Operations Complete`,
-    detail: `${ops.length} operations executed. Build: O(n). Each query/update: O(log n). Total: O(n + kÂ·log n) for k operations.`,
+    title: `✓ All Operations Complete`,
+    detail: `${ops.length} operations executed. Build: O(n). Each query/update: O(log n). Total: O(n + k·log n) for k operations.`,
     ...snap(), phase: "done", codeHL: [29],
     highlighted: [], queryRange: null, decomp: null, result: null,
     finalized: new Set(finalized), opResults: [...opResults],
@@ -260,7 +260,7 @@ function SegTreeView({ step, n }) {
     nds.forEach((nd, i) => { pos[nd.id] = { x: spacing * (i + 1), y: Number(d) * rowH + 22 }; });
   });
 
-  const fmtVal = (v) => v === Infinity ? "âˆž" : v;
+  const fmtVal = (v) => v === Infinity ? "∞" : v;
 
   return (
     <svg viewBox={`0 0 ${totalW} ${Math.min(totalH, 250)}`} className="w-full" style={{ maxHeight: 220 }}>
@@ -370,7 +370,7 @@ const CODE_MAP = { rangeSum: CODE_SUM, rangeMin: CODE_MIN };
 function IOPanel({ step, problem, expected, pKey }) {
   const { phase, opResults, arr } = step;
   const done = phase === "done";
-  const fmtVal = (v) => v === Infinity ? "âˆž" : v;
+  const fmtVal = (v) => v === Infinity ? "∞" : v;
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-3">
@@ -402,7 +402,7 @@ function IOPanel({ step, problem, expected, pKey }) {
             <div key={i} className="text-zinc-300">
               {exp.type === "query"
                 ? <span>{problem.mergeLabel}({exp.l},{exp.r}) = {fmtVal(exp.result)}</span>
-                : <span className="text-zinc-500">update({exp.idx},{exp.val}) âœ“</span>}
+                : <span className="text-zinc-500">update({exp.idx},{exp.val}) ✓</span>}
             </div>
           ))}
         </div>
@@ -412,14 +412,14 @@ function IOPanel({ step, problem, expected, pKey }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs space-y-0.5">
           {expected.map((exp, i) => {
             const got = opResults[i];
             if (!got) return (
               <div key={i} className="text-zinc-600">
-                {exp.type === "query" ? `${problem.mergeLabel}(${exp.l},${exp.r}) = ?` : `update(${exp.idx},${exp.val}) â€¦`}
+                {exp.type === "query" ? `${problem.mergeLabel}(${exp.l},${exp.r}) = ?` : `update(${exp.idx},${exp.val}) …`}
               </div>
             );
             if (got.type === "query") {
@@ -429,13 +429,13 @@ function IOPanel({ step, problem, expected, pKey }) {
                   <span className={match ? "text-emerald-300 font-bold" : "text-zinc-300"}>
                     {problem.mergeLabel}({got.l},{got.r}) = {fmtVal(got.result)}
                   </span>
-                  {match && <span className="text-emerald-600 text-[9px]">âœ“</span>}
+                  {match && <span className="text-emerald-600 text-[9px]">✓</span>}
                 </div>
               );
             }
             return (
               <div key={i} className="text-zinc-400">
-                update({got.idx},{got.newVal}) <span className="text-emerald-600 text-[9px]">âœ“</span>
+                update({got.idx},{got.newVal}) <span className="text-emerald-600 text-[9px]">✓</span>
               </div>
             );
           })}
@@ -490,7 +490,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -505,7 +505,7 @@ export default function SegTreeViz() {
   const step = steps[Math.min(si, steps.length - 1)];
   const switchP = (k) => { setPKey(k); setSi(0); };
   const n = problem.arr.length;
-  const fmtVal = (v) => v === Infinity ? "âˆž" : v;
+  const fmtVal = (v) => v === Infinity ? "∞" : v;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-3 sm:p-4" style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}>
@@ -541,12 +541,12 @@ export default function SegTreeViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€” COL 1: IO + Tree Viz â€” */}
+          {/* — COL 1: IO + Tree Viz — */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} problem={problem} expected={expected} pKey={pKey} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">n={n} â€¢ {problem.mergeLabel} tree â€¢ node values = {problem.mergeLabel} of range</div>
+              <div className="text-[10px] text-zinc-500 mb-1">n={n} • {problem.mergeLabel} tree • node values = {problem.mergeLabel} of range</div>
               <SegTreeView step={step} n={n} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />Build</span>
@@ -556,7 +556,7 @@ export default function SegTreeViz() {
             </div>
           </div>
 
-          {/* â€” COL 2: Steps + State â€” */}
+          {/* — COL 2: Steps + State — */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -586,7 +586,7 @@ export default function SegTreeViz() {
             {/* Source Array */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                arr[] {step.queryRange ? `â€¢ query range [${step.queryRange[0]},${step.queryRange[1]}]` : ""}
+                arr[] {step.queryRange ? `• query range [${step.queryRange[0]},${step.queryRange[1]}]` : ""}
               </div>
               <div className="flex gap-1.5 justify-center">
                 {step.arr.map((v, i) => {
@@ -663,7 +663,7 @@ export default function SegTreeViz() {
             )}
           </div>
 
-          {/* â€” COL 3: Code â€” */}
+          {/* — COL 3: Code — */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} pKey={pKey} />
           </div>
@@ -676,17 +676,17 @@ export default function SegTreeViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Mutable array + repeated range queries (sum, min, max, gcd)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Point update + range query â€” or range update + point query with lazy propagation</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Coordinate compression + counting (inversions, smaller-after-self)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Any associative operation where prefix sums aren't enough due to updates</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Mutable array + repeated range queries (sum, min, max, gcd)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Point update + range query — or range update + point query with lazy propagation</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Coordinate compression + counting (inversions, smaller-after-self)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Any associative operation where prefix sums aren't enough due to updates</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
                 <div><span className="text-zinc-500 font-semibold">Build:</span> O(n)</div>
                 <div><span className="text-zinc-500 font-semibold">Query / Update:</span> O(log n)</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(4n)</div>
-                <div><span className="text-zinc-500 font-semibold">Alternative:</span> BIT (Fenwick tree) for prefix sums â€” simpler but less general</div>
+                <div><span className="text-zinc-500 font-semibold">Alternative:</span> BIT (Fenwick tree) for prefix sums — simpler but less general</div>
               </div>
             </div>
           </div>
@@ -695,12 +695,12 @@ export default function SegTreeViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 307 â€” Range Sum Query Mutable</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 315 â€” Count of Smaller Numbers After Self</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 327 â€” Count of Range Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 699 â€” Falling Squares</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 218 â€” The Skyline Problem</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2286 â€” Booking Concert Tickets</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 307 — Range Sum Query Mutable</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 315 — Count of Smaller Numbers After Self</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 327 — Count of Range Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 699 — Falling Squares</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 218 — The Skyline Problem</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2286 — Booking Concert Tickets</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

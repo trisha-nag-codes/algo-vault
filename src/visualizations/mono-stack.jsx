@@ -1,31 +1,31 @@
 import { useState, useMemo } from "react";
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   MONOTONIC STACK â€” 3 Classic Problems
-   LC 84 Largest Rectangle Â· LC 42 Trapping Rain Water Â· LC 85 Maximal Rectangle
+   MONOTONIC STACK — 3 Classic Problems
+   LC 84 Largest Rectangle · LC 42 Trapping Rain Water · LC 85 Maximal Rectangle
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ Problem Definitions â”€â”€â”€ */
+/* ─── Problem Definitions ─── */
 const PROBLEMS = {
   histogram: {
     title: "Largest Rectangle",
-    subtitle: "LC 84 Â· heights = [2, 1, 5, 6, 2, 3]",
-    coreIdea: "Maintain a monotonically increasing stack of bar indices. When a shorter bar arrives, pop taller bars â€” each popped bar has found its right boundary (current index) and left boundary (new stack top). Width = right âˆ’ left âˆ’ 1. Append a sentinel 0 to flush all remaining bars. Each bar is pushed once, popped once â†’ O(n).",
+    subtitle: "LC 84 · heights = [2, 1, 5, 6, 2, 3]",
+    coreIdea: "Maintain a monotonically increasing stack of bar indices. When a shorter bar arrives, pop taller bars — each popped bar has found its right boundary (current index) and left boundary (new stack top). Width = right − left − 1. Append a sentinel 0 to flush all remaining bars. Each bar is pushed once, popped once → O(n).",
   },
   trapping: {
     title: "Trapping Rain Water",
-    subtitle: "LC 42 Â· height = [0,1,0,2,1,0,1,3,2,1,2,1]",
-    coreIdea: "Use a monotonically decreasing stack. When a taller bar appears, it forms a right wall. Pop the top (the pool bottom). The new stack top is the left wall. Trapped water = (min(left, right) âˆ’ bottom) Ã— width. Process layer by layer from bottom up â€” the stack naturally handles nested pools.",
+    subtitle: "LC 42 · height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+    coreIdea: "Use a monotonically decreasing stack. When a taller bar appears, it forms a right wall. Pop the top (the pool bottom). The new stack top is the left wall. Trapped water = (min(left, right) − bottom) × width. Process layer by layer from bottom up — the stack naturally handles nested pools.",
   },
   maxrect: {
     title: "Maximal Rectangle",
-    subtitle: "LC 85 Â· Binary matrix â†’ largest rectangle of 1s",
-    coreIdea: "Reduce 2D to 1D: for each row, build a histogram where height[c] = number of consecutive 1s ending at the current row. Then apply the Largest Rectangle in Histogram algorithm (LC 84) on each row's histogram. Track the global maximum. This converts an O(RÂ²CÂ²) brute-force into O(RÃ—C).",
+    subtitle: "LC 85 · Binary matrix → largest rectangle of 1s",
+    coreIdea: "Reduce 2D to 1D: for each row, build a histogram where height[c] = number of consecutive 1s ending at the current row. Then apply the Largest Rectangle in Histogram algorithm (LC 84) on each row's histogram. Track the global maximum. This converts an O(R²C²) brute-force into O(R×C).",
   },
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   CODE PANELS â€” per-problem Python functions
+   CODE PANELS — per-problem Python functions
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const CODES = {
   histogram: [
@@ -106,7 +106,7 @@ const EXPECTED = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” Largest Rectangle in Histogram
+   BUILD STEPS — Largest Rectangle in Histogram
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildHistogramSteps() {
   const HEIGHTS = [2, 1, 5, 6, 2, 3];
@@ -130,7 +130,7 @@ function buildHistogramSteps() {
   }
 
   snap(
-    "Initialize â€” Append sentinel 0",
+    "Initialize — Append sentinel 0",
     `heights = [${HEIGHTS.join(",")}] + sentinel [0]. Stack starts empty. Process left to right; maintain increasing stack.`,
     "init", [0, 1, 2, 3], -1, -1, null
   );
@@ -142,8 +142,8 @@ function buildHistogramSteps() {
       stack.push(i);
       if (i < n) {
         snap(
-          `Bar ${i} (h=${h}): Push â€” stack increasing`,
-          `${h} â‰¥ ${stack.length > 1 ? `stack top h=${heights[stack[stack.length - 2]]}` : "empty stack"}. Push index ${i}. Stack: [${stack.join(",")}].`,
+          `Bar ${i} (h=${h}): Push — stack increasing`,
+          `${h} ≥ ${stack.length > 1 ? `stack top h=${heights[stack[stack.length - 2]]}` : "empty stack"}. Push index ${i}. Stack: [${stack.join(",")}].`,
           "push", [5, 11], i, -1, null
         );
       }
@@ -172,7 +172,7 @@ function buildHistogramSteps() {
         i < n
           ? `Bar ${i} (h=${h}): Pop idx ${pIdx} (h=${pH})`
           : `Sentinel: Pop idx ${pIdx} (h=${pH})`,
-        `${h} < ${pH} â†’ pop. Height=${pH}, width=${stack.length === 0 ? `${i} (to left edge)` : `${i}âˆ’${stack[stack.length - 1]}âˆ’1=${width}`}. Area=${pH}Ã—${width}=${area}. ${area > prevMax ? `New max ${prevMax}â†’${maxArea}.` : `Max stays ${maxArea}.`}`,
+        `${h} < ${pH} → pop. Height=${pH}, width=${stack.length === 0 ? `${i} (to left edge)` : `${i}−${stack[stack.length - 1]}−1=${width}`}. Area=${pH}×${width}=${area}. ${area > prevMax ? `New max ${prevMax}→${maxArea}.` : `Max stays ${maxArea}.`}`,
         "pop", [6, 7, 8, 9, 10], i < n ? i : -1, pIdx, calcArea
       );
     }
@@ -188,8 +188,8 @@ function buildHistogramSteps() {
   }
 
   snap(
-    `âœ“ Complete â€” Max Area = ${maxArea}`,
-    `Largest rectangle: h=${bestRect.height} Ã— w=${bestRect.right - bestRect.left + 1} = ${maxArea} spanning bars ${bestRect.left}..${bestRect.right}. O(n) â€” each bar pushed and popped exactly once.`,
+    `✓ Complete — Max Area = ${maxArea}`,
+    `Largest rectangle: h=${bestRect.height} × w=${bestRect.right - bestRect.left + 1} = ${maxArea} spanning bars ${bestRect.left}..${bestRect.right}. O(n) — each bar pushed and popped exactly once.`,
     "done", [13], -1, -1, null
   );
 
@@ -197,7 +197,7 @@ function buildHistogramSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” Trapping Rain Water
+   BUILD STEPS — Trapping Rain Water
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildTrappingSteps() {
   const HEIGHT = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1];
@@ -219,7 +219,7 @@ function buildTrappingSteps() {
   }
 
   snap(
-    "Initialize â€” Empty decreasing stack",
+    "Initialize — Empty decreasing stack",
     `height = [${HEIGHT.join(",")}]. Maintain a monotonically decreasing stack. When a taller bar appears, compute trapped water layer by layer.`,
     "init", [0, 1, 2], -1, -1, null
   );
@@ -232,8 +232,8 @@ function buildTrappingSteps() {
       const bot = HEIGHT[botIdx];
       if (stack.length === 0) {
         snap(
-          `Bar ${i} (h=${h}): Pop idx ${botIdx} â€” no left wall`,
-          `${h} > bottom h=${bot}. Pop index ${botIdx}. Stack empty â†’ no left boundary. Skip.`,
+          `Bar ${i} (h=${h}): Pop idx ${botIdx} — no left wall`,
+          `${h} > bottom h=${bot}. Pop index ${botIdx}. Stack empty → no left boundary. Skip.`,
           "pop-skip", [5, 6, 7, 8], i, botIdx, null
         );
         break;
@@ -253,8 +253,8 @@ function buildTrappingSteps() {
       }
 
       snap(
-        `Bar ${i} (h=${h}): Pool â€” left=${leftH}, bottom=${bot}`,
-        `Pop idx ${botIdx}(h=${bot}). Left wall idx ${leftIdx}(h=${leftH}), right wall h=${h}. min(${leftH},${h})âˆ’${bot}=${bounded}, width=${w}. Water +${trapped} â†’ total=${water}.`,
+        `Bar ${i} (h=${h}): Pool — left=${leftH}, bottom=${bot}`,
+        `Pop idx ${botIdx}(h=${bot}). Left wall idx ${leftIdx}(h=${leftH}), right wall h=${h}. min(${leftH},${h})−${bot}=${bounded}, width=${w}. Water +${trapped} → total=${water}.`,
         trapped > 0 ? "pool" : "pop-zero", [5, 6, 9, 10, 11, 12], i, botIdx,
         { leftIdx, leftH, rightH: h, bot, width: w, bounded, trapped }
       );
@@ -262,7 +262,7 @@ function buildTrappingSteps() {
 
     stack.push(i);
     if (i < n - 1 || steps.length < 3) {
-      // Don't spam push steps for every bar â€” show selectively
+      // Don't spam push steps for every bar — show selectively
       const prevPhase = steps[steps.length - 1]?.phase;
       if (stack.length <= 2 || prevPhase === "pool" || prevPhase === "pop-skip" || prevPhase === "init" || i === 0) {
         snap(
@@ -275,7 +275,7 @@ function buildTrappingSteps() {
   }
 
   snap(
-    `âœ“ Complete â€” Total Water = ${water}`,
+    `✓ Complete — Total Water = ${water}`,
     `Trapped water = ${water} units. Every pool computed layer by layer using the stack. O(n) time, O(n) space.`,
     "done", [15], -1, -1, null
   );
@@ -284,7 +284,7 @@ function buildTrappingSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” Maximal Rectangle
+   BUILD STEPS — Maximal Rectangle
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildMaxRectSteps() {
   const MATRIX = INPUTS.maxrect.matrix;
@@ -305,8 +305,8 @@ function buildMaxRectSteps() {
   }
 
   snap(
-    "Initialize â€” Build histogram row by row",
-    `Matrix: ${R}Ã—${C}. For each row, heights[c] += 1 if cell=1, else reset to 0. Then apply LC 84 on the histogram.`,
+    "Initialize — Build histogram row by row",
+    `Matrix: ${R}×${C}. For each row, heights[c] += 1 if cell=1, else reset to 0. Then apply LC 84 on the histogram.`,
     "init", [0, 1, 2, 3, 4], -1, new Array(C).fill(0), 0, null
   );
 
@@ -350,18 +350,18 @@ function buildMaxRectSteps() {
 
     snap(
       rowMax > prevGlobal
-        ? `Row ${r}: Stack â†’ area=${rowMax} â€” New global max!`
-        : `Row ${r}: Stack â†’ area=${rowMax}`,
+        ? `Row ${r}: Stack → area=${rowMax} — New global max!`
+        : `Row ${r}: Stack → area=${rowMax}`,
       rowBest
-        ? `LC 84 on [${heights.join(",")}]: h=${rowBest.height} Ã— w=${rowBest.right - rowBest.left + 1} = ${rowMax} at cols ${rowBest.left}..${rowBest.right}. Global max: ${globalMax}.`
+        ? `LC 84 on [${heights.join(",")}]: h=${rowBest.height} × w=${rowBest.right - rowBest.left + 1} = ${rowMax} at cols ${rowBest.left}..${rowBest.right}. Global max: ${globalMax}.`
         : `LC 84 on [${heights.join(",")}]: max area ${rowMax}. Global max: ${globalMax}.`,
       rowMax > prevGlobal ? "new-max" : "stack-done", [13, 14], r, heights, rowMax, rowBest
     );
   }
 
   snap(
-    `âœ“ Complete â€” Maximal Rectangle = ${globalMax}`,
-    `Best rectangle: row ${globalBest.row}, cols ${globalBest.left}..${globalBest.right}, h=${globalBest.height} â†’ ${globalMax}. O(RÃ—C) total.`,
+    `✓ Complete — Maximal Rectangle = ${globalMax}`,
+    `Best rectangle: row ${globalBest.row}, cols ${globalBest.left}..${globalBest.right}, h=${globalBest.height} → ${globalMax}. O(R×C) total.`,
     "done", [16], -1, heights, globalMax, globalBest
   );
 
@@ -381,7 +381,7 @@ function buildSteps(key) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VIZ â€” Histogram (LC 84)
+   VIZ — Histogram (LC 84)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function HistogramViz({ step }) {
   const { heights, stack, current, poppedIdx, calcArea, bestRect, phase } = step;
@@ -442,7 +442,7 @@ function HistogramViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VIZ â€” Trapping Rain Water (LC 42)
+   VIZ — Trapping Rain Water (LC 42)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function TrappingViz({ step }) {
   const { heights, stack, current, poppedIdx, waterMap, phase, calcWater } = step;
@@ -512,7 +512,7 @@ function TrappingViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VIZ â€” Maximal Rectangle (LC 85)
+   VIZ — Maximal Rectangle (LC 85)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function MaxRectViz({ step }) {
   const { matrix, heights, row, globalBest, phase, rowBest } = step;
@@ -588,7 +588,7 @@ function Visualization({ pKey, step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   IO PANEL â€” Input / Expected / Progressive Output
+   IO PANEL — Input / Expected / Progressive Output
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function IOPanel({ pKey, step }) {
   const done = step.phase === "done";
@@ -633,7 +633,7 @@ function IOPanel({ pKey, step }) {
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
           {done && (
-            <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>
+            <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>
           )}
         </div>
         <div className="font-mono text-[11px]">
@@ -645,8 +645,8 @@ function IOPanel({ pKey, step }) {
               </span>
               {step.bestRect && (
                 <div className="text-[10px] text-zinc-600 mt-0.5">
-                  h={step.bestRect.height} Ã— w={step.bestRect.right - step.bestRect.left + 1} at [{step.bestRect.left}..{step.bestRect.right}]
-                  {done && step.maxArea === EXPECTED.histogram.maxArea && <span className="text-emerald-600 ml-1">âœ“</span>}
+                  h={step.bestRect.height} × w={step.bestRect.right - step.bestRect.left + 1} at [{step.bestRect.left}..{step.bestRect.right}]
+                  {done && step.maxArea === EXPECTED.histogram.maxArea && <span className="text-emerald-600 ml-1">✓</span>}
                 </div>
               )}
             </div>
@@ -657,7 +657,7 @@ function IOPanel({ pKey, step }) {
               <span className={done ? "text-emerald-300 font-bold" : step.water > 0 ? "text-zinc-300" : "text-zinc-600"}>
                 {step.water > 0 ? step.water : "?"}
               </span>
-              {done && step.water === EXPECTED.trapping.water && <span className="text-emerald-600 ml-1">âœ“</span>}
+              {done && step.water === EXPECTED.trapping.water && <span className="text-emerald-600 ml-1">✓</span>}
             </div>
           )}
           {pKey === "maxrect" && (
@@ -666,7 +666,7 @@ function IOPanel({ pKey, step }) {
               <span className={done ? "text-emerald-300 font-bold" : step.globalMax > 0 ? "text-zinc-300" : "text-zinc-600"}>
                 {step.globalMax > 0 ? step.globalMax : "?"}
               </span>
-              {done && step.globalMax === EXPECTED.maxrect.maxArea && <span className="text-emerald-600 ml-1">âœ“</span>}
+              {done && step.globalMax === EXPECTED.maxrect.maxArea && <span className="text-emerald-600 ml-1">✓</span>}
             </div>
           )}
         </div>
@@ -724,7 +724,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -747,7 +747,7 @@ function phaseStyle(phase) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   STATE PANEL â€” per-problem
+   STATE PANEL — per-problem
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function StatePanel({ pKey, step }) {
   if (pKey === "histogram") {
@@ -755,7 +755,7 @@ function StatePanel({ pKey, step }) {
       <>
         {/* Stack */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-          <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Stack (bottom â†’ top)</div>
+          <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Stack (bottom → top)</div>
           <div className="flex gap-1.5 flex-wrap min-h-[32px] items-center">
             {step.stack.length > 0 ? step.stack.map((idx, i) => (
               <div key={i} className="flex flex-col items-center">
@@ -774,7 +774,7 @@ function StatePanel({ pKey, step }) {
                 <div className="text-lg font-bold font-mono text-blue-300">{step.calcArea.height}</div>
                 <div className="text-[9px] text-zinc-600">height</div>
               </div>
-              <span className="text-zinc-500 text-lg">Ã—</span>
+              <span className="text-zinc-500 text-lg">×</span>
               <div className="text-center">
                 <div className="text-lg font-bold font-mono text-blue-300">{step.calcArea.width}</div>
                 <div className="text-[9px] text-zinc-600">width</div>
@@ -805,7 +805,7 @@ function StatePanel({ pKey, step }) {
       <>
         {/* Stack */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-          <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Stack â€” decreasing (bottom â†’ top)</div>
+          <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Stack — decreasing (bottom → top)</div>
           <div className="flex gap-1.5 flex-wrap min-h-[32px] items-center">
             {step.stack.length > 0 ? step.stack.map((idx, i) => (
               <div key={i} className="flex flex-col items-center">
@@ -821,13 +821,13 @@ function StatePanel({ pKey, step }) {
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">Pool Calculation</div>
             <div className="font-mono text-[11px] text-zinc-400 space-y-1">
               <div>
-                <span className="text-zinc-500">bounded</span> = min(<span className="text-amber-300">{step.calcWater.leftH}</span>, <span className="text-blue-300">{step.calcWater.rightH}</span>) âˆ’ <span className="text-red-300">{step.calcWater.bot}</span> = <span className="text-zinc-200">{step.calcWater.bounded}</span>
+                <span className="text-zinc-500">bounded</span> = min(<span className="text-amber-300">{step.calcWater.leftH}</span>, <span className="text-blue-300">{step.calcWater.rightH}</span>) − <span className="text-red-300">{step.calcWater.bot}</span> = <span className="text-zinc-200">{step.calcWater.bounded}</span>
               </div>
               <div>
                 <span className="text-zinc-500">width</span> = {step.calcWater.width}
               </div>
               <div>
-                <span className="text-zinc-500">water</span> = {step.calcWater.bounded} Ã— {step.calcWater.width} = <span className="text-blue-300 font-bold">+{step.calcWater.trapped}</span>
+                <span className="text-zinc-500">water</span> = {step.calcWater.bounded} × {step.calcWater.width} = <span className="text-blue-300 font-bold">+{step.calcWater.trapped}</span>
               </div>
             </div>
           </div>
@@ -867,11 +867,11 @@ function StatePanel({ pKey, step }) {
           <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">State</div>
           <div className="flex gap-4">
             <div className="flex-1 text-center">
-              <div className="text-lg font-bold font-mono text-violet-400">{step.row >= 0 ? step.row : "â€”"}</div>
+              <div className="text-lg font-bold font-mono text-violet-400">{step.row >= 0 ? step.row : "—"}</div>
               <div className="text-[9px] text-zinc-600">row</div>
             </div>
             <div className="flex-1 text-center">
-              <div className="text-lg font-bold font-mono text-amber-400">{step.rowMax ?? "â€”"}</div>
+              <div className="text-lg font-bold font-mono text-amber-400">{step.rowMax ?? "—"}</div>
               <div className="text-[9px] text-zinc-600">row max</div>
             </div>
             <div className="flex-1 text-center">
@@ -905,7 +905,7 @@ export default function MonoStackViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Monotonic Stack</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Next Greater / Smaller Element Pattern â€¢ O(n) Single Pass</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Next Greater / Smaller Element Pattern • O(n) Single Pass</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -933,7 +933,7 @@ export default function MonoStackViz() {
         {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Visualization â”€â”€ */}
+          {/* ── COL 1: IO + Visualization ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -964,7 +964,7 @@ export default function MonoStackViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -991,7 +991,7 @@ export default function MonoStackViz() {
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Result</div>
                 <div className="font-mono text-[11px] text-emerald-300">
-                  {pKey === "histogram" && `Largest rectangle area = ${step.maxArea} (h=${step.bestRect?.height} Ã— w=${step.bestRect ? step.bestRect.right - step.bestRect.left + 1 : 0} at bars ${step.bestRect?.left}..${step.bestRect?.right}).`}
+                  {pKey === "histogram" && `Largest rectangle area = ${step.maxArea} (h=${step.bestRect?.height} × w=${step.bestRect ? step.bestRect.right - step.bestRect.left + 1 : 0} at bars ${step.bestRect?.left}..${step.bestRect?.right}).`}
                   {pKey === "trapping" && `Total trapped water = ${step.water} units.`}
                   {pKey === "maxrect" && `Maximal rectangle = ${step.globalMax}. Row ${step.globalBest?.row}, cols ${step.globalBest?.left}..${step.globalBest?.right}, h=${step.globalBest?.height}.`}
                 </div>
@@ -999,7 +999,7 @@ export default function MonoStackViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -1012,15 +1012,15 @@ export default function MonoStackViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Next greater / smaller element" for each item in an array</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Histogram-based area problems â€” rectangles, trapped water</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Left/right boundary discovery â€” each element pushed once, popped once</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>2D matrix problems reduced to per-row histograms</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Next greater / smaller element" for each item in an array</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Histogram-based area problems — rectangles, trapped water</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Left/right boundary discovery — each element pushed once, popped once</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>2D matrix problems reduced to per-row histograms</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(n) â€” each element pushed and popped at most once</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(n) â€” stack size</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(n) — each element pushed and popped at most once</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(n) — stack size</div>
                 <div><span className="text-zinc-500 font-semibold">Variants:</span> Increasing (left/right smaller), Decreasing (left/right greater)</div>
               </div>
             </div>
@@ -1030,14 +1030,14 @@ export default function MonoStackViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 84 â€” Largest Rectangle in Histogram</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 42 â€” Trapping Rain Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 85 â€” Maximal Rectangle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 739 â€” Daily Temperatures</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 496 â€” Next Greater Element I</span><span className="ml-auto text-[10px] text-amber-700">Easy</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 901 â€” Online Stock Span</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 503 â€” Next Greater Element II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 907 â€” Sum of Subarray Minimums</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 84 — Largest Rectangle in Histogram</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 42 — Trapping Rain Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 85 — Maximal Rectangle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 739 — Daily Temperatures</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 496 — Next Greater Element I</span><span className="ml-auto text-[10px] text-amber-700">Easy</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 901 — Online Stock Span</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 503 — Next Greater Element II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 907 — Sum of Subarray Minimums</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

@@ -1,54 +1,54 @@
 import { useState, useMemo } from "react";
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   KNAPSACK FAMILY â€” 5 Problem Types
-   0/1 Â· Fractional Â· Unbounded Â· Bounded Â· Multiple
+   KNAPSACK FAMILY — 5 Problem Types
+   0/1 · Fractional · Unbounded · Bounded · Multiple
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ Problem Definitions â”€â”€â”€ */
+/* ─── Problem Definitions ─── */
 const PROBLEMS = {
   zeroone: {
     title: "0/1 Knapsack",
     subtitle: "Binary Choice",
-    coreIdea: "Each item is taken or skipped â€” no splitting. Build dp[i][w] bottom-up: for each item at each capacity, pick max(exclude, include). The 2D table captures all subproblem solutions. Space-optimize to 1D by iterating capacity backwards so each item is considered only once.",
+    coreIdea: "Each item is taken or skipped — no splitting. Build dp[i][w] bottom-up: for each item at each capacity, pick max(exclude, include). The 2D table captures all subproblem solutions. Space-optimize to 1D by iterating capacity backwards so each item is considered only once.",
     items: [
-      { name: "ðŸ’»", label: "Laptop", w: 3, v: 4 },
-      { name: "ðŸ“±", label: "Phone",  w: 2, v: 3 },
-      { name: "ðŸ“·", label: "Camera", w: 4, v: 5 },
-      { name: "ðŸŽ§", label: "Headset", w: 1, v: 2 },
+      { name: "💻", label: "Laptop", w: 3, v: 4 },
+      { name: "📱", label: "Phone",  w: 2, v: 3 },
+      { name: "📷", label: "Camera", w: 4, v: 5 },
+      { name: "🎧", label: "Headset", w: 1, v: 2 },
     ],
     capacity: 6,
   },
   fractional: {
     title: "Fractional Knapsack",
     subtitle: "Greedy by Value Density",
-    coreIdea: "Items are divisible â€” take fractions. Greedy works optimally: sort by value/weight ratio descending, take as much of each item as capacity allows. No DP needed â€” O(n log n) sort dominates. This is the only knapsack variant solvable greedily.",
+    coreIdea: "Items are divisible — take fractions. Greedy works optimally: sort by value/weight ratio descending, take as much of each item as capacity allows. No DP needed — O(n log n) sort dominates. This is the only knapsack variant solvable greedily.",
     items: [
-      { name: "ðŸ¥‡", label: "Gold",   w: 10, v: 60 },
-      { name: "ðŸ¥ˆ", label: "Silver", w: 20, v: 100 },
-      { name: "ðŸ¥‰", label: "Bronze", w: 30, v: 120 },
+      { name: "🥇", label: "Gold",   w: 10, v: 60 },
+      { name: "🥈", label: "Silver", w: 20, v: 100 },
+      { name: "🥉", label: "Bronze", w: 30, v: 120 },
     ],
     capacity: 50,
   },
   unbounded: {
     title: "Unbounded Knapsack",
     subtitle: "Unlimited Items",
-    coreIdea: "Each item can be taken any number of times. Use 1D dp[w] â€” iterate capacity forwards (left to right) so updated values feed into later computations, naturally allowing reuse. dp[w] = max over all items of dp[w - wt_i] + val_i.",
+    coreIdea: "Each item can be taken any number of times. Use 1D dp[w] — iterate capacity forwards (left to right) so updated values feed into later computations, naturally allowing reuse. dp[w] = max over all items of dp[w - wt_i] + val_i.",
     items: [
-      { name: "ðŸ’Ž", label: "Diamond", w: 2, v: 3 },
-      { name: "ðŸ‘‘", label: "Crown",   w: 3, v: 4 },
-      { name: "ðŸª™", label: "Coin",    w: 1, v: 1 },
+      { name: "💎", label: "Diamond", w: 2, v: 3 },
+      { name: "👑", label: "Crown",   w: 3, v: 4 },
+      { name: "🪙", label: "Coin",    w: 1, v: 1 },
     ],
     capacity: 7,
   },
   bounded: {
     title: "Bounded Knapsack",
     subtitle: "Limited Quantities",
-    coreIdea: "Each item has a max quantity k_i. Binary representation trick: split each item into copies of size 1, 2, 4, â€¦ to reduce to 0/1 knapsack with O(Î£ log k_i) items. Alternatively, use a modified 2D DP tracking quantity used per item.",
+    coreIdea: "Each item has a max quantity k_i. Binary representation trick: split each item into copies of size 1, 2, 4, … to reduce to 0/1 knapsack with O(Σ log k_i) items. Alternatively, use a modified 2D DP tracking quantity used per item.",
     items: [
-      { name: "ðŸ“±", label: "Phone",  w: 2, v: 3, qty: 2 },
-      { name: "ðŸ’»", label: "Laptop", w: 3, v: 5, qty: 1 },
-      { name: "ðŸª™", label: "Coin",   w: 1, v: 1, qty: 3 },
+      { name: "📱", label: "Phone",  w: 2, v: 3, qty: 2 },
+      { name: "💻", label: "Laptop", w: 3, v: 5, qty: 1 },
+      { name: "🪙", label: "Coin",   w: 1, v: 1, qty: 3 },
     ],
     capacity: 7,
   },
@@ -57,16 +57,16 @@ const PROBLEMS = {
     subtitle: "Multiple Containers",
     coreIdea: "Assign items to K bins, each with its own capacity. With 2 bins, use dp[w1][w2] = max value with remaining capacities w1 and w2. For each item: skip it, put in bin 1, or put in bin 2. Generalizes to K bins but complexity grows exponentially with K.",
     items: [
-      { name: "ðŸ’»", label: "Laptop", w: 3, v: 4 },
-      { name: "ðŸ“±", label: "Phone",  w: 2, v: 3 },
-      { name: "ðŸ“·", label: "Camera", w: 4, v: 5 },
-      { name: "ðŸŽ§", label: "Headset", w: 1, v: 2 },
+      { name: "💻", label: "Laptop", w: 3, v: 4 },
+      { name: "📱", label: "Phone",  w: 2, v: 3 },
+      { name: "📷", label: "Camera", w: 4, v: 5 },
+      { name: "🎧", label: "Headset", w: 1, v: 2 },
     ],
     bins: [5, 4],
   },
 };
 
-/* â”€â”€â”€ Python Code per Problem â”€â”€â”€ */
+/* ─── Python Code per Problem ─── */
 const CODES = {
   zeroone: [
     { id: 1,  text: `def knapsack_01(items, cap):` },
@@ -158,7 +158,7 @@ const CODES = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” each variant
+   BUILD STEPS — each variant
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildSteps_zeroone(prob) {
@@ -170,8 +170,8 @@ function buildSteps_zeroone(prob) {
   const snap = () => dp.map(r => [...r]);
 
   steps.push({
-    title: "Initialize â€” dp[0][w] = 0 for all w",
-    detail: `${n} items, capacity ${C}. dp[i][w] = max value using items 0..iâˆ’1 with capacity w. Base: row 0 is all zeros.`,
+    title: "Initialize — dp[0][w] = 0 for all w",
+    detail: `${n} items, capacity ${C}. dp[i][w] = max value using items 0..i−1 with capacity w. Base: row 0 is all zeros.`,
     dp: snap(), current: null, phase: "init", codeHL: [1, 2, 3],
     comparing: null, selectedItems: [], finalized: new Set(finalized),
     dpType: "2d", highlight: null,
@@ -190,7 +190,7 @@ function buildSteps_zeroone(prob) {
       if (w === it.w || w === C || (canInc && incVal > excl) || w === 0) {
         steps.push({
           title: canInc
-            ? `Item ${i} ${it.name} (w=${it.w},v=${it.v}), cap=${w}: ${chose === "include" ? "Include âœ“" : "Exclude"}`
+            ? `Item ${i} ${it.name} (w=${it.w},v=${it.v}), cap=${w}: ${chose === "include" ? "Include ✓" : "Exclude"}`
             : `Item ${i} ${it.name} (w=${it.w}), cap=${w}: ${w === 0 ? "Cap=0" : "Too Heavy"}`,
           detail: canInc
             ? `Exclude: dp[${i-1}][${w}]=${excl}. Include: dp[${i-1}][${w-it.w}]+${it.v}=${dp[i-1][w-it.w]}+${it.v}=${incVal}. Best=${best}.`
@@ -214,7 +214,7 @@ function buildSteps_zeroone(prob) {
   sel.reverse();
 
   steps.push({
-    title: `âœ“ Max Value = ${dp[n][C]}`,
+    title: `✓ Max Value = ${dp[n][C]}`,
     detail: `Selected: [${sel.map(i => `${items[i].name} w=${items[i].w} v=${items[i].v}`).join(", ")}]. Weight: ${sel.reduce((s, i) => s + items[i].w, 0)}/${C}.`,
     dp: snap(), current: null, phase: "done", codeHL: [13],
     comparing: null, selectedItems: sel, finalized: new Set(finalized),
@@ -248,7 +248,7 @@ function buildSteps_fractional(prob) {
       taken.push({ ...it, frac: 1, gained: it.v });
       steps.push({
         title: `Take All ${it.name} (ratio=${it.ratio.toFixed(1)})`,
-        detail: `Weight ${it.w} â‰¤ remaining ${remain + it.w}. Take all: +${it.v} value. Remaining capacity: ${remain}.`,
+        detail: `Weight ${it.w} ≤ remaining ${remain + it.w}. Take all: +${it.v} value. Remaining capacity: ${remain}.`,
         taken: taken.map(t => ({ ...t })), remain, total, phase: "take", codeHL: [8, 9, 10, 11],
         sortedItems: sorted.map(s => ({ ...s })), currentIdx: si,
         finalized: new Set(taken.map((_, i) => i)),
@@ -270,7 +270,7 @@ function buildSteps_fractional(prob) {
   }
 
   steps.push({
-    title: `âœ“ Max Value = ${total % 1 === 0 ? total : total.toFixed(2)}`,
+    title: `✓ Max Value = ${total % 1 === 0 ? total : total.toFixed(2)}`,
     detail: `Taken: ${taken.map(t => `${t.frac < 1 ? (t.frac*100).toFixed(0)+"% " : ""}${t.name} (+${t.gained})`).join(", ")}. Total=${total % 1 === 0 ? total : total.toFixed(2)}.`,
     taken: taken.map(t => ({ ...t })), remain: 0, total, phase: "done", codeHL: [17],
     sortedItems: sorted.map(s => ({ ...s })), currentIdx: null,
@@ -288,8 +288,8 @@ function buildSteps_unbounded(prob) {
   finalized.add(0);
 
   steps.push({
-    title: "Initialize â€” dp[0] = 0",
-    detail: `1D array dp[0..${C}]. dp[w] = max value with capacity w. Iterate w forward â€” allows unlimited reuse.`,
+    title: "Initialize — dp[0] = 0",
+    detail: `1D array dp[0..${C}]. dp[w] = max value with capacity w. Iterate w forward — allows unlimited reuse.`,
     dp: [...dp], current: null, phase: "init", codeHL: [1, 2],
     bestItem: null, finalized: new Set(finalized), from: [...from],
   });
@@ -335,7 +335,7 @@ function buildSteps_unbounded(prob) {
   }
 
   steps.push({
-    title: `âœ“ Max Value = ${dp[C]}`,
+    title: `✓ Max Value = ${dp[C]}`,
     detail: `Items used: [${sel.map(it => `${it.name}`).join(", ")}]. Total weight: ${C - w}/${C}.`,
     dp: [...dp], current: null, phase: "done", codeHL: [10],
     bestItem: null, finalized: new Set(finalized), from: [...from], selectedItems: sel,
@@ -361,8 +361,8 @@ function buildSteps_bounded(prob) {
   const finalized = new Set();
 
   steps.push({
-    title: "Binary Split â€” Expand Items",
-    detail: `Split: ${items.map(it => `${it.name}Ã—${it.qty}`).join(", ")} â†’ ${expanded.length} groups: [${expanded.map(e => `${e.name}Ã—${e.cnt}(w=${e.w},v=${e.v})`).join(", ")}]. Now solve as 0/1.`,
+    title: "Binary Split — Expand Items",
+    detail: `Split: ${items.map(it => `${it.name}×${it.qty}`).join(", ")} → ${expanded.length} groups: [${expanded.map(e => `${e.name}×${e.cnt}(w=${e.w},v=${e.v})`).join(", ")}]. Now solve as 0/1.`,
     dp: [...dp], current: null, phase: "init", codeHL: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     expanded: expanded.map(e => ({ ...e })), currentGroup: null,
     finalized: new Set(finalized),
@@ -379,7 +379,7 @@ function buildSteps_bounded(prob) {
     if (changed || g === expanded.length - 1) {
       for (let w = 0; w <= C; w++) if (dp[w] > 0) finalized.add(w);
       steps.push({
-        title: `Group ${g+1}: ${grp.name}Ã—${grp.cnt} (w=${grp.w},v=${grp.v})`,
+        title: `Group ${g+1}: ${grp.name}×${grp.cnt} (w=${grp.w},v=${grp.v})`,
         detail: `Process backwards w=${C}..${grp.w}. ${changed ? "Updated cells exist." : "No change."} dp[${C}]=${dp[C]}.`,
         dp: [...dp], current: null, phase: "fill", codeHL: [12, 13, 14, 15, 16],
         expanded: expanded.map(e => ({ ...e })), currentGroup: g,
@@ -389,8 +389,8 @@ function buildSteps_bounded(prob) {
   }
 
   steps.push({
-    title: `âœ“ Max Value = ${dp[C]}`,
-    detail: `Bounded knapsack solved via binary splitting â†’ 0/1 knapsack. dp[${C}]=${dp[C]}.`,
+    title: `✓ Max Value = ${dp[C]}`,
+    detail: `Bounded knapsack solved via binary splitting → 0/1 knapsack. dp[${C}]=${dp[C]}.`,
     dp: [...dp], current: null, phase: "done", codeHL: [18],
     expanded: expanded.map(e => ({ ...e })), currentGroup: null,
     finalized: new Set(finalized),
@@ -409,7 +409,7 @@ function buildSteps_multiple(prob) {
   const snap = () => dp.map(r => [...r]);
 
   steps.push({
-    title: `Initialize â€” dp[w1][w2] = 0, bins: [${W1}, ${W2}]`,
+    title: `Initialize — dp[w1][w2] = 0, bins: [${W1}, ${W2}]`,
     detail: `${n} items, 2 bins with capacities ${W1} and ${W2}. dp[w1][w2] = max value using remaining caps w1, w2.`,
     dp: snap(), current: null, phase: "init", codeHL: [1, 2, 3, 4, 5],
     currentItem: null, finalized: new Set(finalized), bins,
@@ -446,9 +446,9 @@ function buildSteps_multiple(prob) {
     });
   }
 
-  // Traceback (simplified â€” show final dp value)
+  // Traceback (simplified — show final dp value)
   steps.push({
-    title: `âœ“ Max Value = ${dp[W1][W2]}`,
+    title: `✓ Max Value = ${dp[W1][W2]}`,
     detail: `Optimal packing across both bins. dp[${W1}][${W2}]=${dp[W1][W2]}.`,
     dp: snap(), current: null, phase: "done", codeHL: [19],
     currentItem: null, finalized: new Set(finalized), bins,
@@ -469,18 +469,18 @@ const BUILDERS = {
    Expected Outputs (precomputed)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const EXPECTED = {
-  zeroone: { value: 9, items: "ðŸ’»+ðŸ“±+ðŸŽ§", weight: 6 },
-  fractional: { value: 240, items: "ðŸ¥‡ all + ðŸ¥ˆ all + ðŸ¥‰ 66.7%", weight: 50 },
-  unbounded: { value: 10, items: "ðŸ’ŽÃ—3+ðŸª™Ã—1 (or variants)", weight: 7 },
-  bounded: { value: 11, items: "ðŸ“±Ã—2+ðŸ’»Ã—1", weight: 7 },
-  multiple: { value: 12, items: "Bin1: ðŸ“±+ðŸ’», Bin2: ðŸ“·", weight: "5+4" },
+  zeroone: { value: 9, items: "💻+📱+🎧", weight: 6 },
+  fractional: { value: 240, items: "🥇 all + 🥈 all + 🥉 66.7%", weight: 50 },
+  unbounded: { value: 10, items: "💎×3+🪙×1 (or variants)", weight: 7 },
+  bounded: { value: 11, items: "📱×2+💻×1", weight: 7 },
+  multiple: { value: 12, items: "Bin1: 📱+💻, Bin2: 📷", weight: "5+4" },
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SHARED COMPONENTS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ code, highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -503,7 +503,7 @@ function CodePanel({ code, highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -526,14 +526,14 @@ function NavBar({ si, setSi, total }) {
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">
-        Next â†’
+        Next →
       </button>
     </div>
   );
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   IO PANELS â€” per variant
+   IO PANELS — per variant
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function IOPanel_zeroone({ step, prob }) {
@@ -568,7 +568,7 @@ function IOPanel_zeroone({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && curVal === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && curVal === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">dp[{n}][{capacity}]</span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{curVal}</span>
@@ -612,7 +612,7 @@ function IOPanel_fractional({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div><span className="text-zinc-500">total </span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{step.total % 1 === 0 ? step.total : step.total.toFixed(2)}</span></div>
@@ -645,7 +645,7 @@ function IOPanel_unbounded({ step, prob }) {
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
           {items.map((it, i) => (
-            <div key={i}><span className="text-zinc-300">{it.name} w={it.w} v={it.v}</span> <span className="text-zinc-600">Ã—âˆž</span></div>
+            <div key={i}><span className="text-zinc-300">{it.name} w={it.w} v={it.v}</span> <span className="text-zinc-600">×∞</span></div>
           ))}
           <div><span className="text-zinc-500">cap</span> = <span className="text-blue-400">{capacity}</span></div>
         </div>
@@ -659,7 +659,7 @@ function IOPanel_unbounded({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && step.dp[capacity] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && step.dp[capacity] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">dp[{capacity}]</span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{step.dp[capacity]}</span>
@@ -703,7 +703,7 @@ function IOPanel_bounded({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && step.dp[capacity] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && step.dp[capacity] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">dp[{capacity}]</span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{step.dp[capacity]}</span>
@@ -739,7 +739,7 @@ function IOPanel_multiple({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && step.dp[W1][W2] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && step.dp[W1][W2] === exp.value && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">dp[{W1}][{W2}]</span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{step.dp[W1] ? step.dp[W1][W2] : 0}</span>
@@ -758,10 +758,10 @@ const IO_PANELS = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION COMPONENTS â€” per variant
+   VISUALIZATION COMPONENTS — per variant
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ 0/1 Knapsack: 2D DP Table â”€â”€â”€ */
+/* ─── 0/1 Knapsack: 2D DP Table ─── */
 function DPTable2D({ step, items, capacity }) {
   const { dp, current, selectedItems } = step;
   const done = step.phase === "done";
@@ -780,7 +780,7 @@ function DPTable2D({ step, items, capacity }) {
           {dp.map((row, i) => (
             <tr key={i}>
               <td className={`py-0.5 text-[10px] px-1.5 ${current && current[0] === i ? "text-blue-400 font-bold" : "text-zinc-500"}`}>
-                {i === 0 ? "âˆ…" : `${i} ${items[i-1].name}`}
+                {i === 0 ? "∅" : `${i} ${items[i-1].name}`}
               </td>
               {row.map((val, w) => {
                 const isCurr = current && current[0] === i && current[1] === w;
@@ -804,14 +804,14 @@ function DPTable2D({ step, items, capacity }) {
   );
 }
 
-/* â”€â”€â”€ Fractional: Sorted Items Bar â”€â”€â”€ */
+/* ─── Fractional: Sorted Items Bar ─── */
 function FractionalViz({ step }) {
   const { sortedItems, taken, currentIdx, remain } = step;
   const totalCap = 50;
 
   return (
     <div className="space-y-2">
-      <div className="text-[10px] text-zinc-500 mb-1">Sorted by ratio (v/w) â€¢ bars show fill</div>
+      <div className="text-[10px] text-zinc-500 mb-1">Sorted by ratio (v/w) • bars show fill</div>
       {sortedItems.map((it, i) => {
         const t = taken.find(x => x.idx === it.idx);
         const frac = t ? t.frac : 0;
@@ -830,7 +830,7 @@ function FractionalViz({ step }) {
               </div>
             </div>
             <span className="text-[10px] font-mono w-10 text-right text-zinc-500">
-              {frac > 0 ? (frac < 1 ? `${(frac*100).toFixed(0)}%` : "100%") : "â€”"}
+              {frac > 0 ? (frac < 1 ? `${(frac*100).toFixed(0)}%` : "100%") : "—"}
             </span>
           </div>
         );
@@ -844,12 +844,12 @@ function FractionalViz({ step }) {
   );
 }
 
-/* â”€â”€â”€ Unbounded: 1D DP Array â”€â”€â”€ */
+/* ─── Unbounded: 1D DP Array ─── */
 function DPArray1D({ step, capacity }) {
   const { dp, current, finalized } = step;
   return (
     <div>
-      <div className="text-[10px] text-zinc-500 mb-2">dp[w] â€” iterate left to right (allows reuse)</div>
+      <div className="text-[10px] text-zinc-500 mb-2">dp[w] — iterate left to right (allows reuse)</div>
       <div className="flex gap-1 flex-wrap">
         {dp.map((val, w) => {
           const isCurr = current === w;
@@ -867,31 +867,31 @@ function DPArray1D({ step, capacity }) {
           );
         })}
       </div>
-      <div className="text-[9px] text-zinc-700 mt-1.5 text-center">â†‘ forward iteration = items reusable</div>
+      <div className="text-[9px] text-zinc-700 mt-1.5 text-center">↑ forward iteration = items reusable</div>
     </div>
   );
 }
 
-/* â”€â”€â”€ Bounded: 1D DP + Expanded Groups â”€â”€â”€ */
+/* ─── Bounded: 1D DP + Expanded Groups ─── */
 function BoundedViz({ step, prob }) {
   const { dp, expanded, currentGroup, prevDp } = step;
   const C = prob.capacity;
   return (
     <div className="space-y-3">
       <div>
-        <div className="text-[10px] text-zinc-500 mb-1.5">Binary-split groups â€¢ current â†’ blue</div>
+        <div className="text-[10px] text-zinc-500 mb-1.5">Binary-split groups • current → blue</div>
         <div className="flex gap-1 flex-wrap">
           {expanded && expanded.map((g, i) => (
             <span key={i} className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-mono border ${
               currentGroup === i ? "bg-blue-950 border-blue-700 text-blue-300" :
               currentGroup !== null && i < currentGroup ? "bg-emerald-950/30 border-emerald-900 text-emerald-400" :
               "bg-zinc-900 border-zinc-800 text-zinc-500"
-            }`}>{g.name}Ã—{g.cnt}</span>
+            }`}>{g.name}×{g.cnt}</span>
           ))}
         </div>
       </div>
       <div>
-        <div className="text-[10px] text-zinc-500 mb-1.5">dp[w] â€” backwards iteration (0/1 style)</div>
+        <div className="text-[10px] text-zinc-500 mb-1.5">dp[w] — backwards iteration (0/1 style)</div>
         <div className="flex gap-1 flex-wrap">
           {dp.map((val, w) => {
             const changed = prevDp && val !== prevDp[w];
@@ -913,7 +913,7 @@ function BoundedViz({ step, prob }) {
   );
 }
 
-/* â”€â”€â”€ Multiple: 2D dp[w1][w2] heatmap â”€â”€â”€ */
+/* ─── Multiple: 2D dp[w1][w2] heatmap ─── */
 function MultipleViz({ step }) {
   const { dp, bins } = step;
   const [W1, W2] = bins;
@@ -921,7 +921,7 @@ function MultipleViz({ step }) {
 
   return (
     <div>
-      <div className="text-[10px] text-zinc-500 mb-1.5">dp[w1][w2] â€¢ Bin 1 cap â†“, Bin 2 cap â†’</div>
+      <div className="text-[10px] text-zinc-500 mb-1.5">dp[w1][w2] • Bin 1 cap ↓, Bin 2 cap →</div>
       <div className="overflow-x-auto">
         <table className="font-mono text-[10px]">
           <thead>
@@ -958,7 +958,7 @@ function MultipleViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ITEMS DISPLAY â€” shared across variants
+   ITEMS DISPLAY — shared across variants
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function ItemsRow({ items, step, variant }) {
   const done = step.phase === "done";
@@ -976,7 +976,7 @@ function ItemsRow({ items, step, variant }) {
           }`}>
             <span className="text-xl">{it.name}</span>
             <span className={`text-[10px] font-mono ${isSelected ? "text-emerald-300" : "text-zinc-500"}`}>
-              w={it.w} v={it.v}{it.qty !== undefined ? ` Ã—${it.qty}` : ""}
+              w={it.w} v={it.v}{it.qty !== undefined ? ` ×${it.qty}` : ""}
             </span>
           </div>
         );
@@ -1007,7 +1007,7 @@ export default function KnapsackViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Knapsack Problems</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">5 Variants â€¢ DP & Greedy Strategies</p>
+            <p className="text-zinc-500 text-sm mt-0.5">5 Variants • DP & Greedy Strategies</p>
           </div>
           <div className="flex gap-1.5 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -1023,7 +1023,7 @@ export default function KnapsackViz() {
 
         {/* â•â•â• 2. Core Idea â•â•â• */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
-          <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea â€” {prob.subtitle}</span>
+          <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea — {prob.subtitle}</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">{prob.coreIdea}</p>
         </div>
 
@@ -1035,18 +1035,18 @@ export default function KnapsackViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Items â”€â”€ */}
+          {/* ── COL 1: IO + Items ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} prob={prob} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] text-zinc-500 mb-2">
-                {prob.items ? `${prob.items.length} items` : ""} â€¢ {prob.capacity ? `cap=${prob.capacity}` : `bins=[${prob.bins.join(",")}]`}
+                {prob.items ? `${prob.items.length} items` : ""} • {prob.capacity ? `cap=${prob.capacity}` : `bins=[${prob.bins.join(",")}]`}
               </div>
               <ItemsRow items={prob.items} step={step} variant={exKey} />
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -1064,14 +1064,14 @@ export default function KnapsackViz() {
               <p className="text-zinc-400 text-xs leading-relaxed">{step.detail}</p>
             </div>
 
-            {/* Visualization area â€” varies by variant */}
+            {/* Visualization area — varies by variant */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                {exKey === "zeroone" ? "DP Table â€” dp[i][w]" :
+                {exKey === "zeroone" ? "DP Table — dp[i][w]" :
                  exKey === "fractional" ? "Greedy Selection" :
-                 exKey === "unbounded" ? "DP Array â€” dp[w]" :
-                 exKey === "bounded" ? "Binary Split â†’ 0/1 DP" :
-                 "DP Table â€” dp[w1][w2]"}
+                 exKey === "unbounded" ? "DP Array — dp[w]" :
+                 exKey === "bounded" ? "Binary Split → 0/1 DP" :
+                 "DP Table — dp[w1][w2]"}
               </div>
               {exKey === "zeroone" && <DPTable2D step={step} items={prob.items} capacity={prob.capacity} />}
               {exKey === "fractional" && <FractionalViz step={step} />}
@@ -1104,16 +1104,16 @@ export default function KnapsackViz() {
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1">Result</div>
                 <div className="font-mono text-[11px] text-emerald-300">
                   {exKey === "zeroone" && `Max value: ${step.dp[prob.items.length][prob.capacity]}. Selected: ${step.selectedItems.map(i => prob.items[i].name).join(" + ")}`}
-                  {exKey === "fractional" && `Max value: ${step.total % 1 === 0 ? step.total : step.total.toFixed(2)}. Greedy optimal â€” O(n log n).`}
-                  {exKey === "unbounded" && `Max value: ${step.dp[prob.capacity]}. Items reusable â€” forward iteration.`}
-                  {exKey === "bounded" && `Max value: ${step.dp[prob.capacity]}. Binary-split â†’ 0/1 reduction.`}
+                  {exKey === "fractional" && `Max value: ${step.total % 1 === 0 ? step.total : step.total.toFixed(2)}. Greedy optimal — O(n log n).`}
+                  {exKey === "unbounded" && `Max value: ${step.dp[prob.capacity]}. Items reusable — forward iteration.`}
+                  {exKey === "bounded" && `Max value: ${step.dp[prob.capacity]}. Binary-split → 0/1 reduction.`}
                   {exKey === "multiple" && `Max value: ${step.dp[prob.bins[0]][prob.bins[1]]}. Optimal across both bins.`}
                 </div>
               </div>
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel code={code} highlightLines={step.codeHL} />
           </div>
@@ -1125,15 +1125,15 @@ export default function KnapsackViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>0/1: Each item used once â€” subset selection, partition</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Fractional: Items divisible â€” greedy by ratio is optimal</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Unbounded: Unlimited reuse â€” coin change, rod cutting</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Bounded: Fixed quantities â€” binary split to 0/1</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Multiple: Multi-bin packing â€” scheduling, allocation</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>0/1: Each item used once — subset selection, partition</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Fractional: Items divisible — greedy by ratio is optimal</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Unbounded: Unlimited reuse — coin change, rod cutting</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Bounded: Fixed quantities — binary split to 0/1</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Multiple: Multi-bin packing — scheduling, allocation</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">0/1 Time:</span> O(n Ã— W) pseudo-polynomial</div>
+                <div><span className="text-zinc-500 font-semibold">0/1 Time:</span> O(n × W) pseudo-polynomial</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(W) with 1D optimization</div>
                 <div><span className="text-zinc-500 font-semibold">Key trick:</span> Backwards iteration = 0/1, Forwards = unbounded</div>
               </div>
@@ -1144,14 +1144,14 @@ export default function KnapsackViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 416 â€” Partition Equal Subset Sum</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 494 â€” Target Sum</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 322 â€” Coin Change</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 518 â€” Coin Change II</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 474 â€” Ones and Zeroes</span><span className="ml-auto text-[10px] text-violet-700">Multi-dim</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1049 â€” Last Stone Weight II</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 279 â€” Perfect Squares</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1235 â€” Job Scheduling</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 416 — Partition Equal Subset Sum</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 494 — Target Sum</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 322 — Coin Change</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 518 — Coin Change II</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 474 — Ones and Zeroes</span><span className="ml-auto text-[10px] text-violet-700">Multi-dim</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1049 — Last Stone Weight II</span><span className="ml-auto text-[10px] text-amber-700">0/1</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 279 — Perfect Squares</span><span className="ml-auto text-[10px] text-blue-700">Unbound</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1235 — Job Scheduling</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

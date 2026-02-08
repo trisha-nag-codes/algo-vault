@@ -1,17 +1,17 @@
 import { useState, useMemo } from "react";
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   LINKED LISTS â€” Multi-Problem Visualizer
-   Patterns: Pointer Reversal Â· Floyd's Cycle Â· Heap Merge
+   LINKED LISTS — Multi-Problem Visualizer
+   Patterns: Pointer Reversal · Floyd's Cycle · Heap Merge
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â€”â€”â€” Problem Definitions â€”â€”â€” */
+/* ——— Problem Definitions ——— */
 const PROBLEMS = {
   reverse: {
     title: "Reverse Linked List",
     lc: "LC 206", difficulty: "Medium",
     patternTag: "Iterative Pointer Reversal",
-    coreIdea: "Use three pointers â€” prev, curr, next. At each step: save curr.next, reverse the link (curr.next = prev), then advance prev and curr forward. After the loop, prev points to the new head. Each node is visited exactly once â†’ O(n) time, O(1) space. This is the foundation for LC 25 (reverse in k-groups), LC 92 (reverse between), and many partition problems.",
+    coreIdea: "Use three pointers — prev, curr, next. At each step: save curr.next, reverse the link (curr.next = prev), then advance prev and curr forward. After the loop, prev points to the new head. Each node is visited exactly once → O(n) time, O(1) space. This is the foundation for LC 25 (reverse in k-groups), LC 92 (reverse between), and many partition problems.",
     input: { list: [1, 2, 3, 4, 5] },
     expected: { value: [5, 4, 3, 2, 1], detail: "fully reversed" },
   },
@@ -19,7 +19,7 @@ const PROBLEMS = {
     title: "Linked List Cycle II",
     lc: "LC 142", difficulty: "Medium",
     patternTag: "Floyd's Tortoise & Hare",
-    coreIdea: "Phase 1: slow moves 1 step, fast moves 2 steps. If they meet, a cycle exists. Phase 2: reset one pointer to head. Move both at speed 1 â€” where they meet again is the cycle start. The math: if the distance from head to cycle start is 'a' and meeting point is 'b' steps into the cycle, then slow traveled a+b and fast traveled a+b+c+b (one full cycle c+b extra). Since fast=2Ã—slow â†’ a = c. So moving from head and from meeting point converge at the cycle start.",
+    coreIdea: "Phase 1: slow moves 1 step, fast moves 2 steps. If they meet, a cycle exists. Phase 2: reset one pointer to head. Move both at speed 1 — where they meet again is the cycle start. The math: if the distance from head to cycle start is 'a' and meeting point is 'b' steps into the cycle, then slow traveled a+b and fast traveled a+b+c+b (one full cycle c+b extra). Since fast=2×slow → a = c. So moving from head and from meeting point converge at the cycle start.",
     input: { list: [3, 2, 0, -4], cyclePos: 1 },
     expected: { value: 1, detail: "cycle starts at index 1 (node val=2)" },
   },
@@ -27,13 +27,13 @@ const PROBLEMS = {
     title: "Merge K Sorted Lists",
     lc: "LC 23", difficulty: "Hard",
     patternTag: "Min-Heap Merge",
-    coreIdea: "Push the head of each list into a min-heap. Repeatedly pop the smallest node, append it to the result, and push that node's next (if any) back into the heap. The heap always holds at most k nodes (one per list), so each push/pop is O(log k). With n total nodes across all lists â†’ O(n log k) time, O(k) space. This generalizes the 2-list merge and is the optimal approach.",
+    coreIdea: "Push the head of each list into a min-heap. Repeatedly pop the smallest node, append it to the result, and push that node's next (if any) back into the heap. The heap always holds at most k nodes (one per list), so each push/pop is O(log k). With n total nodes across all lists → O(n log k) time, O(k) space. This generalizes the 2-list merge and is the optimal approach.",
     input: { lists: [[1,4,5],[1,3,4],[2,6]] },
     expected: { value: [1,1,2,3,4,4,5,6], detail: "3 lists merged into sorted order" },
   },
 };
 
-/* â€”â€”â€” Code for each problem â€”â€”â€” */
+/* ——— Code for each problem ——— */
 const CODES = {
   reverse: [
     { id: 0,  text: `def reverseList(head):` },
@@ -92,7 +92,7 @@ const CODES = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   Build Steps â€” LC 206 Reverse
+   Build Steps — LC 206 Reverse
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildReverse() {
   const vals = [1, 2, 3, 4, 5];
@@ -102,8 +102,8 @@ function buildReverse() {
   let prev = -1, curr = 0;
 
   steps.push({
-    title: "Initialize â€” prev=None, curr=head",
-    detail: `List: ${vals.join(" â†’ ")} â†’ None. Set prev=None, curr=node(1). We will reverse each link one by one.`,
+    title: "Initialize — prev=None, curr=head",
+    detail: `List: ${vals.join(" → ")} → None. Set prev=None, curr=node(1). We will reverse each link one by one.`,
     vals, links: [...links],
     prev: -1, curr: 0, nxt: -1,
     phase: "init", codeHL: [0, 1, 2],
@@ -118,7 +118,7 @@ function buildReverse() {
 
     steps.push({
       title: `Reverse: node(${vals[curr]}).next = ${prev === -1 ? "None" : `node(${vals[prev]})`}`,
-      detail: `Save nxt=${nxt === -1 ? "None" : `node(${vals[nxt]})`}. Reverse link: ${vals[curr]}.next â†’ ${prev === -1 ? "None" : vals[prev]}. Advance prevâ†’${vals[curr]}, currâ†’${nxt === -1 ? "None" : vals[nxt]}.`,
+      detail: `Save nxt=${nxt === -1 ? "None" : `node(${vals[nxt]})`}. Reverse link: ${vals[curr]}.next → ${prev === -1 ? "None" : vals[prev]}. Advance prev→${vals[curr]}, curr→${nxt === -1 ? "None" : vals[nxt]}.`,
       vals, links: [...links],
       prev: curr, curr: nxt, nxt,
       phase: "reverse", codeHL: [4, 5, 6, 7, 8],
@@ -132,8 +132,8 @@ function buildReverse() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” New Head = node(${vals[prev]})`,
-    detail: `All links reversed. List: ${vals.slice().reverse().join(" â†’ ")} â†’ None. prev points to new head (${vals[prev]}). O(n) time, O(1) space.`,
+    title: `✓ Complete — New Head = node(${vals[prev]})`,
+    detail: `All links reversed. List: ${vals.slice().reverse().join(" → ")} → None. prev points to new head (${vals[prev]}). O(n) time, O(1) space.`,
     vals, links: [...links],
     prev, curr: -1, nxt: -1,
     phase: "done", codeHL: [10],
@@ -146,19 +146,19 @@ function buildReverse() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   Build Steps â€” LC 142 Cycle II
+   Build Steps — LC 142 Cycle II
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildCycle() {
   const vals = [3, 2, 0, -4];
   const cyclePos = 1; // index where cycle starts
-  // links: 0â†’1, 1â†’2, 2â†’3, 3â†’1 (cycle back)
+  // links: 0→1, 1→2, 2→3, 3→1 (cycle back)
   const links = [1, 2, 3, cyclePos];
   const steps = [];
 
   let slow = 0, fast = 0;
   steps.push({
-    title: "Initialize â€” slow=head, fast=head",
-    detail: `List: 3 â†’ 2 â†’ 0 â†’ -4 â†’ (back to 2). Cycle starts at index ${cyclePos} (val=${vals[cyclePos]}). Phase 1: move slow +1, fast +2 until they meet.`,
+    title: "Initialize — slow=head, fast=head",
+    detail: `List: 3 → 2 → 0 → -4 → (back to 2). Cycle starts at index ${cyclePos} (val=${vals[cyclePos]}). Phase 1: move slow +1, fast +2 until they meet.`,
     vals, links,
     slow: 0, fast: 0,
     phase: "init", codeHL: [0, 1],
@@ -177,11 +177,11 @@ function buildCycle() {
     const met = slow === fast;
     steps.push({
       title: met
-        ? `Phase 1, Step ${stepCount}: slow=fast=node(${vals[slow]}) â€” Met!`
-        : `Phase 1, Step ${stepCount}: slowâ†’node(${vals[slow]}), fastâ†’node(${vals[fast]})`,
+        ? `Phase 1, Step ${stepCount}: slow=fast=node(${vals[slow]}) — Met!`
+        : `Phase 1, Step ${stepCount}: slow→node(${vals[slow]}), fast→node(${vals[fast]})`,
       detail: met
         ? `slow and fast meet at index ${slow} (val=${vals[slow]}). Cycle confirmed. Now Phase 2: reset slow to head, move both +1 until they meet again.`
-        : `slow moved 1 step to node(${vals[slow]}). fast moved 2 steps to node(${vals[fast]}). Not equal yet â€” continue.`,
+        : `slow moved 1 step to node(${vals[slow]}). fast moved 2 steps to node(${vals[fast]}). Not equal yet — continue.`,
       vals, links,
       slow, fast,
       phase: met ? "met" : "chase", codeHL: met ? [4, 5, 6, 7, 8] : [4, 5, 6, 7],
@@ -196,8 +196,8 @@ function buildCycle() {
   // Phase 2: find cycle start
   slow = 0;
   steps.push({
-    title: `Phase 2: Reset slowâ†’head, both move +1`,
-    detail: `slow reset to head (index 0, val=${vals[0]}). fast stays at meeting point (index ${fast}, val=${vals[fast]}). Move both +1 step until they meet â€” that's the cycle start.`,
+    title: `Phase 2: Reset slow→head, both move +1`,
+    detail: `slow reset to head (index 0, val=${vals[0]}). fast stays at meeting point (index ${fast}, val=${vals[fast]}). Move both +1 step until they meet — that's the cycle start.`,
     vals, links,
     slow: 0, fast,
     phase: "phase2", codeHL: [12, 13, 14],
@@ -215,11 +215,11 @@ function buildCycle() {
     const found = slow === fast;
     steps.push({
       title: found
-        ? `Phase 2, Step ${p2Steps}: slow=fast=node(${vals[slow]}) â€” Cycle Start Found!`
-        : `Phase 2, Step ${p2Steps}: slowâ†’node(${vals[slow]}), fastâ†’node(${vals[fast]})`,
+        ? `Phase 2, Step ${p2Steps}: slow=fast=node(${vals[slow]}) — Cycle Start Found!`
+        : `Phase 2, Step ${p2Steps}: slow→node(${vals[slow]}), fast→node(${vals[fast]})`,
       detail: found
-        ? `Both pointers meet at index ${slow} (val=${vals[slow]}). This is the cycle entry. Math: dist(headâ†’entry) = dist(meetingâ†’entry) moving forward in cycle.`
-        : `slow at node(${vals[slow]}), fast at node(${vals[fast]}). Not equal â€” continue.`,
+        ? `Both pointers meet at index ${slow} (val=${vals[slow]}). This is the cycle entry. Math: dist(head→entry) = dist(meeting→entry) moving forward in cycle.`
+        : `slow at node(${vals[slow]}), fast at node(${vals[fast]}). Not equal — continue.`,
       vals, links,
       slow, fast,
       phase: found ? "found" : "phase2", codeHL: found ? [14, 15, 16, 18] : [14, 15, 16],
@@ -230,7 +230,7 @@ function buildCycle() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Cycle Starts at Index ${slow} (val=${vals[slow]})`,
+    title: `✓ Complete — Cycle Starts at Index ${slow} (val=${vals[slow]})`,
     detail: `Floyd's algorithm: Phase 1 O(n) to detect, Phase 2 O(n) to find start. Total O(n) time, O(1) space. The key math: a = c (distance from head to cycle start = distance from meeting point to cycle start).`,
     vals, links,
     slow, fast,
@@ -244,7 +244,7 @@ function buildCycle() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   Build Steps â€” LC 23 Merge K Sorted
+   Build Steps — LC 23 Merge K Sorted
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildMergeK() {
   const lists = [[1,4,5],[1,3,4],[2,6]];
@@ -259,7 +259,7 @@ function buildMergeK() {
     .sort((a, b) => a.val - b.val);
 
   steps.push({
-    title: "Initialize â€” Push Heads into Min-Heap",
+    title: "Initialize — Push Heads into Min-Heap",
     detail: `${lists.length} lists. Push head of each: [${heap.map(h => `(${h.val},L${h.listIdx})`).join(", ")}]. Dummy node created for result chain.`,
     lists, ptrs: [...ptrs], result: [],
     heap: heap.map(h => ({ ...h })),
@@ -286,7 +286,7 @@ function buildMergeK() {
 
     steps.push({
       title: `Pop min=${val} from L${listIdx}${pushed ? `, push ${pushed.val} from L${listIdx}` : " (list exhausted)"}`,
-      detail: `Heap-pop (${val}, L${listIdx}) â†’ append ${val} to result. ${pushed ? `Next in L${listIdx} is ${pushed.val} â†’ push to heap.` : `L${listIdx} is empty, nothing to push.`} Result so far: [${result.join(", ")}]. Heap: [${heap.map(h => `(${h.val},L${h.listIdx})`).join(", ")}].`,
+      detail: `Heap-pop (${val}, L${listIdx}) → append ${val} to result. ${pushed ? `Next in L${listIdx} is ${pushed.val} → push to heap.` : `L${listIdx} is empty, nothing to push.`} Result so far: [${result.join(", ")}]. Heap: [${heap.map(h => `(${h.val},L${h.listIdx})`).join(", ")}].`,
       lists, ptrs: [...ptrs], result: [...result],
       heap: heap.map(h => ({ ...h })),
       popped: { val, listIdx }, pushed,
@@ -296,7 +296,7 @@ function buildMergeK() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Merged: [${result.join(", ")}]`,
+    title: `✓ Complete — Merged: [${result.join(", ")}]`,
     detail: `All ${result.length} nodes merged in sorted order. Heap empty. O(n log k) where n=${result.length} total nodes, k=${lists.length} lists. Each of n pops/pushes costs O(log k).`,
     lists, ptrs: [...ptrs], result: [...result],
     heap: [],
@@ -439,9 +439,9 @@ function ListVizCycle({ step }) {
   const { vals, links, slow, fast, phase: ph, cyclePos, meetIdx } = step;
   const n = vals.length;
   // Layout: nodes 0,1,2,3 in a shape showing cycle
-  // 0 â†’ 1 â†’ 2 â†’ 3
-  //     â†‘         â†“
-  //     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  // 0 → 1 → 2 → 3
+  //     ↑         ↓
+  //     └─────────┘
   const positions = [
     { x: 40, y: 60 },
     { x: 140, y: 60 },
@@ -621,20 +621,20 @@ function IOReverse({ step, prob }) {
       <div>
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400" style={{ whiteSpace: "pre" }}>
-          <div><span className="text-zinc-500">head</span> = <span className="text-zinc-300">[{prob.input.list.join(" â†’ ")}]</span></div>
+          <div><span className="text-zinc-500">head</span> = <span className="text-zinc-300">[{prob.input.list.join(" → ")}]</span></div>
         </div>
       </div>
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">Expected Output</div>
         <div className="font-mono text-[11px]">
-          <span className="text-zinc-300">[{prob.expected.value.join(" â†’ ")}]</span>
+          <span className="text-zinc-300">[{prob.expected.value.join(" → ")}]</span>
           <span className="text-zinc-600 text-[10px] ml-2">{prob.expected.detail}</span>
         </div>
       </div>
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -683,12 +683,12 @@ function IOCycle({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
             <span className="text-zinc-500">phase</span> = <span className="text-zinc-300">
-              {step.phase2 ? "2 (find start)" : step.met ? "1 â†’ met!" : "1 (detect)"}
+              {step.phase2 ? "2 (find start)" : step.met ? "1 → met!" : "1 (detect)"}
             </span>
           </div>
           <div>
@@ -723,7 +723,7 @@ function IOMergeK({ step, prob }) {
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400" style={{ whiteSpace: "pre" }}>
           {prob.input.lists.map((lst, i) => (
-            <div key={i}><span className="text-zinc-500">L{i}</span> = <span className="text-zinc-300">[{lst.join(" â†’ ")}]</span></div>
+            <div key={i}><span className="text-zinc-500">L{i}</span> = <span className="text-zinc-300">[{lst.join(" → ")}]</span></div>
           ))}
         </div>
       </div>
@@ -737,7 +737,7 @@ function IOMergeK({ step, prob }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {match && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -796,7 +796,7 @@ function NavBar({ si, setSi, total }) {
         ))}
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
-        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next â†’</button>
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next →</button>
     </div>
   );
 }
@@ -815,15 +815,15 @@ function StateReverse({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Pointer State</div>
       <div className="flex gap-4">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-purple-400">{prev === -1 ? "âˆ…" : vals[prev]}</div>
+          <div className="text-lg font-bold font-mono text-purple-400">{prev === -1 ? "∅" : vals[prev]}</div>
           <div className="text-[9px] text-zinc-600">prev</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{curr === -1 ? "âˆ…" : vals[curr]}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{curr === -1 ? "∅" : vals[curr]}</div>
           <div className="text-[9px] text-zinc-600">curr</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-amber-400">{nxt === -1 ? "âˆ…" : vals[nxt]}</div>
+          <div className="text-lg font-bold font-mono text-amber-400">{nxt === -1 ? "∅" : vals[nxt]}</div>
           <div className="text-[9px] text-zinc-600">nxt</div>
         </div>
         <div className="flex-1 text-center">
@@ -841,7 +841,7 @@ function StateReverse({ step }) {
               <div key={i} className={`flex-1 h-6 rounded flex items-center justify-center font-mono text-[10px] font-bold ${
                 isRev ? "bg-emerald-950 border border-emerald-800 text-emerald-300" :
                 "bg-zinc-800 border border-zinc-700 text-zinc-600"
-              }`}>{v}{isRev ? " âœ“" : ""}</div>
+              }`}>{v}{isRev ? " ✓" : ""}</div>
             );
           })}
         </div>
@@ -878,11 +878,11 @@ function StateCycle({ step }) {
       {/* Phase explanation */}
       <div className="mt-3 pt-2.5 border-t border-zinc-800">
         <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">
-          {phase2 ? "Phase 2 â€” Find Cycle Start" : "Phase 1 â€” Detect Cycle"}
+          {phase2 ? "Phase 2 — Find Cycle Start" : "Phase 1 — Detect Cycle"}
         </div>
         <div className="text-[10px] text-zinc-400 leading-relaxed">
           {phase2
-            ? "Both pointers move +1. They'll converge at the cycle entry because dist(headâ†’entry) = dist(meetâ†’entry)."
+            ? "Both pointers move +1. They'll converge at the cycle entry because dist(head→entry) = dist(meet→entry)."
             : "slow +1, fast +2. If cycle exists they must meet inside it. Fast closes gap by 1 each step."
           }
         </div>
@@ -908,11 +908,11 @@ function StateMergeK({ step }) {
           <div className="text-[9px] text-zinc-600">heap size</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-orange-400">{popped ? popped.val : "â€”"}</div>
+          <div className="text-lg font-bold font-mono text-orange-400">{popped ? popped.val : "—"}</div>
           <div className="text-[9px] text-zinc-600">popped</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{pushed ? pushed.val : "â€”"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{pushed ? pushed.val : "—"}</div>
           <div className="text-[9px] text-zinc-600">pushed</div>
         </div>
         <div className="flex-1 text-center">
@@ -943,7 +943,7 @@ function StateMergeK({ step }) {
             <div key={i} className="flex items-center gap-1 text-[10px] font-mono">
               <span className="text-zinc-600">L{i}:</span>
               <span className={ptrs[i] >= lst.length ? "text-zinc-700" : "text-zinc-300"}>
-                {ptrs[i] >= lst.length ? "done" : `â†’${lst[ptrs[i]]}`}
+                {ptrs[i] >= lst.length ? "done" : `→${lst[ptrs[i]]}`}
               </span>
               <span className="text-zinc-700">({ptrs[i]}/{lst.length})</span>
             </div>
@@ -971,7 +971,7 @@ export default function LinkedListViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Linked Lists</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Pointer Reversal Â· Floyd's Cycle Â· Heap Merge â€¢ O(n) Patterns</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Pointer Reversal · Floyd's Cycle · Heap Merge • O(n) Patterns</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -979,7 +979,7 @@ export default function LinkedListViz() {
                 className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                   probKey === k ? "bg-indigo-600 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
                 }`}>
-                <span className="opacity-60 mr-1">{v.lc}</span>{v.title.length > 20 ? v.title.slice(0, 18) + "â€¦" : v.title}
+                <span className="opacity-60 mr-1">{v.lc}</span>{v.title.length > 20 ? v.title.slice(0, 18) + "…" : v.title}
                 <span className={`ml-1.5 text-[9px] px-1 py-0.5 rounded ${
                   v.difficulty === "Hard" ? "bg-red-900/50 text-red-400" : "bg-amber-900/50 text-amber-400"
                 }`}>{v.difficulty}</span>
@@ -1005,14 +1005,14 @@ export default function LinkedListViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + List Viz â€”â€” */}
+          {/* —— COL 1: IO + List Viz —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} probKey={probKey} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] text-zinc-500 mb-1">
-                {probKey === "reverse" ? `${prob.input.list.length} nodes â€¢ iterative` :
-                 probKey === "cycle" ? `${prob.input.list.length} nodes â€¢ cycle at idx ${prob.input.cyclePos}` :
-                 `${prob.input.lists.length} sorted lists â€¢ ${prob.input.lists.flat().length} total nodes`}
+                {probKey === "reverse" ? `${prob.input.list.length} nodes • iterative` :
+                 probKey === "cycle" ? `${prob.input.list.length} nodes • cycle at idx ${prob.input.cyclePos}` :
+                 `${prob.input.lists.length} sorted lists • ${prob.input.lists.flat().length} total nodes`}
               </div>
               <ListViz step={step} probKey={probKey} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
@@ -1043,7 +1043,7 @@ export default function LinkedListViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -1095,20 +1095,20 @@ export default function LinkedListViz() {
                 <div className="text-[10px] text-zinc-500 space-y-1">
                   {probKey === "reverse" && (
                     <>
-                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n) â€” single pass through all nodes</div>
-                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(1) â€” only 3 pointers</div>
+                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n) — single pass through all nodes</div>
+                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(1) — only 3 pointers</div>
                     </>
                   )}
                   {probKey === "cycle" && (
                     <>
-                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n) â€” Phase 1 + Phase 2 both â‰¤ n steps</div>
-                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(1) â€” only two pointers</div>
+                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n) — Phase 1 + Phase 2 both ≤ n steps</div>
+                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(1) — only two pointers</div>
                     </>
                   )}
                   {probKey === "mergeK" && (
                     <>
-                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n log k) â€” n pops/pushes, each O(log k)</div>
-                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(k) â€” heap holds at most k nodes</div>
+                      <div><span className="text-zinc-400 font-semibold">Time:</span> O(n log k) — n pops/pushes, each O(log k)</div>
+                      <div><span className="text-zinc-400 font-semibold">Space:</span> O(k) — heap holds at most k nodes</div>
                     </>
                   )}
                 </div>
@@ -1116,7 +1116,7 @@ export default function LinkedListViz() {
             )}
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} probKey={probKey} />
           </div>
@@ -1127,15 +1127,15 @@ export default function LinkedListViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use Linked Lists</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Reverse a sublist" or "reverse in k-groups" â†’ iterative 3-pointer pattern</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Detect cycle" or "find cycle start" â†’ Floyd's tortoise & hare</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Merge sorted lists" â†’ two-pointer merge or min-heap for k lists</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Find middle" or "find kth from end" â†’ slow/fast pointer technique</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Use dummy head node to simplify edge cases (empty list, head changes)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Reverse a sublist" or "reverse in k-groups" → iterative 3-pointer pattern</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Detect cycle" or "find cycle start" → Floyd's tortoise & hare</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Merge sorted lists" → two-pointer merge or min-heap for k lists</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Find middle" or "find kth from end" → slow/fast pointer technique</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Use dummy head node to simplify edge cases (empty list, head changes)</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Key insight:</span> Draw the pointers on paper â€” track prev, curr, next carefully</div>
+                <div><span className="text-zinc-500 font-semibold">Key insight:</span> Draw the pointers on paper — track prev, curr, next carefully</div>
                 <div><span className="text-zinc-500 font-semibold">Common bug:</span> Losing reference to next before overwriting .next</div>
                 <div><span className="text-zinc-500 font-semibold">Trick:</span> Sentinel/dummy nodes eliminate null-check edge cases</div>
               </div>
@@ -1145,15 +1145,15 @@ export default function LinkedListViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 206 â€” Reverse Linked List</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 21 â€” Merge Two Sorted Lists</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 142 â€” Linked List Cycle II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 143 â€” Reorder List</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 146 â€” LRU Cache</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 138 â€” Copy List with Random Pointer</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 23 â€” Merge K Sorted Lists</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 25 â€” Reverse Nodes in k-Group</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 460 â€” LFU Cache</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 206 — Reverse Linked List</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 21 — Merge Two Sorted Lists</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 142 — Linked List Cycle II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 143 — Reorder List</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 146 — LRU Cache</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 138 — Copy List with Random Pointer</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 23 — Merge K Sorted Lists</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 25 — Reverse Nodes in k-Group</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 460 — LFU Cache</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

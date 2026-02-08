@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Configs â€”â€”â€” */
+/* ——— Problem Configs ——— */
 const PROBLEMS = {
   edit: {
     title: "Edit Distance",
-    subtitle: "dp[i][j] = min ops to convert word1[:i] â†’ word2[:j]",
+    subtitle: "dp[i][j] = min ops to convert word1[:i] → word2[:j]",
     coreIdea: "At each cell (i,j) compare characters: if they match, take the diagonal for free. Otherwise pick the cheapest of three operations â€” insert (â†), delete (â†‘), or replace (â†–), each costing 1. The matrix fills row by row, and the answer sits at dp[m][n]. This two-string DP pattern is the backbone of spell checkers, diff tools, and DNA sequence alignment.",
     s1: "horse", s2: "ros",
     s1Label: "word1", s2Label: "word2",
@@ -35,20 +35,20 @@ const PROBLEMS = {
       "DNA sequence alignment (bioinformatics)",
       "Spell-check suggestion ranking by edit cost",
     ],
-    complexity: { time: "O(m Ã— n)", space: "O(m Ã— n) â†’ O(n) with rolling array", note: "Three choices per cell: insert, delete, replace" },
+    complexity: { time: "O(m × n)", space: "O(m × n) → O(n) with rolling array", note: "Three choices per cell: insert, delete, replace" },
     classics: [
-      { name: "LC 72 â€” Edit Distance", diff: "Medium" },
-      { name: "LC 583 â€” Delete Ops for Two Strings", diff: "Medium" },
-      { name: "LC 712 â€” Min ASCII Delete Sum", diff: "Medium" },
-      { name: "LC 97 â€” Interleaving String", diff: "Medium" },
-      { name: "LC 10 â€” Regular Expression Matching", diff: "Hard" },
-      { name: "LC 44 â€” Wildcard Matching", diff: "Hard" },
+      { name: "LC 72 — Edit Distance", diff: "Medium" },
+      { name: "LC 583 — Delete Ops for Two Strings", diff: "Medium" },
+      { name: "LC 712 — Min ASCII Delete Sum", diff: "Medium" },
+      { name: "LC 97 — Interleaving String", diff: "Medium" },
+      { name: "LC 10 — Regular Expression Matching", diff: "Hard" },
+      { name: "LC 44 — Wildcard Matching", diff: "Hard" },
     ],
   },
   lcs: {
     title: "Longest Common Subseq",
     subtitle: "dp[i][j] = LCS length of s1[:i] and s2[:j]",
-    coreIdea: "At each cell (i,j): if characters match, extend the LCS from dp[i-1][j-1] + 1. If they don't, carry forward the better of skipping either character â€” max(dp[i-1][j], dp[i][j-1]). The matrix reveals all subsequence relationships, and backtracking from dp[m][n] recovers the actual LCS string.",
+    coreIdea: "At each cell (i,j): if characters match, extend the LCS from dp[i-1][j-1] + 1. If they don't, carry forward the better of skipping either character — max(dp[i-1][j], dp[i][j-1]). The matrix reveals all subsequence relationships, and backtracking from dp[m][n] recovers the actual LCS string.",
     s1: "abcde", s2: "ace",
     s1Label: "text1", s2Label: "text2",
     expectedResult: 3,
@@ -71,23 +71,23 @@ const PROBLEMS = {
     ],
     whenToUse: [
       "Find longest sequence common to both strings (not contiguous)",
-      "Diff/patch algorithms â€” LCS of lines gives unchanged regions",
+      "Diff/patch algorithms — LCS of lines gives unchanged regions",
       "Version control merge conflict resolution",
       "Measuring string similarity (LCS ratio)",
     ],
-    complexity: { time: "O(m Ã— n)", space: "O(m Ã— n) â†’ O(n) with rolling array", note: "Two choices when mismatch: skip from s1 or s2" },
+    complexity: { time: "O(m × n)", space: "O(m × n) → O(n) with rolling array", note: "Two choices when mismatch: skip from s1 or s2" },
     classics: [
-      { name: "LC 1143 â€” Longest Common Subsequence", diff: "Medium" },
-      { name: "LC 1035 â€” Uncrossed Lines", diff: "Medium" },
-      { name: "LC 516 â€” Longest Palindromic Subseq", diff: "Medium" },
-      { name: "LC 115 â€” Distinct Subsequences", diff: "Hard" },
-      { name: "LC 1092 â€” Shortest Common Superseq", diff: "Hard" },
-      { name: "LC 718 â€” Max Length Repeated Subarray", diff: "Medium" },
+      { name: "LC 1143 — Longest Common Subsequence", diff: "Medium" },
+      { name: "LC 1035 — Uncrossed Lines", diff: "Medium" },
+      { name: "LC 516 — Longest Palindromic Subseq", diff: "Medium" },
+      { name: "LC 115 — Distinct Subsequences", diff: "Hard" },
+      { name: "LC 1092 — Shortest Common Superseq", diff: "Hard" },
+      { name: "LC 718 — Max Length Repeated Subarray", diff: "Medium" },
     ],
   },
 };
 
-/* â€”â€”â€” Build steps: Edit Distance â€”â€”â€” */
+/* ——— Build steps: Edit Distance ——— */
 function buildEditSteps(prob) {
   const { s1, s2 } = prob;
   const m = s1.length, n = s2.length;
@@ -101,15 +101,15 @@ function buildEditSteps(prob) {
   const k = (i, j) => `${i},${j}`;
 
   steps.push({
-    title: "Initialize â€” Define Recurrence",
-    detail: `Transform "${s1}" â†’ "${s2}". dp[i][j] = min ops to convert first i chars of word1 to first j chars of word2.`,
+    title: "Initialize — Define Recurrence",
+    detail: `Transform "${s1}" → "${s2}". dp[i][j] = min ops to convert first i chars of word1 to first j chars of word2.`,
     dp: snap(), op: snapOp(), current: null, phase: "init", codeHL: [0, 1, 2],
     path: [], candidates: null, changedCell: null, finalized: new Set(finalized),
   });
 
   for (let j = 0; j <= n; j++) { dp[0][j] = j; op[0][j] = j === 0 ? "start" : "insert"; finalized.add(k(0, j)); }
   steps.push({
-    title: "Base Case: First Row â€” Insert All",
+    title: "Base Case: First Row — Insert All",
     detail: `Converting "" to "${s2}".substring(0,j): need j insertions. dp[0][j] = j.`,
     dp: snap(), op: snapOp(), current: [0, n], phase: "base", codeHL: [4, 5],
     path: [], candidates: null, changedCell: null, finalized: new Set(finalized),
@@ -117,7 +117,7 @@ function buildEditSteps(prob) {
 
   for (let i = 0; i <= m; i++) { dp[i][0] = i; op[i][0] = i === 0 ? "start" : "delete"; finalized.add(k(i, 0)); }
   steps.push({
-    title: "Base Case: First Column â€” Delete All",
+    title: "Base Case: First Column — Delete All",
     detail: `Converting "${s1}".substring(0,i) to "": need i deletions. dp[i][0] = i.`,
     dp: snap(), op: snapOp(), current: [m, 0], phase: "base", codeHL: [4, 5],
     path: [], candidates: null, changedCell: null, finalized: new Set(finalized),
@@ -130,7 +130,7 @@ function buildEditSteps(prob) {
         op[i][j] = "match";
         finalized.add(k(i, j));
         steps.push({
-          title: `(${i},${j}): '${s1[i-1]}' == '${s2[j-1]}' â€” Match (free)`,
+          title: `(${i},${j}): '${s1[i-1]}' == '${s2[j-1]}' — Match (free)`,
           detail: `Characters match. dp[${i}][${j}] = dp[${i-1}][${j-1}] = ${dp[i][j]}. Diagonal, cost 0.`,
           dp: snap(), op: snapOp(), current: [i, j], phase: "match", codeHL: [9, 10],
           path: [], candidates: null, changedCell: [i, j], finalized: new Set(finalized),
@@ -146,7 +146,7 @@ function buildEditSteps(prob) {
         finalized.add(k(i, j));
 
         steps.push({
-          title: `(${i},${j}): '${s1[i-1]}' â‰  '${s2[j-1]}' â€” ${op[i][j]} = ${dp[i][j]}`,
+          title: `(${i},${j}): '${s1[i-1]}' ≠ '${s2[j-1]}' — ${op[i][j]} = ${dp[i][j]}`,
           detail: `Insert(â†): ${dp[i][j-1]}+1=${ins}. Delete(â†‘): ${dp[i-1][j]}+1=${del}. Replace(â†–): ${dp[i-1][j-1]}+1=${rep}. Best: ${op[i][j]}.`,
           dp: snap(), op: snapOp(), current: [i, j], phase: "fill", codeHL: [12, 13, 14, 15],
           path: [], candidates: { ins, del, rep }, changedCell: [i, j], finalized: new Set(finalized),
@@ -167,8 +167,8 @@ function buildEditSteps(prob) {
   path.reverse();
 
   steps.push({
-    title: `âœ“ Complete â€” Edit Distance = ${dp[m][n]}`,
-    detail: `Minimum ${dp[m][n]} operations to transform "${s1}" â†’ "${s2}".`,
+    title: `✓ Complete — Edit Distance = ${dp[m][n]}`,
+    detail: `Minimum ${dp[m][n]} operations to transform "${s1}" → "${s2}".`,
     dp: snap(), op: snapOp(), current: null, phase: "done", codeHL: [17],
     path, candidates: null, changedCell: null, finalized: new Set(finalized),
   });
@@ -176,7 +176,7 @@ function buildEditSteps(prob) {
   return steps;
 }
 
-/* â€”â€”â€” Build steps: LCS â€”â€”â€” */
+/* ——— Build steps: LCS ——— */
 function buildLCSSteps(prob) {
   const { s1, s2 } = prob;
   const m = s1.length, n = s2.length;
@@ -194,7 +194,7 @@ function buildLCSSteps(prob) {
   for (let j = 0; j <= n; j++) { op[0][j] = "base"; finalized.add(k(0, j)); }
 
   steps.push({
-    title: "Initialize â€” Base Cases All Zero",
+    title: "Initialize — Base Cases All Zero",
     detail: `"${s1}" vs "${s2}". dp[i][j] = LCS length of first i chars and first j chars. Row 0 and col 0 are 0 (empty string has LCS 0).`,
     dp: snap(), op: snapOp(), current: null, phase: "init", codeHL: [0, 1, 2],
     path: [], candidates: null, changedCell: null, finalized: new Set(finalized),
@@ -207,7 +207,7 @@ function buildLCSSteps(prob) {
         op[i][j] = "match";
         finalized.add(k(i, j));
         steps.push({
-          title: `(${i},${j}): '${s1[i-1]}' == '${s2[j-1]}' â€” Match! +1`,
+          title: `(${i},${j}): '${s1[i-1]}' == '${s2[j-1]}' — Match! +1`,
           detail: `Characters match. dp[${i}][${j}] = dp[${i-1}][${j-1}] + 1 = ${dp[i-1][j-1]} + 1 = ${dp[i][j]}.`,
           dp: snap(), op: snapOp(), current: [i, j], phase: "match", codeHL: [6, 7],
           path: [], candidates: null, changedCell: [i, j], finalized: new Set(finalized),
@@ -249,7 +249,7 @@ function buildLCSSteps(prob) {
   lcsChars.reverse();
 
   steps.push({
-    title: `âœ“ Complete â€” LCS Length = ${dp[m][n]}`,
+    title: `✓ Complete — LCS Length = ${dp[m][n]}`,
     detail: `LCS of "${s1}" and "${s2}" is "${lcsChars.join("")}" (length ${dp[m][n]}).`,
     dp: snap(), op: snapOp(), current: null, phase: "done", codeHL: [13],
     path, candidates: null, changedCell: null, finalized: new Set(finalized),
@@ -263,7 +263,7 @@ function buildSteps(prob, key) {
   return key === "edit" ? buildEditSteps(prob) : buildLCSSteps(prob);
 }
 
-/* â€”â€”â€” Matrix SVG (shared, adapts to problem) â€”â€”â€” */
+/* ——— Matrix SVG (shared, adapts to problem) ——— */
 function MatrixView({ step, prob, exKey }) {
   const { s1, s2 } = prob;
   const m = s1.length, n = s2.length;
@@ -272,9 +272,9 @@ function MatrixView({ step, prob, exKey }) {
   const pathSet = new Set((path || []).map(([r, c]) => `${r},${c}`));
 
   const arrow = (o) => {
-    if (o === "match" || o === "replace") return "â†–";
+    if (o === "match" || o === "replace") return "↖";
     if (o === "insert" || o === "skip-s2") return "â†";
-    if (o === "delete" || o === "skip-s1") return "â†‘";
+    if (o === "delete" || o === "skip-s1") return "↑";
     return "";
   };
 
@@ -282,14 +282,14 @@ function MatrixView({ step, prob, exKey }) {
     <svg viewBox={`0 0 ${headerW + (n + 1) * cellW + 6} ${headerH + (m + 1) * cellH + 6}`} className="w-full" style={{ maxHeight: 230 }}>
       {/* Column headers */}
       <text x={headerW + cellW / 2} y={headerH / 2 + 2} textAnchor="middle" dominantBaseline="central"
-        fill="#71717a" fontSize="9" fontFamily="monospace">Îµ</text>
+        fill="#71717a" fontSize="9" fontFamily="monospace">ε</text>
       {s2.split("").map((c, j) => (
         <text key={`ch-${j}`} x={headerW + (j + 1) * cellW + cellW / 2} y={headerH / 2 + 2} textAnchor="middle" dominantBaseline="central"
           fill={current && current[1] === j + 1 ? "#f59e0b" : "#a1a1aa"} fontSize="11" fontWeight="700" fontFamily="monospace">{c}</text>
       ))}
       {/* Row headers */}
       <text x={headerW / 2} y={headerH + cellH / 2 + 2} textAnchor="middle" dominantBaseline="central"
-        fill="#71717a" fontSize="9" fontFamily="monospace">Îµ</text>
+        fill="#71717a" fontSize="9" fontFamily="monospace">ε</text>
       {s1.split("").map((c, i) => (
         <text key={`rh-${i}`} x={headerW / 2} y={headerH + (i + 1) * cellH + cellH / 2 + 2} textAnchor="middle" dominantBaseline="central"
           fill={current && current[0] === i + 1 ? "#3b82f6" : "#a1a1aa"} fontSize="11" fontWeight="700" fontFamily="monospace">{c}</text>
@@ -334,7 +334,7 @@ function MatrixView({ step, prob, exKey }) {
   );
 }
 
-/* â€”â€”â€” IO Panel: Edit Distance â€”â€”â€” */
+/* ——— IO Panel: Edit Distance ——— */
 function EditIOPanel({ step, prob }) {
   const { s1, s2, expectedResult } = prob;
   const m = s1.length, n = s2.length;
@@ -361,7 +361,7 @@ function EditIOPanel({ step, prob }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs">
           <span className="text-zinc-500">dp[{m}][{n}] = </span>
@@ -379,7 +379,7 @@ function EditIOPanel({ step, prob }) {
                 <span className={`w-14 ${o === "match" ? "text-emerald-400" : "text-amber-400"}`}>{o}</span>
                 <span className="text-zinc-600">
                   {o === "match" ? `'${s1[r - 1]}'='${s2[c - 1]}'` :
-                   o === "replace" ? `'${s1[r - 1]}'â†’'${s2[c - 1]}'` :
+                   o === "replace" ? `'${s1[r - 1]}'→'${s2[c - 1]}'` :
                    o === "insert" ? `+' ${s2[c - 1]}'` :
                    `-'${s1[r - 1]}'`}
                 </span>
@@ -392,7 +392,7 @@ function EditIOPanel({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” IO Panel: LCS â€”â€”â€” */
+/* ——— IO Panel: LCS ——— */
 function LCSIOPanel({ step, prob }) {
   const { s1, s2, expectedResult, expectedLCS } = prob;
   const m = s1.length, n = s2.length;
@@ -422,7 +422,7 @@ function LCSIOPanel({ step, prob }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs">
           <span className="text-zinc-500">dp[{m}][{n}] = </span>
@@ -438,7 +438,7 @@ function LCSIOPanel({ step, prob }) {
             <div className="flex items-center gap-1.5 text-[10px] font-mono">
               <span className="text-zinc-500">lcs =</span>
               <span className="text-emerald-300 font-bold">"{step.lcsStr}"</span>
-              <span className="text-emerald-600">âœ“</span>
+              <span className="text-emerald-600">✓</span>
             </div>
           </div>
         )}
@@ -447,7 +447,7 @@ function LCSIOPanel({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” State panels: Edit Distance â€”â€”â€” */
+/* ——— State panels: Edit Distance ——— */
 function EditState({ step, prob }) {
   const { s1, s2 } = prob;
   return (
@@ -458,8 +458,8 @@ function EditState({ step, prob }) {
           <div className="flex gap-2 justify-center">
             {[
               { label: "Insert â†", val: step.candidates.ins, key: "ins" },
-              { label: "Delete â†‘", val: step.candidates.del, key: "del" },
-              { label: "Replace â†–", val: step.candidates.rep, key: "rep" },
+              { label: "Delete ↑", val: step.candidates.del, key: "del" },
+              { label: "Replace ↖", val: step.candidates.rep, key: "rep" },
             ].map((c) => {
               const best = c.val === Math.min(step.candidates.ins, step.candidates.del, step.candidates.rep);
               const chosen = best && step.dp[step.current[0]][step.current[1]] === c.val;
@@ -484,7 +484,7 @@ function EditState({ step, prob }) {
                 <span className={`w-14 ${o === "match" ? "text-emerald-400" : "text-amber-400"}`}>{o}</span>
                 <span className="text-zinc-500">
                   {o === "match" ? `'${s1[r - 1]}' = '${s2[c - 1]}'` :
-                   o === "replace" ? `'${s1[r - 1]}' â†’ '${s2[c - 1]}'` :
+                   o === "replace" ? `'${s1[r - 1]}' → '${s2[c - 1]}'` :
                    o === "insert" ? `insert '${s2[c - 1]}'` :
                    `delete '${s1[r - 1]}'`}
                 </span>
@@ -497,7 +497,7 @@ function EditState({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” State panels: LCS â€”â€”â€” */
+/* ——— State panels: LCS ——— */
 function LCSState({ step }) {
   return (
     <>
@@ -506,7 +506,7 @@ function LCSState({ step }) {
           <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Two Choices</div>
           <div className="flex gap-3 justify-center">
             <div className={`flex-1 text-center p-2.5 rounded-xl border ${step.candidates.up >= step.candidates.left ? "bg-blue-950/50 border-blue-800" : "border-zinc-800"}`}>
-              <div className="text-[10px] text-blue-400 mb-1">Skip s1 (â†‘)</div>
+              <div className="text-[10px] text-blue-400 mb-1">Skip s1 (↑)</div>
               <div className={`text-xl font-bold font-mono ${step.candidates.up >= step.candidates.left ? "text-blue-300" : "text-zinc-600"}`}>{step.candidates.up}</div>
             </div>
             <div className="flex items-center text-zinc-600 font-bold text-sm">vs</div>
@@ -532,7 +532,7 @@ function LCSState({ step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines, code }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -554,7 +554,7 @@ function CodePanel({ highlightLines, code }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar (with slider for many steps) â€”â€”â€” */
+/* ——— Navigation Bar (with slider for many steps) ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -575,12 +575,12 @@ function NavBar({ si, setSi, total }) {
         }
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
-        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next â†’</button>
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function DP2DViz() {
   const [exKey, setExKey] = useState("edit");
   const [si, setSi] = useState(0);
@@ -596,7 +596,7 @@ export default function DP2DViz() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">2D Dynamic Programming</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">{prob.title} â€¢ {prob.subtitle}</p>
+            <p className="text-zinc-500 text-sm mt-0.5">{prob.title} • {prob.subtitle}</p>
           </div>
           <div className="flex gap-2">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -622,7 +622,7 @@ export default function DP2DViz() {
         {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Matrix â€”â€” */}
+          {/* —— COL 1: IO + Matrix —— */}
           <div className="col-span-3 space-y-3">
             {exKey === "edit"
               ? <EditIOPanel step={step} prob={prob} />
@@ -639,7 +639,7 @@ export default function DP2DViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -669,14 +669,14 @@ export default function DP2DViz() {
                   <div className="flex gap-1.5 items-center">
                     <span className="text-[10px] text-zinc-600">i={step.current[0]}</span>
                     <span className="font-mono text-blue-300 font-bold text-sm">
-                      {step.current[0] > 0 ? `'${prob.s1[step.current[0] - 1]}'` : "Îµ"}
+                      {step.current[0] > 0 ? `'${prob.s1[step.current[0] - 1]}'` : "ε"}
                     </span>
                   </div>
-                  <span className="text-zinc-700">Ã—</span>
+                  <span className="text-zinc-700">×</span>
                   <div className="flex gap-1.5 items-center">
                     <span className="text-[10px] text-zinc-600">j={step.current[1]}</span>
                     <span className="font-mono text-amber-300 font-bold text-sm">
-                      {step.current[1] > 0 ? `'${prob.s2[step.current[1] - 1]}'` : "Îµ"}
+                      {step.current[1] > 0 ? `'${prob.s2[step.current[1] - 1]}'` : "ε"}
                     </span>
                   </div>
                   <span className="ml-auto font-mono text-lg font-bold text-zinc-300">
@@ -691,7 +691,7 @@ export default function DP2DViz() {
               : <LCSState step={step} />}
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} code={prob.code} />
           </div>
@@ -704,7 +704,7 @@ export default function DP2DViz() {
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
               {prob.whenToUse.map((text, i) => (
-                <li key={i} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>{text}</li>
+                <li key={i} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>{text}</li>
               ))}
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
@@ -721,7 +721,7 @@ export default function DP2DViz() {
             <div className="space-y-1.5 text-xs">
               {prob.classics.map((c, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-amber-500/60">â€¢</span>
+                  <span className="text-amber-500/60">•</span>
                   <span className="text-zinc-400">{c.name}</span>
                   <span className={`ml-auto text-[10px] ${c.diff === "Hard" ? "text-red-700" : c.diff === "Easy" ? "text-emerald-700" : "text-amber-700"}`}>{c.diff}</span>
                 </div>

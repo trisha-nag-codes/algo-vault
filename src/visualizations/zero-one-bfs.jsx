@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const ROWS = 6, COLS = 7;
 const ARROWS = [
   [ 0, 0, 1, 0, 0, 1, 0],
@@ -15,7 +15,7 @@ const DIR_DELTAS = [[0,1],[1,0],[0,-1],[-1,0]];
 const key = (r, c) => `${r},${c}`;
 const START = [0, 0], GOAL = [5, 6];
 
-/* â”€â”€â”€ Precompute Expected Output â”€â”€â”€ */
+/* ─── Precompute Expected Output ─── */
 const EXPECTED = (() => {
   const dist = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
   const parent = Array.from({ length: ROWS }, () => new Array(COLS).fill(null));
@@ -60,7 +60,7 @@ const EXPECTED = (() => {
   return { path: [], cost: -1, expanded };
 })();
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps() {
   const dist = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
   const parent = Array.from({ length: ROWS }, () => new Array(COLS).fill(null));
@@ -73,7 +73,7 @@ function buildSteps() {
   const dequeSnap = () => deque.map(x => [...x]);
 
   steps.push({
-    title: "Initialize â€“ Start at (0,0), Cost = 0",
+    title: "Initialize – Start at (0,0), Cost = 0",
     detail: `dist[0][0]=0. Push (cost=0, (0,0)) into the deque. Arrow directions define free (cost 0) vs paid (cost 1) moves.`,
     dist: dist.map(r => [...r]), visited: new Set(),
     deque: dequeSnap(), current: null, neighbors: [],
@@ -105,7 +105,7 @@ function buildSteps() {
       }
 
       steps.push({
-        title: `âœ“ Goal Reached (${r},${c}) â€“ Cost = ${d}`,
+        title: `✓ Goal Reached (${r},${c}) – Cost = ${d}`,
         detail: `Minimum cost path found. Total cost: ${d} direction changes. ${stepCount} nodes expanded. Deque maintained sorted order throughout.`,
         dist: dist.map(r => [...r]), visited: new Set(visited),
         deque: dequeSnap(), current: [r, c], neighbors: [],
@@ -151,8 +151,8 @@ function buildSteps() {
 
     /* Pop step */
     steps.push({
-      title: `Pop (${r},${c}) â€“ dist=${d}, arrow=${DIR_NAMES[cellDir]}`,
-      detail: `Deque-pop â†’ (${d}, (${r},${c})). Not visited, so mark visited.`,
+      title: `Pop (${r},${c}) – dist=${d}, arrow=${DIR_NAMES[cellDir]}`,
+      detail: `Deque-pop → (${d}, (${r},${c})). Not visited, so mark visited.`,
       dist: dist.map(r_ => [...r_]), visited: new Set(visited),
       deque: dequeSnap(), current: [r, c], neighbors: [],
       phase: "visit", codeHL: [7, 8, 9, 10],
@@ -163,14 +163,14 @@ function buildSteps() {
     if (nbs.length > 0) {
       steps.push({
         title: freeNbs.length > 0 && paidNbs.length > 0
-          ? `Relax: ${freeNbs.length} freeâ†’front, ${paidNbs.length} paidâ†’back`
+          ? `Relax: ${freeNbs.length} free→front, ${paidNbs.length} paid→back`
           : freeNbs.length > 0
-          ? `Relax: ${freeNbs.length} free neighbor(s) â†’ front`
-          : `Relax: ${paidNbs.length} paid neighbor(s) â†’ back`,
+          ? `Relax: ${freeNbs.length} free neighbor(s) → front`
+          : `Relax: ${paidNbs.length} paid neighbor(s) → back`,
         detail:
-          (freeNbs.length > 0 ? `Free (w=0, â†’front): [${freeNbs.map(n => `(${n.r},${n.c}) d=${n.nd}`).join(", ")}]. ` : "")
-          + (paidNbs.length > 0 ? `Paid (w=1, â†’back): [${paidNbs.map(n => `(${n.r},${n.c}) d=${n.nd}`).join(", ")}]. ` : "")
-          + "Deque stays sorted: front â‰¤ back.",
+          (freeNbs.length > 0 ? `Free (w=0, →front): [${freeNbs.map(n => `(${n.r},${n.c}) d=${n.nd}`).join(", ")}]. ` : "")
+          + (paidNbs.length > 0 ? `Paid (w=1, →back): [${paidNbs.map(n => `(${n.r},${n.c}) d=${n.nd}`).join(", ")}]. ` : "")
+          + "Deque stays sorted: front ≤ back.",
         dist: dist.map(r_ => [...r_]), visited: new Set(visited),
         deque: dequeSnap(), current: [r, c],
         neighbors: nbs.map(n => [n.r, n.c, n.cost]),
@@ -196,7 +196,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ Grid SVG â”€â”€â”€ */
+/* ─── Grid SVG ─── */
 function GridView({ step }) {
   const { dist, visited, current, neighbors, path } = step;
   const cellSize = 50;
@@ -255,7 +255,7 @@ function GridView({ step }) {
               {isWall && (
                 <text x={c * cellSize + cellSize / 2 + 1} y={r * cellSize + cellSize / 2 + 1}
                   textAnchor="middle" dominantBaseline="central"
-                  fill="#3f3f46" fontSize="14">â–ª</text>
+                  fill="#3f3f46" fontSize="14">▪</text>
               )}
               {isStart && !isCurrent && (
                 <text x={c * cellSize + 6} y={r * cellSize + cellSize - 6}
@@ -273,7 +273,7 @@ function GridView({ step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (clean function) â”€â”€â”€ */
+/* ─── Python Code (clean function) ─── */
 const CODE = [
   { id: 0,  text: `from collections import deque` },
   { id: 1,  text: `` },
@@ -299,7 +299,7 @@ const CODE = [
   { id: 21, text: `    return -1` },
 ];
 
-/* â”€â”€â”€ IO Panel â”€â”€â”€ */
+/* ─── IO Panel ─── */
 function IOPanel({ step }) {
   const { phase, expanded, path, finalized } = step;
   const done = phase === "done";
@@ -311,7 +311,7 @@ function IOPanel({ step }) {
       <div>
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
-          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}Ã—{COLS}</span> <span className="text-zinc-600">(arrows + 3 walls)</span></div>
+          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}×{COLS}</span> <span className="text-zinc-600">(arrows + 3 walls)</span></div>
           <div><span className="text-zinc-500">start</span> = <span className="text-violet-400">({START[0]},{START[1]})</span>  <span className="text-zinc-500">goal</span> = <span className="text-red-400">({GOAL[0]},{GOAL[1]})</span></div>
           <div><span className="text-zinc-500">w(e) </span> = <span className="text-emerald-400">0</span> <span className="text-zinc-600">(with arrow)</span> or <span className="text-orange-400">1</span> <span className="text-zinc-600">(against)</span></div>
         </div>
@@ -330,7 +330,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -351,7 +351,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -378,7 +378,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -404,12 +404,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function ZeroOneBFSViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -421,14 +421,14 @@ export default function ZeroOneBFSViz() {
         {/* â•â•â• 1. Header â•â•â• */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">0-1 BFS</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Deque-Based Shortest Path for Binary Edge Weights â€¢ O(V+E)</p>
+          <p className="text-zinc-500 text-sm mt-0.5">Deque-Based Shortest Path for Binary Edge Weights • O(V+E)</p>
         </div>
 
         {/* â•â•â• 2. Core Idea â•â•â• */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            When edge weights are only 0 or 1, replace Dijkstra's heap with a deque: push cost-0 neighbors to the <span className="text-emerald-400 font-semibold">front</span>, cost-1 to the <span className="text-orange-400 font-semibold">back</span>. The deque stays naturally sorted (front â‰¤ back), giving Dijkstra-level optimality in O(V+E) â€” no log factor.
+            When edge weights are only 0 or 1, replace Dijkstra's heap with a deque: push cost-0 neighbors to the <span className="text-emerald-400 font-semibold">front</span>, cost-1 to the <span className="text-orange-400 font-semibold">back</span>. The deque stays naturally sorted (front ≤ back), giving Dijkstra-level optimality in O(V+E) — no log factor.
           </p>
         </div>
 
@@ -440,24 +440,24 @@ export default function ZeroOneBFSViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Grid â”€â”€ */}
+          {/* ── COL 1: IO + Grid ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}Ã—{COLS} â€¢ arrows = free dir â€¢ numbers = min cost</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}×{COLS} • arrows = free dir • numbers = min cost</div>
               <GridView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-blue-600 inline-block" />Current</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-800 inline-block" />â†’front</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-orange-900 inline-block" />â†’back</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-800 inline-block" />→front</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-orange-900 inline-block" />→back</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-slate-800 inline-block" />Visited</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-600 inline-block" />Path</span>
               </div>
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -478,7 +478,7 @@ export default function ZeroOneBFSViz() {
             {/* Deque */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                Deque ({step.deque.length}) â€” <span className="text-emerald-400">front</span> â€¦ <span className="text-orange-400">back</span>
+                Deque ({step.deque.length}) — <span className="text-emerald-400">front</span> … <span className="text-orange-400">back</span>
               </div>
               <div className="flex gap-1 flex-wrap min-h-[28px] items-center">
                 {step.deque.length > 0
@@ -517,7 +517,7 @@ export default function ZeroOneBFSViz() {
                   <div className="text-[9px] text-zinc-600">visited</div>
                 </div>
                 <div className="flex-1 text-center">
-                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "â€”"}</div>
+                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "—"}</div>
                   <div className="text-[9px] text-zinc-600">path cost</div>
                 </div>
               </div>
@@ -526,9 +526,9 @@ export default function ZeroOneBFSViz() {
             {/* Final path */}
             {step.phase === "done" && step.path.length > 0 && (
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
-                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Shortest Path ({START[0]},{START[1]}) â†’ ({GOAL[0]},{GOAL[1]})</div>
+                <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Shortest Path ({START[0]},{START[1]}) → ({GOAL[0]},{GOAL[1]})</div>
                 <div className="font-mono text-[10px] text-emerald-300">
-                  {step.path.map(([r, c]) => `(${r},${c})`).join(" â†’ ")}
+                  {step.path.map(([r, c]) => `(${r},${c})`).join(" → ")}
                 </div>
                 <div className="mt-2 flex gap-4 text-[10px]">
                   <span className="text-zinc-500">Cost: <span className="text-emerald-300 font-bold">{step.path.length - 1}</span></span>
@@ -538,7 +538,7 @@ export default function ZeroOneBFSViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -551,16 +551,16 @@ export default function ZeroOneBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Edge weights are exactly 0 and 1 â€” "some moves are free, others cost 1"</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Grid problems with conditional movement costs</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>When you need Dijkstra optimality but O(V+E) without the log factor</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Can generalize to 0-K BFS with a K+1 bucket queue</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Edge weights are exactly 0 and 1 — "some moves are free, others cost 1"</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Grid problems with conditional movement costs</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>When you need Dijkstra optimality but O(V+E) without the log factor</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Can generalize to 0-K BFS with a K+1 bucket queue</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) â€” no heap needed</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) — no heap needed</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V)</div>
-                <div><span className="text-zinc-500 font-semibold">Won't work:</span> Arbitrary weights â†’ Dijkstra; all equal â†’ plain BFS</div>
+                <div><span className="text-zinc-500 font-semibold">Won't work:</span> Arbitrary weights → Dijkstra; all equal → plain BFS</div>
               </div>
             </div>
           </div>
@@ -569,12 +569,12 @@ export default function ZeroOneBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1368 â€” Min Cost to Make Valid Path</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2290 â€” Min Obstacle Removal to Reach Corner</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1293 â€” Shortest Path with Obstacle Elimination</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1129 â€” Shortest Path with Alternating Colors</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">CF â€” Labyrinth (classic 0-1 BFS)</span><span className="ml-auto text-[10px] text-amber-700">CF</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">CF â€” Magic Stones (0-1 BFS on diff array)</span><span className="ml-auto text-[10px] text-amber-700">CF</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1368 — Min Cost to Make Valid Path</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2290 — Min Obstacle Removal to Reach Corner</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1293 — Shortest Path with Obstacle Elimination</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1129 — Shortest Path with Alternating Colors</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">CF — Labyrinth (classic 0-1 BFS)</span><span className="ml-auto text-[10px] text-amber-700">CF</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">CF — Magic Stones (0-1 BFS on diff array)</span><span className="ml-auto text-[10px] text-amber-700">CF</span></div>
             </div>
           </div>
         </div>

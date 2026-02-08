@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Configs â€”â€”â€” */
+/* ——— Problem Configs ——— */
 const PROBLEMS = {
   robber: {
     title: "House Robber",
     subtitle: "dp[i] = max(dp[i-1], dp[i-2] + nums[i])",
-    coreIdea: "At each house, you choose: skip it (keep dp[i-1]) or rob it (add its value to the best from two houses back, dp[i-2] + nums[i]). This \"take-or-skip\" recurrence is the foundation of 1D DP â€” it appears in Climbing Stairs, Decode Ways, and any problem where each decision only depends on a fixed window of previous states.",
+    coreIdea: "At each house, you choose: skip it (keep dp[i-1]) or rob it (add its value to the best from two houses back, dp[i-2] + nums[i]). This \"take-or-skip\" recurrence is the foundation of 1D DP — it appears in Climbing Stairs, Decode Ways, and any problem where each decision only depends on a fixed window of previous states.",
     nums: [2, 7, 9, 3, 1, 6, 4],
     expectedDp: [2, 7, 11, 11, 12, 17, 18],
     expectedResult: 18,
@@ -28,25 +28,25 @@ const PROBLEMS = {
     ],
     whenToUse: [
       "Maximize/minimize over a linear sequence with adjacent constraints",
-      "dp[i] depends on a fixed-size window of previous states (i-1, i-2, â€¦)",
+      "dp[i] depends on a fixed-size window of previous states (i-1, i-2, …)",
       "Take-or-skip decisions at each element (rob, climb, decode)",
       "Can be space-optimized to O(1) when only prev1/prev2 needed",
     ],
-    complexity: { time: "O(n) â€” single pass", space: "O(n) â†’ O(1) optimized", note: "prev2, prev1 = prev1, max(prev1, prev2+x)" },
+    complexity: { time: "O(n) — single pass", space: "O(n) → O(1) optimized", note: "prev2, prev1 = prev1, max(prev1, prev2+x)" },
     classics: [
-      { name: "LC 70 â€” Climbing Stairs", diff: "Easy" },
-      { name: "LC 198 â€” House Robber", diff: "Medium" },
-      { name: "LC 213 â€” House Robber II (circular)", diff: "Medium" },
-      { name: "LC 91 â€” Decode Ways", diff: "Medium" },
-      { name: "LC 139 â€” Word Break", diff: "Medium" },
-      { name: "LC 322 â€” Coin Change", diff: "Medium" },
-      { name: "LC 300 â€” Longest Increasing Subseq", diff: "Medium" },
+      { name: "LC 70 — Climbing Stairs", diff: "Easy" },
+      { name: "LC 198 — House Robber", diff: "Medium" },
+      { name: "LC 213 — House Robber II (circular)", diff: "Medium" },
+      { name: "LC 91 — Decode Ways", diff: "Medium" },
+      { name: "LC 139 — Word Break", diff: "Medium" },
+      { name: "LC 322 — Coin Change", diff: "Medium" },
+      { name: "LC 300 — Longest Increasing Subseq", diff: "Medium" },
     ],
   },
   coin: {
     title: "Coin Change",
     subtitle: "dp[i] = min(dp[i - c] + 1) for each coin c",
-    coreIdea: "For each amount i, try every coin c: if using coin c, you need dp[i-c] + 1 coins total. Take the minimum across all coins. This bottom-up approach builds from amount 0 upward, guaranteeing each subproblem is solved before it's needed. The classic unbounded knapsack variant â€” each coin can be reused.",
+    coreIdea: "For each amount i, try every coin c: if using coin c, you need dp[i-c] + 1 coins total. Take the minimum across all coins. This bottom-up approach builds from amount 0 upward, guaranteeing each subproblem is solved before it's needed. The classic unbounded knapsack variant — each coin can be reused.",
     coins: [1, 3, 4],
     amount: 6,
     expectedDp: [0, 1, 2, 1, 1, 2, 2],
@@ -70,21 +70,21 @@ const PROBLEMS = {
       "Minimum/maximum using unlimited supply of items (unbounded knapsack)",
       "Target sum reachable by combining values from a set",
       "dp[i] depends on dp[i - c] for each option c (multi-choice per state)",
-      "\"Fewest steps to reach target\" â€” BFS on values or DP on amounts",
+      "\"Fewest steps to reach target\" — BFS on values or DP on amounts",
     ],
-    complexity: { time: "O(amount Ã— len(coins))", space: "O(amount)", note: "Count ways â†’ dp[i] += dp[i-c] instead of min" },
+    complexity: { time: "O(amount × len(coins))", space: "O(amount)", note: "Count ways → dp[i] += dp[i-c] instead of min" },
     classics: [
-      { name: "LC 322 â€” Coin Change", diff: "Medium" },
-      { name: "LC 518 â€” Coin Change II (count ways)", diff: "Medium" },
-      { name: "LC 279 â€” Perfect Squares", diff: "Medium" },
-      { name: "LC 377 â€” Combination Sum IV", diff: "Medium" },
-      { name: "LC 983 â€” Minimum Cost for Tickets", diff: "Medium" },
-      { name: "LC 1449 â€” Largest Number (cost)", diff: "Hard" },
+      { name: "LC 322 — Coin Change", diff: "Medium" },
+      { name: "LC 518 — Coin Change II (count ways)", diff: "Medium" },
+      { name: "LC 279 — Perfect Squares", diff: "Medium" },
+      { name: "LC 377 — Combination Sum IV", diff: "Medium" },
+      { name: "LC 983 — Minimum Cost for Tickets", diff: "Medium" },
+      { name: "LC 1449 — Largest Number (cost)", diff: "Hard" },
     ],
   },
 };
 
-/* â€”â€”â€” Build steps: House Robber â€”â€”â€” */
+/* ——— Build steps: House Robber ——— */
 function buildRobberSteps(prob) {
   const { nums } = prob;
   const n = nums.length;
@@ -94,7 +94,7 @@ function buildRobberSteps(prob) {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Define Recurrence",
+    title: "Initialize — Define Recurrence",
     detail: `nums = [${nums.join(", ")}]. dp[i] = max money from houses 0..i. Recurrence: dp[i] = max(dp[i-1], dp[i-2] + nums[i]).`,
     dp: [...dp], choices: [...choices], current: -1, phase: "init", codeHL: [0, 1, 2],
     prev1: null, prev2: null, comparing: null, finalized: new Set(finalized),
@@ -106,7 +106,7 @@ function buildRobberSteps(prob) {
   finalized.add(0);
   steps.push({
     title: `Base Case: dp[0] = nums[0] = ${nums[0]}`,
-    detail: `Only one house â€” rob it. dp[0] = ${nums[0]}.`,
+    detail: `Only one house — rob it. dp[0] = ${nums[0]}.`,
     dp: [...dp], choices: [...choices], current: 0, phase: "base", codeHL: [4, 5],
     prev1: null, prev2: null, comparing: null, finalized: new Set(finalized),
     changedIdx: 0,
@@ -117,7 +117,7 @@ function buildRobberSteps(prob) {
   finalized.add(1);
   steps.push({
     title: `Base Case: dp[1] = max(${nums[0]}, ${nums[1]}) = ${dp[1]}`,
-    detail: `Two houses â€” rob the more valuable. ${dp[1] === nums[1] ? `Rob house 1 (${nums[1]}).` : `Rob house 0 (${nums[0]}), skip house 1.`}`,
+    detail: `Two houses — rob the more valuable. ${dp[1] === nums[1] ? `Rob house 1 (${nums[1]}).` : `Rob house 0 (${nums[0]}), skip house 1.`}`,
     dp: [...dp], choices: [...choices], current: 1, phase: "base", codeHL: [6],
     prev1: null, prev2: null, comparing: null, finalized: new Set(finalized),
     changedIdx: 1,
@@ -141,8 +141,8 @@ function buildRobberSteps(prob) {
     finalized.add(i);
 
     steps.push({
-      title: `dp[${i}] = ${dp[i]} â†’ ${choices[i] === "rob" ? "Rob ðŸ’°" : "Skip"}`,
-      detail: `${robVal > skipVal ? `Rob wins: ${robVal} > ${skipVal}` : robVal === skipVal ? `Equal â€” skip: ${skipVal}` : `Skip wins: ${skipVal} > ${robVal}`}. dp[${i}] = ${dp[i]}.`,
+      title: `dp[${i}] = ${dp[i]} → ${choices[i] === "rob" ? "Rob 💰" : "Skip"}`,
+      detail: `${robVal > skipVal ? `Rob wins: ${robVal} > ${skipVal}` : robVal === skipVal ? `Equal — skip: ${skipVal}` : `Skip wins: ${skipVal} > ${robVal}`}. dp[${i}] = ${dp[i]}.`,
       dp: [...dp], choices: [...choices], current: i, phase: "fill", codeHL: [11],
       prev1: i - 1, prev2: i - 2, comparing: null,
       finalized: new Set(finalized), changedIdx: i, prevDp,
@@ -158,7 +158,7 @@ function buildRobberSteps(prob) {
   robbed.reverse();
 
   steps.push({
-    title: `âœ“ Complete â€” Maximum = ${dp[n - 1]}`,
+    title: `✓ Complete — Maximum = ${dp[n - 1]}`,
     detail: `Robbed houses: [${robbed.map(i => `${i}(=${nums[i]})`).join(", ")}]. Total = ${robbed.reduce((s, i) => s + nums[i], 0)}.`,
     dp: [...dp], choices: [...choices], current: -1, phase: "done", codeHL: [13],
     prev1: null, prev2: null, comparing: null,
@@ -168,7 +168,7 @@ function buildRobberSteps(prob) {
   return steps;
 }
 
-/* â€”â€”â€” Build steps: Coin Change â€”â€”â€” */
+/* ——— Build steps: Coin Change ——— */
 function buildCoinSteps(prob) {
   const { coins, amount } = prob;
   const INF = Infinity;
@@ -179,7 +179,7 @@ function buildCoinSteps(prob) {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” dp[0] = 0, rest = âˆž",
+    title: "Initialize — dp[0] = 0, rest = ∞",
     detail: `coins = [${coins.join(", ")}], amount = ${amount}. dp[i] = min coins to make amount i.`,
     dp: [...dp], current: -1, phase: "init", codeHL: [0, 1, 4],
     tryCoin: null, tryResult: null, bestCoin: null,
@@ -208,8 +208,8 @@ function buildCoinSteps(prob) {
     steps.push({
       title: `Amount ${i}: Try Each Coin`,
       detail: attempts.map(a =>
-        `coin ${a.coin}: dp[${a.from}]${a.fromVal === INF ? "=âˆž" : "=" + a.fromVal}+1=${a.result === INF ? "âˆž" : a.result}`
-      ).join(" â”‚ ") + ".",
+        `coin ${a.coin}: dp[${a.from}]${a.fromVal === INF ? "=∞" : "=" + a.fromVal}+1=${a.result === INF ? "∞" : a.result}`
+      ).join(" │ ") + ".",
       dp: [...dp], current: i, phase: "compare", codeHL: [6, 7, 8],
       tryCoin: attempts, tryResult: bestAttempt.result,
       bestCoin: bestAttempt.result < INF ? bestAttempt.coin : null,
@@ -227,9 +227,9 @@ function buildCoinSteps(prob) {
     steps.push({
       title: improved
         ? `dp[${i}] = ${dp[i]} (used coin ${usedCoin[i]})`
-        : `dp[${i}] = âˆž â€” Not Reachable`,
+        : `dp[${i}] = ∞ — Not Reachable`,
       detail: improved
-        ? `Best option: coin ${usedCoin[i]} â†’ dp[${i - usedCoin[i]}] + 1 = ${dp[i]}.`
+        ? `Best option: coin ${usedCoin[i]} → dp[${i - usedCoin[i]}] + 1 = ${dp[i]}.`
         : `No coin can reach amount ${i}.`,
       dp: [...dp], current: i, phase: "fill", codeHL: [8, 9],
       tryCoin: null, tryResult: null, bestCoin: usedCoin[i],
@@ -245,7 +245,7 @@ function buildCoinSteps(prob) {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Minimum = ${dp[amount]} Coins`,
+    title: `✓ Complete — Minimum = ${dp[amount]} Coins`,
     detail: `dp[${amount}] = ${dp[amount]}. Coins used: [${coinsUsed.join(" + ")}] = ${coinsUsed.reduce((a, b) => a + b, 0)}.`,
     dp: [...dp], current: -1, phase: "done", codeHL: [11],
     tryCoin: null, tryResult: null, bestCoin: null,
@@ -260,7 +260,7 @@ function buildSteps(prob, key) {
   return key === "robber" ? buildRobberSteps(prob) : buildCoinSteps(prob);
 }
 
-/* â€”â€”â€” Houses SVG (robber) â€”â€”â€” */
+/* ——— Houses SVG (robber) ——— */
 function HousesView({ step, prob }) {
   const { nums } = prob;
   const { current, choices, robbed } = step;
@@ -294,7 +294,7 @@ function HousesView({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” Coins Bar SVG (coin change) â€”â€”â€” */
+/* ——— Coins Bar SVG (coin change) ——— */
 function CoinsBarView({ step, prob }) {
   const { coins, amount } = prob;
   const { current, dp, finalized, tryCoin, bestCoin } = step;
@@ -335,7 +335,7 @@ function CoinsBarView({ step, prob }) {
               fill={fill} stroke={stroke} strokeWidth={isCurr ? 2.5 : 1.5} />
             <text x={x + cellW / 2} y={barY + cellH / 2 + 1} textAnchor="middle" dominantBaseline="central"
               fill="#fff" fontSize="12" fontWeight="700" fontFamily="monospace">
-              {val === Infinity ? "âˆž" : val}
+              {val === Infinity ? "∞" : val}
             </text>
             <text x={x + cellW / 2} y={barY + cellH + 10} textAnchor="middle"
               fill="#71717a" fontSize="9" fontFamily="monospace">{i}</text>
@@ -346,7 +346,7 @@ function CoinsBarView({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” IO Panel (robber) â€”â€”â€” */
+/* ——— IO Panel (robber) ——— */
 function RobberIOPanel({ step, prob }) {
   const { nums, expectedDp, expectedResult, expectedDetail } = prob;
   const { phase, dp, finalized } = step;
@@ -373,7 +373,7 @@ function RobberIOPanel({ step, prob }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs flex items-center gap-0.5">
           <span className="text-zinc-500">dp = [</span>
@@ -398,7 +398,7 @@ function RobberIOPanel({ step, prob }) {
               <div key={idx} className="flex items-center gap-1.5 text-[10px]">
                 <span className="text-zinc-600 w-12">house {idx}:</span>
                 <span className="text-emerald-400/80">+{nums[idx]}</span>
-                <span className="text-emerald-600">âœ“</span>
+                <span className="text-emerald-600">✓</span>
               </div>
             ))}
             <div className="flex items-center gap-1.5 text-[10px] pt-1 border-t border-zinc-800">
@@ -412,7 +412,7 @@ function RobberIOPanel({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” IO Panel (coin change) â€”â€”â€” */
+/* ——— IO Panel (coin change) ——— */
 function CoinIOPanel({ step, prob }) {
   const { coins, amount, expectedDp, expectedResult, expectedDetail } = prob;
   const { phase, dp, finalized } = step;
@@ -440,14 +440,14 @@ function CoinIOPanel({ step, prob }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs flex items-center gap-0.5 flex-wrap">
           <span className="text-zinc-500">dp = [</span>
           {Array.from({ length: amount + 1 }).map((_, i) => {
             const isFinal = finalized.has(i);
             const val = dp[i];
-            const displayVal = val === Infinity ? "âˆž" : val;
+            const displayVal = val === Infinity ? "∞" : val;
             const matchesExpected = isFinal && val === expectedDp[i];
             return (
               <span key={i} className="flex items-center">
@@ -466,7 +466,7 @@ function CoinIOPanel({ step, prob }) {
               <div key={ci} className="flex items-center gap-1.5 text-[10px]">
                 <span className="text-zinc-600 w-12">coin {ci + 1}:</span>
                 <span className="text-emerald-400/80">{c}</span>
-                <span className="text-emerald-600">âœ“</span>
+                <span className="text-emerald-600">✓</span>
               </div>
             ))}
             <div className="flex items-center gap-1.5 text-[10px] pt-1 border-t border-zinc-800">
@@ -480,7 +480,7 @@ function CoinIOPanel({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” State panels: Robber â€”â€”â€” */
+/* ——— State panels: Robber ——— */
 function RobberState({ step, prob }) {
   const { nums } = prob;
   return (
@@ -510,12 +510,12 @@ function RobberState({ step, prob }) {
                   "bg-zinc-900 border-zinc-700 text-zinc-600"
                 }`}>
                   {changed && prevVal !== null && prevVal !== d
-                    ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === null ? "â€“" : prevVal}</span> {d}</span>
-                    : d !== null ? d : "â€“"}
+                    ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === null ? "–" : prevVal}</span> {d}</span>
+                    : d !== null ? d : "–"}
                 </div>
                 {isPrev1 && <span className="text-[8px] font-mono text-blue-600">i-1</span>}
                 {isPrev2 && <span className="text-[8px] font-mono text-amber-600">i-2</span>}
-                {isFinal && !isPrev1 && !isPrev2 && <span className="text-[8px] font-mono text-emerald-700">âœ“</span>}
+                {isFinal && !isPrev1 && !isPrev2 && <span className="text-[8px] font-mono text-emerald-700">✓</span>}
               </div>
             );
           })}
@@ -560,7 +560,7 @@ function RobberState({ step, prob }) {
   );
 }
 
-/* â€”â€”â€” State panels: Coin Change â€”â€”â€” */
+/* ——— State panels: Coin Change ——— */
 function CoinState({ step }) {
   return (
     <>
@@ -572,7 +572,7 @@ function CoinState({ step }) {
             const isDone = step.phase === "done";
             const isFinal = step.finalized.has(i);
             const prevVal = step.prevDp ? step.prevDp[i] : null;
-            const val = d === Infinity ? "âˆž" : d;
+            const val = d === Infinity ? "∞" : d;
             return (
               <div key={i} className="flex flex-col items-center gap-1">
                 <span className="text-[9px] text-zinc-600 font-mono">{i}</span>
@@ -584,10 +584,10 @@ function CoinState({ step }) {
                   "bg-zinc-900 border-zinc-700 text-zinc-300"
                 }`}>
                   {changed && prevVal !== null && prevVal !== d
-                    ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === Infinity ? "âˆž" : prevVal}</span> {val}</span>
+                    ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === Infinity ? "∞" : prevVal}</span> {val}</span>
                     : val}
                 </div>
-                {isFinal && <span className="text-[8px] font-mono text-emerald-700">âœ“</span>}
+                {isFinal && <span className="text-[8px] font-mono text-emerald-700">✓</span>}
               </div>
             );
           })}
@@ -605,7 +605,7 @@ function CoinState({ step }) {
                   <div className="text-[10px] text-zinc-500 mb-0.5">coin {a.coin}</div>
                   <div className="text-[9px] text-zinc-600 mb-1">dp[{a.from}]+1</div>
                   <div className={`text-lg font-bold font-mono ${isBest ? "text-emerald-300" : a.result === Infinity ? "text-zinc-600" : "text-zinc-400"}`}>
-                    {a.result === Infinity ? "âˆž" : a.result}
+                    {a.result === Infinity ? "∞" : a.result}
                   </div>
                   {isBest && <div className="text-[8px] text-emerald-500 mt-0.5">â† best</div>}
                 </div>
@@ -634,7 +634,7 @@ function CoinState({ step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines, code }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -656,7 +656,7 @@ function CodePanel({ highlightLines, code }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -669,12 +669,12 @@ function NavBar({ si, setSi, total }) {
         ))}
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
-        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next â†’</button>
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function DP1DViz() {
   const [exKey, setExKey] = useState("robber");
   const [si, setSi] = useState(0);
@@ -690,7 +690,7 @@ export default function DP1DViz() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">1D Dynamic Programming</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">{prob.title} â€¢ {prob.subtitle}</p>
+            <p className="text-zinc-500 text-sm mt-0.5">{prob.title} • {prob.subtitle}</p>
           </div>
           <div className="flex gap-2">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -716,7 +716,7 @@ export default function DP1DViz() {
         {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Viz â€”â€” */}
+          {/* —— COL 1: IO + Viz —— */}
           <div className="col-span-3 space-y-3">
             {exKey === "robber"
               ? <RobberIOPanel step={step} prob={prob} />
@@ -725,8 +725,8 @@ export default function DP1DViz() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
               <div className="text-[10px] text-zinc-500 mb-1">
                 {exKey === "robber"
-                  ? `${prob.nums.length} houses â€¢ no two adjacent`
-                  : `coins = [${prob.coins.join(",")}] â€¢ amount = ${prob.amount}`}
+                  ? `${prob.nums.length} houses • no two adjacent`
+                  : `coins = [${prob.coins.join(",")}] • amount = ${prob.amount}`}
               </div>
               {exKey === "robber"
                 ? <HousesView step={step} prob={prob} />
@@ -741,7 +741,7 @@ export default function DP1DViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
               <div className="flex items-center gap-3 mb-1.5">
@@ -763,7 +763,7 @@ export default function DP1DViz() {
               : <CoinState step={step} />}
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} code={prob.code} />
           </div>
@@ -776,7 +776,7 @@ export default function DP1DViz() {
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
               {prob.whenToUse.map((text, i) => (
-                <li key={i} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>{text}</li>
+                <li key={i} className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>{text}</li>
               ))}
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
@@ -793,7 +793,7 @@ export default function DP1DViz() {
             <div className="space-y-1.5 text-xs">
               {prob.classics.map((c, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-amber-500/60">â€¢</span>
+                  <span className="text-amber-500/60">•</span>
                   <span className="text-zinc-400">{c.name}</span>
                   <span className={`ml-auto text-[10px] ${c.diff === "Hard" ? "text-red-700" : c.diff === "Easy" ? "text-emerald-700" : "text-amber-700"}`}>{c.diff}</span>
                 </div>

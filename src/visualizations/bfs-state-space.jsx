@@ -1,15 +1,15 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const BEGIN = "hit";
 const END = "cog";
 const WORD_LIST = ["hot", "dot", "dog", "lot", "log", "cog"];
 
-/* â”€â”€â”€ Expected Output (precomputed) â”€â”€â”€ */
+/* ─── Expected Output (precomputed) ─── */
 const EXPECTED_LENGTH = 5;
 const EXPECTED_PATH = ["hit", "hot", "dot", "dog", "cog"];
 
-/* â”€â”€â”€ Helpers â”€â”€â”€ */
+/* ─── Helpers ─── */
 function diffByOne(a, b) {
   if (a.length !== b.length) return false;
   let diff = 0;
@@ -28,7 +28,7 @@ function diffChar(a, b) {
   return null;
 }
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps() {
   const steps = [];
   const wordSet = new Set(WORD_LIST);
@@ -41,7 +41,7 @@ function buildSteps() {
   const discoveredInOrder = [BEGIN];
 
   steps.push({
-    title: "Initialize â€“ Begin Word",
+    title: "Initialize – Begin Word",
     detail: `Start with "${BEGIN}". Target: "${END}". Word list has ${WORD_LIST.length} words. BFS explores words that differ by exactly 1 letter.`,
     visited: new Set(visited), queue: queue.map(x => [...x]), current: null, neighbor: null,
     level: 0, found: false, phase: "init", codeHL: [0, 2, 3, 4, 5],
@@ -72,8 +72,8 @@ function buildSteps() {
         if (visited.has(nb)) {
           const d = diffChar(word, nb);
           steps.push({
-            title: `"${word}" â†’ "${nb}" â€“ Already Visited`,
-            detail: `Change '${d.from}' â†’ '${d.to}' at position ${d.pos}. But "${nb}" was already discovered. Skip.`,
+            title: `"${word}" → "${nb}" – Already Visited`,
+            detail: `Change '${d.from}' → '${d.to}' at position ${d.pos}. But "${nb}" was already discovered. Skip.`,
             visited: new Set(visited), queue: [...nextQueue, ...queue.filter(([w]) => w !== word)].map(x => [...x]),
             current: word, neighbor: nb, level: level - 1, found: false, phase: "skip", codeHL: [10, 11, 12, 15],
             allEdges: [...allEdges], levelNodes: JSON.parse(JSON.stringify(levelNodes)), path: [],
@@ -95,8 +95,8 @@ function buildSteps() {
           while (c !== undefined) { path.unshift(c); c = parent[c]; }
 
           steps.push({
-            title: `âœ“ "${word}" â†’ "${nb}" â€“ Target Found!`,
-            detail: `Reached "${END}" at level ${level}! Ladder length = ${path.length}. Path: ${path.map(w => `"${w}"`).join(" â†’ ")}.`,
+            title: `✓ "${word}" → "${nb}" – Target Found!`,
+            detail: `Reached "${END}" at level ${level}! Ladder length = ${path.length}. Path: ${path.map(w => `"${w}"`).join(" → ")}.`,
             visited: new Set(visited), queue: [], current: word, neighbor: nb, level,
             found: true, phase: "found", codeHL: [13, 14],
             allEdges: [...allEdges], levelNodes: JSON.parse(JSON.stringify(levelNodes)), path,
@@ -108,8 +108,8 @@ function buildSteps() {
         const d = diffChar(word, nb);
         nextQueue.push([nb, nextLvl]);
         steps.push({
-          title: `"${word}" â†’ "${nb}" â€“ New Word Discovered`,
-          detail: `Change '${d.from}' â†’ '${d.to}' at position ${d.pos}. "${nb}" not visited. Mark visited, enqueue at level ${level}.`,
+          title: `"${word}" → "${nb}" – New Word Discovered`,
+          detail: `Change '${d.from}' → '${d.to}' at position ${d.pos}. "${nb}" not visited. Mark visited, enqueue at level ${level}.`,
           visited: new Set(visited), queue: [...nextQueue, ...queue.filter(([w]) => w !== word)].map(x => [...x]),
           current: word, neighbor: nb, level: level - 1, found: false, phase: "discover", codeHL: [15, 16, 17],
           allEdges: [...allEdges], levelNodes: JSON.parse(JSON.stringify(levelNodes)), path: [],
@@ -123,7 +123,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ State Graph SVG â”€â”€â”€ */
+/* ─── State Graph SVG ─── */
 function StateGraphView({ step }) {
   const { visited, current, neighbor, allEdges, path, found } = step;
   const words = [...visited];
@@ -184,7 +184,7 @@ function StateGraphView({ step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code â”€â”€â”€ */
+/* ─── Python Code ─── */
 const CODE = [
   { id: 0,  text: `from collections import deque` },
   { id: 1,  text: `` },
@@ -208,7 +208,7 @@ const CODE = [
   { id: 19, text: `    return 0` },
 ];
 
-/* â”€â”€â”€ Input / Output Panel â”€â”€â”€ */
+/* ─── Input / Output Panel ─── */
 function IOPanel({ step }) {
   const { phase, foundPath, discoveredInOrder } = step;
   const done = phase === "found";
@@ -237,7 +237,7 @@ function IOPanel({ step }) {
         <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1.5">Expected Output</div>
         <div className="font-mono text-xs space-y-0.5">
           <div><span className="text-zinc-500">length = </span><span className="text-zinc-300">{EXPECTED_LENGTH}</span></div>
-          <div><span className="text-zinc-500">path = </span><span className="text-zinc-300">{EXPECTED_PATH.join(" â†’ ")}</span></div>
+          <div><span className="text-zinc-500">path = </span><span className="text-zinc-300">{EXPECTED_PATH.join(" → ")}</span></div>
         </div>
       </div>
 
@@ -245,7 +245,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {pathMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {pathMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs space-y-1">
           <div>
@@ -269,10 +269,10 @@ function IOPanel({ step }) {
                   <span className="text-emerald-400/80 font-mono">{w}</span>
                   {d && (
                     <span className="text-zinc-700 ml-1">
-                      [{d.pos}] '{d.from}'â†’'{d.to}'
+                      [{d.pos}] '{d.from}'→'{d.to}'
                     </span>
                   )}
-                  {w === END && <span className="text-emerald-600">âœ“</span>}
+                  {w === END && <span className="text-emerald-600">✓</span>}
                 </div>
               );
             })}
@@ -283,7 +283,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -310,7 +310,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -327,12 +327,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function BFSStateSpaceViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -344,14 +344,14 @@ export default function BFSStateSpaceViz() {
         {/* Header */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">BFS on State Space</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Implicit Graph â€“ Word Ladder: "{BEGIN}" â†’ "{END}"</p>
+          <p className="text-zinc-500 text-sm mt-0.5">Implicit Graph – Word Ladder: "{BEGIN}" → "{END}"</p>
         </div>
 
         {/* Core Idea */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            The graph isn't given explicitly â€” each <strong className="text-zinc-300">word is a state</strong>, and two words are connected by an edge if they differ by exactly <strong className="text-zinc-300">one letter</strong>. BFS explores states level by level, so the first time we reach the target word it's via the <strong className="text-zinc-300">shortest transformation sequence</strong>. This pattern applies to any problem asking "minimum moves to reach X" â€” puzzles, lock combos, game states.
+            The graph isn't given explicitly — each <strong className="text-zinc-300">word is a state</strong>, and two words are connected by an edge if they differ by exactly <strong className="text-zinc-300">one letter</strong>. BFS explores states level by level, so the first time we reach the target word it's via the <strong className="text-zinc-300">shortest transformation sequence</strong>. This pattern applies to any problem asking "minimum moves to reach X" — puzzles, lock combos, game states.
           </p>
         </div>
 
@@ -363,12 +363,12 @@ export default function BFSStateSpaceViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Graph â”€â”€ */}
+          {/* ── COL 1: IO + Graph ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">BFS tree â€“ levels = transformation steps</div>
+              <div className="text-[10px] text-zinc-500 mb-1">BFS tree – levels = transformation steps</div>
               <StateGraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />Current</span>
@@ -378,7 +378,7 @@ export default function BFSStateSpaceViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "found" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -455,7 +455,7 @@ export default function BFSStateSpaceViz() {
                   {step.path.map((w, i) => (
                     <span key={i} className="flex items-center gap-1">
                       <span className="inline-flex items-center justify-center px-2 h-7 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-300 font-bold">{w}</span>
-                      {i < step.path.length - 1 && <span className="text-emerald-700 text-xs">â†’</span>}
+                      {i < step.path.length - 1 && <span className="text-emerald-700 text-xs">→</span>}
                     </span>
                   ))}
                 </div>
@@ -463,7 +463,7 @@ export default function BFSStateSpaceViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -476,14 +476,14 @@ export default function BFSStateSpaceViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Minimum moves/operations to transform one state to another</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Puzzle solving â€” sliding puzzles, lock combinations, word ladders</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Implicit graphs â€” states generated on the fly, not pre-built</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Unweighted shortest path where each transition costs 1</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Minimum moves/operations to transform one state to another</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Puzzle solving — sliding puzzles, lock combinations, word ladders</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Implicit graphs — states generated on the fly, not pre-built</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Unweighted shortest path where each transition costs 1</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(MÂ² Ã— N) for word ladder (M=word length, N=list size)</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(M² × N) for word ladder (M=word length, N=list size)</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(N) for visited set + queue</div>
                 <div><span className="text-zinc-500 font-semibold">Key insight:</span> Bound the state space to avoid TLE</div>
               </div>
@@ -494,12 +494,12 @@ export default function BFSStateSpaceViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 127 â€” Word Ladder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 752 â€” Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 773 â€” Sliding Puzzle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1091 â€” Shortest Path in Binary Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 433 â€” Minimum Genetic Mutation</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 815 â€” Bus Routes</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 127 — Word Ladder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 752 — Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 773 — Sliding Puzzle</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1091 — Shortest Path in Binary Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 433 — Minimum Genetic Mutation</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 815 — Bus Routes</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

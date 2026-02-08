@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Inputs (two examples) â€”â€”â€” */
+/* ——— Problem Inputs (two examples) ——— */
 const EXAMPLES = {
   circuit: {
     title: "Euler Circuit", n: 5,
     edges: [[0,1],[1,2],[2,0],[0,3],[3,4],[4,0]],
     positions: [{x:200,y:50},{x:340,y:130},{x:280,y:270},{x:120,y:270},{x:60,y:130}],
-    desc: "All in-degree = out-degree â†’ circuit (starts and ends at same node)",
+    desc: "All in-degree = out-degree → circuit (starts and ends at same node)",
     start: 0,
     expectedPath: [0, 1, 2, 0, 3, 4, 0],
   },
@@ -14,13 +14,13 @@ const EXAMPLES = {
     title: "Euler Path", n: 4,
     edges: [[0,1],[1,2],[2,0],[0,3]],
     positions: [{x:80,y:80},{x:280,y:80},{x:180,y:220},{x:380,y:220}],
-    desc: "Node 0: outâˆ’in=1 (start), Node 3: inâˆ’out=1 (end) â†’ path",
+    desc: "Node 0: out−in=1 (start), Node 3: in−out=1 (end) → path",
     start: 0,
     expectedPath: [0, 1, 2, 0, 3],
   },
 };
 
-/* â€”â€”â€” Build simulation steps â€”â€”â€” */
+/* ——— Build simulation steps ——— */
 function buildSteps(ex) {
   const { n, edges, start } = ex;
   const adj = Array.from({ length: n }, () => []);
@@ -35,7 +35,7 @@ function buildSteps(ex) {
   const finalized = new Set(); // edges added to final circuit
 
   steps.push({
-    title: "Initialize â€” Start at Node " + start,
+    title: "Initialize — Start at Node " + start,
     detail: `${edges.length} edges total. Hierholzer's: follow edges greedily, when stuck prepend to circuit. Stack: [${start}].`,
     stack: [...stack], circuit: [...circuit], remaining: remaining.map(a => [...a]),
     current: null, usedEdges: [...usedEdges], phase: "init", codeHL: [0, 1],
@@ -51,8 +51,8 @@ function buildSteps(ex) {
       usedEdges.push([v, u]);
 
       steps.push({
-        title: `Follow Edge ${v}â†’${u}`,
-        detail: `Node ${v} has unused edges: pick ${v}â†’${u}. Push ${u} onto stack. Remaining from ${v}: [${remaining[v].join(",")}].`,
+        title: `Follow Edge ${v}→${u}`,
+        detail: `Node ${v} has unused edges: pick ${v}→${u}. Push ${u} onto stack. Remaining from ${v}: [${remaining[v].join(",")}].`,
         stack: [...stack], circuit: [...circuit], remaining: remaining.map(a => [...a]),
         current: v, usedEdges: [...usedEdges], phase: "follow", codeHL: [3, 4, 5, 6, 7],
         activeEdge: [v, u], adjList: remaining.map(a => [...a]),
@@ -66,8 +66,8 @@ function buildSteps(ex) {
       }
 
       steps.push({
-        title: `Node ${v} â€” No Unused Edges, Add to Circuit`,
-        detail: `Node ${v} has no remaining edges. Pop from stack, prepend to circuit. Circuit so far: [${circuit.join(" â†’ ")}].`,
+        title: `Node ${v} — No Unused Edges, Add to Circuit`,
+        detail: `Node ${v} has no remaining edges. Pop from stack, prepend to circuit. Circuit so far: [${circuit.join(" → ")}].`,
         stack: [...stack], circuit: [...circuit], remaining: remaining.map(a => [...a]),
         current: v, usedEdges: [...usedEdges], phase: "circuit", codeHL: [8, 9, 10],
         activeEdge: null, adjList: remaining.map(a => [...a]),
@@ -77,8 +77,8 @@ function buildSteps(ex) {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Euler ${circuit[0] === circuit[circuit.length - 1] ? "Circuit" : "Path"} Found`,
-    detail: `All ${edges.length} edges used exactly once. Path: ${circuit.join(" â†’ ")}.`,
+    title: `✓ Complete — Euler ${circuit[0] === circuit[circuit.length - 1] ? "Circuit" : "Path"} Found`,
+    detail: `All ${edges.length} edges used exactly once. Path: ${circuit.join(" → ")}.`,
     stack: [], circuit: [...circuit], remaining: remaining.map(a => [...a]),
     current: null, usedEdges: [...usedEdges], phase: "done", codeHL: [12],
     activeEdge: null, adjList: remaining.map(a => [...a]),
@@ -88,7 +88,7 @@ function buildSteps(ex) {
   return steps;
 }
 
-/* â€”â€”â€” Graph SVG â€”â€”â€” */
+/* ——— Graph SVG ——— */
 function GraphView({ example, step }) {
   const { positions, edges } = example;
   const { activeEdge, usedEdges, circuit } = step;
@@ -137,7 +137,7 @@ function GraphView({ example, step }) {
   );
 }
 
-/* â€”â€”â€” Python Code (clean function only) â€”â€”â€” */
+/* ——— Python Code (clean function only) ——— */
 const CODE = [
   { id: 0,  text: `def hierholzer(adj, start):` },
   { id: 1,  text: `    stack = [start]` },
@@ -154,7 +154,7 @@ const CODE = [
   { id: 12, text: `    return circuit` },
 ];
 
-/* â€”â€”â€” Input / Output Panel with progressive output â€”â€”â€” */
+/* ——— Input / Output Panel with progressive output ——— */
 function IOPanel({ example, step }) {
   const { phase, circuit, finalized, usedEdges } = step;
   const { edges, expectedPath, n } = example;
@@ -192,7 +192,7 @@ function IOPanel({ example, step }) {
         <div className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1.5">Expected Output</div>
         <div className="font-mono text-xs">
           <span className="text-zinc-500">path = </span>
-          <span className="text-zinc-300">[{expectedPath.join(" â†’ ")}]</span>
+          <span className="text-zinc-300">[{expectedPath.join(" → ")}]</span>
         </div>
       </div>
 
@@ -200,7 +200,7 @@ function IOPanel({ example, step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs flex items-center gap-0.5 flex-wrap">
           <span className="text-zinc-500">path = [</span>
@@ -214,7 +214,7 @@ function IOPanel({ example, step }) {
                       matchesExpected ? "text-emerald-300 font-bold" :
                       "text-zinc-400"
                     }>{v}</span>
-                    {i < circuit.length - 1 && <span className="text-zinc-600"> â†’ </span>}
+                    {i < circuit.length - 1 && <span className="text-zinc-600"> → </span>}
                   </span>
                 );
               })
@@ -234,7 +234,7 @@ function IOPanel({ example, step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -261,7 +261,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -278,12 +278,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function EulerianViz() {
   const [exKey, setExKey] = useState("circuit");
   const [si, setSi] = useState(0);
@@ -299,7 +299,7 @@ export default function EulerianViz() {
         <div className="flex items-end justify-between mb-3">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Eulerian Path / Circuit</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Hierholzer's Algorithm â€” Visit Every Edge Exactly Once</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Hierholzer's Algorithm — Visit Every Edge Exactly Once</p>
           </div>
           <div className="flex gap-2">
             {Object.entries(EXAMPLES).map(([k, v]) => (
@@ -328,12 +328,12 @@ export default function EulerianViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Graph â€”â€” */}
+          {/* —— COL 1: IO + Graph —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel example={example} step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{example.n} nodes, {example.edges.length} edges â€¢ directed</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{example.n} nodes, {example.edges.length} edges • directed</div>
               <GraphView example={example} step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />Current</span>
@@ -343,7 +343,7 @@ export default function EulerianViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -372,7 +372,7 @@ export default function EulerianViz() {
                       isCurr ? "bg-amber-950/50 border border-amber-900" : "border border-transparent"
                     }`}>
                       <span className={isCurr ? "text-amber-400 font-bold w-4" : "text-zinc-400 w-4"}>{node}</span>
-                      <span className="text-zinc-600">â†’ [</span>
+                      <span className="text-zinc-600">→ [</span>
                       {isEmpty
                         ? <span className="text-zinc-700 italic text-[10px]">empty</span>
                         : nb.map((v, i) => (
@@ -383,7 +383,7 @@ export default function EulerianViz() {
                           ))
                       }
                       <span className="text-zinc-600">]</span>
-                      {isEmpty && <span className="text-[8px] text-zinc-700 ml-auto">âœ“ exhausted</span>}
+                      {isEmpty && <span className="text-[8px] text-zinc-700 ml-auto">✓ exhausted</span>}
                     </div>
                   );
                 })}
@@ -410,7 +410,7 @@ export default function EulerianViz() {
                       ? step.circuit.map((n, i) => (
                           <span key={i} className="flex items-center gap-0.5">
                             <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-emerald-950 border border-emerald-800 text-emerald-300 font-mono font-bold text-xs">{n}</span>
-                            {i < step.circuit.length - 1 && <span className="text-emerald-800 text-[10px]">â†’</span>}
+                            {i < step.circuit.length - 1 && <span className="text-emerald-800 text-[10px]">→</span>}
                           </span>
                         ))
                       : <span className="text-[10px] text-zinc-600 italic">building...</span>}
@@ -420,7 +420,7 @@ export default function EulerianViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -433,10 +433,10 @@ export default function EulerianViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Visit every edge exactly once â€” Euler path or circuit</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>De Bruijn sequences / DNA fragment assembly</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Chinese Postman Problem (after edge duplication)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Circuit board routing, network traversal</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Visit every edge exactly once — Euler path or circuit</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>De Bruijn sequences / DNA fragment assembly</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Chinese Postman Problem (after edge duplication)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Circuit board routing, network traversal</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
@@ -451,12 +451,12 @@ export default function EulerianViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 332 â€” Reconstruct Itinerary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 753 â€” Cracking the Safe (de Bruijn)</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2097 â€” Valid Arrangement of Pairs</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1976 â€” Number of Ways to Arrive at Destination</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1971 â€” Find if Path Exists in Graph</span><span className="ml-auto text-[10px] text-green-700">Easy</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2374 â€” Node With Highest Edge Score</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 332 — Reconstruct Itinerary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 753 — Cracking the Safe (de Bruijn)</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2097 — Valid Arrangement of Pairs</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1976 — Number of Ways to Arrive at Destination</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1971 — Find if Path Exists in Graph</span><span className="ml-auto text-[10px] text-green-700">Easy</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2374 — Node With Highest Edge Score</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

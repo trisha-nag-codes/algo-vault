@@ -74,28 +74,28 @@ const EDGES_MAP = Object.fromEntries(Object.keys(TREES).map(k => [k, allEdges(TR
 const PROBLEMS = {
   validateBST: {
     title: "Validate BST",
-    lc: "LC 98 Â· Medium",
+    lc: "LC 98 · Medium",
     coreIdea:
       "DFS with bounds: pass an allowed range [lo, hi] down the tree. At each node, check lo < val < hi. Go left with hi=val, go right with lo=val. If any node violates its bounds, the tree is invalid. This top-down constraint-passing pattern is the foundation for many BST problems. O(n).",
   },
   lca: {
     title: "Lowest Common Ancestor",
-    lc: "LC 236 Â· Medium",
+    lc: "LC 236 · Medium",
     coreIdea:
-      "Post-order DFS: if the current node is p or q, return it. Recurse left and right. If both sides return non-null, the current node is the LCA â€” the split point where p and q diverge. Otherwise propagate whichever side found something. O(n) single pass, no parent pointers needed.",
+      "Post-order DFS: if the current node is p or q, return it. Recurse left and right. If both sides return non-null, the current node is the LCA — the split point where p and q diverge. Otherwise propagate whichever side found something. O(n) single pass, no parent pointers needed.",
     p: 7, q: 4,
   },
   rightSide: {
     title: "Right Side View",
-    lc: "LC 199 Â· Medium",
+    lc: "LC 199 · Medium",
     coreIdea:
-      "BFS level by level â€” at each level, the last node dequeued is the rightmost (visible from the right). Process all nodes at the current level before moving to the next. This level-order pattern extends to zigzag traversal, level averages, and finding the largest value per level. O(n).",
+      "BFS level by level — at each level, the last node dequeued is the rightmost (visible from the right). Process all nodes at the current level before moving to the next. This level-order pattern extends to zigzag traversal, level averages, and finding the largest value per level. O(n).",
   },
   maxPath: {
     title: "Max Path Sum",
-    lc: "LC 124 Â· Hard",
+    lc: "LC 124 · Hard",
     coreIdea:
-      "Post-order DFS with global tracking. At each node, compute left_gain = max(0, dfs(left)) and right_gain = max(0, dfs(right)). The path through this node = val + left_gain + right_gain â€” update global max. Return val + max(left_gain, right_gain) upward (can only extend one direction). O(n).",
+      "Post-order DFS with global tracking. At each node, compute left_gain = max(0, dfs(left)) and right_gain = max(0, dfs(right)). The path through this node = val + left_gain + right_gain — update global max. Return val + max(left_gain, right_gain) upward (can only extend one direction). O(n).",
   },
 };
 
@@ -179,7 +179,7 @@ const EXPECTED = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” VALIDATE BST
+   BUILD STEPS — VALIDATE BST
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildValidateBSTSteps() {
@@ -189,7 +189,7 @@ function buildValidateBSTSteps() {
   const valid = new Set();
 
   steps.push({
-    title: "Initialize â€” DFS with bounds (-âˆž, âˆž)",
+    title: "Initialize — DFS with bounds (-∞, ∞)",
     detail: "Start at root. Each node must satisfy lo < val < hi. Pass tighter bounds to children.",
     current: null, bounds: null,
     visited: new Set(), valid: new Set(), invalid: null,
@@ -201,16 +201,16 @@ function buildValidateBSTSteps() {
   function dfs(node, lo, hi) {
     if (!node || !isValid) return;
 
-    const loStr = lo === -Infinity ? "-âˆž" : lo;
-    const hiStr = hi === Infinity ? "âˆž" : hi;
+    const loStr = lo === -Infinity ? "-∞" : lo;
+    const hiStr = hi === Infinity ? "∞" : hi;
     const ok = node.val > lo && node.val < hi;
 
     steps.push({
       title: ok
-        ? `Check node ${node.val}: ${loStr} < ${node.val} < ${hiStr} âœ“`
-        : `Check node ${node.val}: ${loStr} < ${node.val} < ${hiStr} âœ— INVALID!`,
+        ? `Check node ${node.val}: ${loStr} < ${node.val} < ${hiStr} ✓`
+        : `Check node ${node.val}: ${loStr} < ${node.val} < ${hiStr} ✗ INVALID!`,
       detail: ok
-        ? `${node.val} is within (${loStr}, ${hiStr}). Valid â€” recurse into children with tighter bounds.`
+        ? `${node.val} is within (${loStr}, ${hiStr}). Valid — recurse into children with tighter bounds.`
         : `${node.val} violates the bound (${loStr}, ${hiStr}). Tree is NOT a valid BST.`,
       current: node.id, bounds: { lo, hi },
       visited: new Set(visited), valid: new Set(valid), invalid: ok ? null : node.id,
@@ -227,7 +227,7 @@ function buildValidateBSTSteps() {
 
     if (isValid) {
       steps.push({
-        title: `âœ“ Subtree at ${node.val} fully validated`,
+        title: `✓ Subtree at ${node.val} fully validated`,
         detail: `Both children of ${node.val} are valid within their bounds. Returning True upward.`,
         current: node.id, bounds: { lo, hi },
         visited: new Set(visited), valid: new Set(valid), invalid: null,
@@ -239,7 +239,7 @@ function buildValidateBSTSteps() {
   dfs(root, -Infinity, Infinity);
 
   steps.push({
-    title: isValid ? "âœ“ Complete â€” Valid BST" : "âœ— Complete â€” Not a Valid BST",
+    title: isValid ? "✓ Complete — Valid BST" : "✗ Complete — Not a Valid BST",
     detail: isValid
       ? `All ${valid.size} nodes satisfy their bounds. Tree is a valid BST.`
       : `Violation found. Tree is NOT a valid BST.`,
@@ -252,7 +252,7 @@ function buildValidateBSTSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” LOWEST COMMON ANCESTOR
+   BUILD STEPS — LOWEST COMMON ANCESTOR
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildLCASteps() {
@@ -291,7 +291,7 @@ function buildLCASteps() {
     }
 
     steps.push({
-      title: `Enter node ${node.val} â€” recurse children`,
+      title: `Enter node ${node.val} — recurse children`,
       detail: `Node ${node.val} is not p(${p}) or q(${q}). DFS into left and right subtrees.`,
       current: node.id,
       visited: new Set(visited), returns: { ...returns }, foundP: !!returns._foundP, foundQ: !!returns._foundQ, lcaNode: null,
@@ -304,8 +304,8 @@ function buildLCASteps() {
     if (left && right) {
       returns[node.id] = node.val;
       steps.push({
-        title: `â˜… LCA Found! Node ${node.val} â€” both subtrees returned`,
-        detail: `Left returned ${left.val}, right returned ${right.val}. Both non-null â†’ node ${node.val} is the Lowest Common Ancestor!`,
+        title: `★ LCA Found! Node ${node.val} — both subtrees returned`,
+        detail: `Left returned ${left.val}, right returned ${right.val}. Both non-null → node ${node.val} is the Lowest Common Ancestor!`,
         current: node.id,
         visited: new Set(visited), returns: { ...returns }, foundP: true, foundQ: true, lcaNode: node.id,
         phase: "lca-found", codeHL: [9, 10],
@@ -334,7 +334,7 @@ function buildLCASteps() {
   const result = dfs(root);
 
   steps.push({
-    title: `âœ“ Complete â€” LCA = ${result ? result.val : "null"}`,
+    title: `✓ Complete — LCA = ${result ? result.val : "null"}`,
     detail: `The lowest common ancestor of ${p} and ${q} is node ${result ? result.val : "null"}.`,
     current: result ? result.id : null,
     visited: new Set(visited), returns: { ...returns }, foundP: true, foundQ: true, lcaNode: result ? result.id : null,
@@ -345,7 +345,7 @@ function buildLCASteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” RIGHT SIDE VIEW (BFS)
+   BUILD STEPS — RIGHT SIDE VIEW (BFS)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildRightSideSteps() {
@@ -356,7 +356,7 @@ function buildRightSideSteps() {
 
   const queue = [root];
   steps.push({
-    title: "Initialize â€” BFS with Level Tracking",
+    title: "Initialize — BFS with Level Tracking",
     detail: `Seed queue with root (${root.val}). Process level by level, capture the rightmost of each.`,
     current: null, queue: queue.map(n => n.val), level: -1,
     visited: new Set(), result: [], levelNodes: [],
@@ -384,7 +384,7 @@ function buildRightSideSteps() {
     qi += levelSize;
 
     steps.push({
-      title: `Level ${level}: [${levelNodes.join(", ")}] â†’ rightmost = ${rightmost}`,
+      title: `Level ${level}: [${levelNodes.join(", ")}] → rightmost = ${rightmost}`,
       detail: `Process ${levelSize} node${levelSize > 1 ? "s" : ""} at depth ${level}. Rightmost visible: ${rightmost}. Result so far: [${result.join(", ")}].`,
       current: queue[startQi + levelSize - 1].id,
       queue: queue.slice(qi).map(n => n.val), level,
@@ -398,7 +398,7 @@ function buildRightSideSteps() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Right Side View = [${result.join(", ")}]`,
+    title: `✓ Complete — Right Side View = [${result.join(", ")}]`,
     detail: `${level} levels processed. View from the right: [${result.join(", ")}].`,
     current: null, queue: [], level: level - 1,
     visited: new Set(visited), result: [...result], levelNodes: [],
@@ -409,7 +409,7 @@ function buildRightSideSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” MAX PATH SUM
+   BUILD STEPS — MAX PATH SUM
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildMaxPathSteps() {
@@ -421,7 +421,7 @@ function buildMaxPathSteps() {
   const pathSums = {};
 
   steps.push({
-    title: "Initialize â€” Post-order DFS",
+    title: "Initialize — Post-order DFS",
     detail: "At each node: left_gain = max(0, dfs(left)), right_gain = max(0, dfs(right)). Update global max with val + left + right. Return val + max(left, right).",
     current: null,
     visited: new Set(), gains: {}, pathSums: {}, maxSum: -Infinity,
@@ -445,10 +445,10 @@ function buildMaxPathSteps() {
 
     steps.push({
       title: improved
-        ? `Node ${node.val}: path = ${node.val}+${leftGain}+${rightGain} = ${pathSum} â€” New Max!`
+        ? `Node ${node.val}: path = ${node.val}+${leftGain}+${rightGain} = ${pathSum} — New Max!`
         : `Node ${node.val}: path = ${node.val}+${leftGain}+${rightGain} = ${pathSum}`,
       detail: `left_gain=max(0,${node.left ? gains[node.left.id] ?? 0 : 0})=${leftGain}, right_gain=max(0,${node.right ? gains[node.right.id] ?? 0 : 0})=${rightGain}. `
-        + `Path through node = ${pathSum}${improved ? ` > ${maxSum === pathSum ? (maxSum === -Infinity ? "-âˆž" : "prev") : maxSum} â†’ new max!` : ` â‰¤ ${maxSum}`}. `
+        + `Path through node = ${pathSum}${improved ? ` > ${maxSum === pathSum ? (maxSum === -Infinity ? "-∞" : "prev") : maxSum} → new max!` : ` ≤ ${maxSum}`}. `
         + `Return ${returnVal} upward (extend ${leftGain >= rightGain ? "left" : "right"} branch).`,
       current: node.id,
       visited: new Set(visited),
@@ -478,8 +478,8 @@ function buildMaxPathSteps() {
   })(root);
 
   steps.push({
-    title: `âœ“ Complete â€” Max Path Sum = ${maxSum}`,
-    detail: `The maximum path sum is ${maxSum} (path: 15 â†’ 20 â†’ 7).`,
+    title: `✓ Complete — Max Path Sum = ${maxSum}`,
+    detail: `The maximum path sum is ${maxSum} (path: 15 → 20 → 7).`,
     current: null,
     visited: new Set(visited),
     gains: { ...gains }, pathSums: { ...pathSums }, maxSum,
@@ -580,15 +580,15 @@ function TreeView({ pKey, step }) {
         const p = pos[n.id];
         return (
           <text key={`g-${n.id}`} x={p.x + nodeR + 4} y={p.y - nodeR + 2}
-            fill="#6ee7b7" fontSize="9" fontWeight="600" fontFamily="monospace">â†‘{g}</text>
+            fill="#6ee7b7" fontSize="9" fontWeight="600" fontFamily="monospace">↑{g}</text>
         );
       })}
 
       {/* Bounds for validateBST */}
       {pKey === "validateBST" && step.current != null && step.bounds && (() => {
         const p = pos[step.current];
-        const lo = step.bounds.lo === -Infinity ? "-âˆž" : step.bounds.lo;
-        const hi = step.bounds.hi === Infinity ? "âˆž" : step.bounds.hi;
+        const lo = step.bounds.lo === -Infinity ? "-∞" : step.bounds.lo;
+        const hi = step.bounds.hi === Infinity ? "∞" : step.bounds.hi;
         return (
           <text x={p.x} y={p.y + nodeR + 14} textAnchor="middle"
             fill="#a1a1aa" fontSize="8" fontFamily="monospace">(  {lo}, {hi})</text>
@@ -603,7 +603,7 @@ function TreeView({ pKey, step }) {
         return (
           <text key={`r-${n.id}`} x={p.x + nodeR + 3} y={p.y + 4}
             fill={ret != null ? "#6ee7b7" : "#71717a"} fontSize="8" fontWeight="600" fontFamily="monospace">
-            â†’{ret != null ? ret : "âˆ…"}
+            →{ret != null ? ret : "∅"}
           </text>
         );
       })}
@@ -652,17 +652,17 @@ function ValidateBSTIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div><span className="text-zinc-500">checked</span> = <span className="text-zinc-300">{validSet ? validSet.size : 0}</span> / {allNodes(tree).length}</div>
           <div><span className="text-zinc-500">valid  </span> = <span className={done ? (result ? "text-emerald-300 font-bold" : "text-red-300 font-bold") : "text-zinc-600"}>
-            {done ? (result ? "True âœ“" : "False âœ—") : "checking..."}
+            {done ? (result ? "True ✓" : "False ✗") : "checking..."}
           </span></div>
         </div>
         {step.bounds && (
           <div className="mt-1.5 font-mono text-[10px] text-zinc-600">
-            bounds: ({step.bounds.lo === -Infinity ? "-âˆž" : step.bounds.lo}, {step.bounds.hi === Infinity ? "âˆž" : step.bounds.hi})
+            bounds: ({step.bounds.lo === -Infinity ? "-∞" : step.bounds.lo}, {step.bounds.hi === Infinity ? "∞" : step.bounds.hi})
           </div>
         )}
       </div>
@@ -695,11 +695,11 @@ function LCAIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
-          <div><span className="text-zinc-500">found p</span> = {step.foundP ? <span className="text-emerald-300">âœ“ {p}</span> : <span className="text-zinc-600">searching</span>}</div>
-          <div><span className="text-zinc-500">found q</span> = {step.foundQ ? <span className="text-emerald-300">âœ“ {q}</span> : <span className="text-zinc-600">searching</span>}</div>
+          <div><span className="text-zinc-500">found p</span> = {step.foundP ? <span className="text-emerald-300">✓ {p}</span> : <span className="text-zinc-600">searching</span>}</div>
+          <div><span className="text-zinc-500">found q</span> = {step.foundQ ? <span className="text-emerald-300">✓ {q}</span> : <span className="text-zinc-600">searching</span>}</div>
           <div><span className="text-zinc-500">LCA   </span> = <span className={lcaVal != null ? "text-purple-300 font-bold" : "text-zinc-600"}>
             {lcaVal != null ? lcaVal : "?"}
           </span></div>
@@ -732,7 +732,7 @@ function RightSideIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">result</span> = [
@@ -747,7 +747,7 @@ function RightSideIOPanel({ step }) {
         </div>
         {step.level >= 0 && (
           <div className="mt-1.5 font-mono text-[10px] text-zinc-600">
-            level {step.level} â€¢ queue: [{step.queue.join(", ")}]
+            level {step.level} • queue: [{step.queue.join(", ")}]
           </div>
         )}
       </div>
@@ -778,17 +778,17 @@ function MaxPathIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div><span className="text-zinc-500">max_sum</span> = <span className={done ? "text-emerald-300 font-bold" : maxSum > -Infinity ? "text-zinc-300" : "text-zinc-600"}>
-            {maxSum === -Infinity ? "-âˆž" : maxSum}
+            {maxSum === -Infinity ? "-∞" : maxSum}
           </span></div>
           {step.current != null && (
             <div>
               <span className="text-zinc-500">at node </span>
               <span className="text-amber-300">{NODES_MAP.maxPath.find(n => n.id === step.current)?.val}</span>
-              <span className="text-zinc-600"> â†’ return â†‘{step.returnVal}</span>
+              <span className="text-zinc-600"> → return ↑{step.returnVal}</span>
             </div>
           )}
         </div>
@@ -818,15 +818,15 @@ function ValidateBSTState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">DFS State</div>
       <div className="flex gap-3">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-purple-400">{current ? current.val : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-purple-400">{current ? current.val : "–"}</div>
           <div className="text-[9px] text-zinc-600">current</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{step.bounds ? (step.bounds.lo === -Infinity ? "-âˆž" : step.bounds.lo) : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{step.bounds ? (step.bounds.lo === -Infinity ? "-∞" : step.bounds.lo) : "–"}</div>
           <div className="text-[9px] text-zinc-600">lo bound</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-amber-400">{step.bounds ? (step.bounds.hi === Infinity ? "âˆž" : step.bounds.hi) : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-amber-400">{step.bounds ? (step.bounds.hi === Infinity ? "∞" : step.bounds.hi) : "–"}</div>
           <div className="text-[9px] text-zinc-600">hi bound</div>
         </div>
         <div className="flex-1 text-center">
@@ -847,16 +847,16 @@ function LCAState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">DFS State</div>
       <div className="flex gap-3">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{current ? current.val : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{current ? current.val : "–"}</div>
           <div className="text-[9px] text-zinc-600">current</div>
         </div>
         <div className="flex-1 text-center">
           <div className={`text-lg font-bold font-mono ${step.foundP ? "text-emerald-400" : "text-zinc-600"}`}>{p}</div>
-          <div className="text-[9px] text-zinc-600">p {step.foundP ? "âœ“" : ""}</div>
+          <div className="text-[9px] text-zinc-600">p {step.foundP ? "✓" : ""}</div>
         </div>
         <div className="flex-1 text-center">
           <div className={`text-lg font-bold font-mono ${step.foundQ ? "text-emerald-400" : "text-zinc-600"}`}>{q}</div>
-          <div className="text-[9px] text-zinc-600">q {step.foundQ ? "âœ“" : ""}</div>
+          <div className="text-[9px] text-zinc-600">q {step.foundQ ? "✓" : ""}</div>
         </div>
         <div className="flex-1 text-center">
           <div className="text-lg font-bold font-mono text-purple-400">{lcaVal != null ? lcaVal : "?"}</div>
@@ -873,7 +873,7 @@ function RightSideState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">BFS State</div>
       <div className="flex gap-3">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-amber-400">{step.level >= 0 ? step.level : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-amber-400">{step.level >= 0 ? step.level : "–"}</div>
           <div className="text-[9px] text-zinc-600">level</div>
         </div>
         <div className="flex-1 text-center">
@@ -907,25 +907,25 @@ function MaxPathState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">DFS State</div>
       <div className="flex gap-3">
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-amber-400">{current ? current.val : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-amber-400">{current ? current.val : "–"}</div>
           <div className="text-[9px] text-zinc-600">current</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{step.leftGain != null ? step.leftGain : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{step.leftGain != null ? step.leftGain : "–"}</div>
           <div className="text-[9px] text-zinc-600">left gain</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-blue-400">{step.rightGain != null ? step.rightGain : "â€“"}</div>
+          <div className="text-lg font-bold font-mono text-blue-400">{step.rightGain != null ? step.rightGain : "–"}</div>
           <div className="text-[9px] text-zinc-600">right gain</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-lg font-bold font-mono text-emerald-400">{step.maxSum === -Infinity ? "-âˆž" : step.maxSum}</div>
+          <div className="text-lg font-bold font-mono text-emerald-400">{step.maxSum === -Infinity ? "-∞" : step.maxSum}</div>
           <div className="text-[9px] text-zinc-600">max sum</div>
         </div>
       </div>
       {step.gains && Object.keys(step.gains).length > 0 && (
         <div className="mt-2 text-[10px] font-mono text-zinc-600 text-center">
-          returns: {NODES_MAP.maxPath.filter(n => step.gains[n.id] !== undefined).map(n => `${n.val}â†’â†‘${step.gains[n.id]}`).join(", ")}
+          returns: {NODES_MAP.maxPath.filter(n => step.gains[n.id] !== undefined).map(n => `${n.val}→↑${step.gains[n.id]}`).join(", ")}
         </div>
       )}
     </div>
@@ -985,7 +985,7 @@ function NavBar({ si, setSi, total }) {
         ))}
       </div>
       <button onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
-        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next â†’</button>
+        className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors">Next →</button>
     </div>
   );
 }
@@ -1064,7 +1064,7 @@ export default function TreeViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Tree Viz â”€â”€ */}
+          {/* ── COL 1: IO + Tree Viz ── */}
           <div className="col-span-3 space-y-3">
             <IOPanelDispatch pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -1094,7 +1094,7 @@ export default function TreeViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             <div className={`rounded-2xl border p-4 ${
               step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" :
@@ -1119,16 +1119,16 @@ export default function TreeViz() {
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Result</div>
                 <div className="font-mono text-[11px] text-emerald-300">
-                  {pKey === "validateBST" && (step.result ? "Valid BST âœ“ â€” all nodes satisfy their bounds" : "Invalid BST âœ— â€” bound violation detected")}
+                  {pKey === "validateBST" && (step.result ? "Valid BST ✓ — all nodes satisfy their bounds" : "Invalid BST ✗ — bound violation detected")}
                   {pKey === "lca" && `LCA(${PROBLEMS.lca.p}, ${PROBLEMS.lca.q}) = ${EXPECTED.lca.lcaVal}`}
                   {pKey === "rightSide" && `Right side view: [${step.result.join(", ")}]`}
-                  {pKey === "maxPath" && `Max path sum = ${step.maxSum} (path: 15 â†’ 20 â†’ 7)`}
+                  {pKey === "maxPath" && `Max path sum = ${step.maxSum} (path: 15 → 20 → 7)`}
                 </div>
               </div>
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -1140,16 +1140,16 @@ export default function TreeViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use Tree Patterns</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Top-down DFS: pass constraints/bounds from parent to children</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Bottom-up DFS: return aggregated info from children to parent</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>BFS level-order: process all nodes at same depth before going deeper</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Global variable DFS: track best-so-far while returning partial results upward</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>BST property: inorder gives sorted order, enables binary-search-like logic</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Top-down DFS: pass constraints/bounds from parent to children</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Bottom-up DFS: return aggregated info from children to parent</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>BFS level-order: process all nodes at same depth before going deeper</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Global variable DFS: track best-so-far while returning partial results upward</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>BST property: inorder gives sorted order, enables binary-search-like logic</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
                 <div><span className="text-zinc-500 font-semibold">Time:</span> O(n) for most tree traversals</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(h) stack for DFS Â· O(w) queue for BFS</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(h) stack for DFS · O(w) queue for BFS</div>
                 <div><span className="text-zinc-500 font-semibold">Key insight:</span> Choose top-down vs bottom-up based on info flow direction</div>
               </div>
             </div>
@@ -1158,14 +1158,14 @@ export default function TreeViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 98 â€” Validate Binary Search Tree</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 236 â€” Lowest Common Ancestor</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 199 â€” Binary Tree Right Side View</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 124 â€” Binary Tree Max Path Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 543 â€” Diameter of Binary Tree</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 297 â€” Serialize / Deserialize Tree</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 105 â€” Construct from Preorder + Inorder</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1028 â€” Recover Tree From Preorder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 98 — Validate Binary Search Tree</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 236 — Lowest Common Ancestor</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 199 — Binary Tree Right Side View</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 124 — Binary Tree Max Path Sum</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 543 — Diameter of Binary Tree</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 297 — Serialize / Deserialize Tree</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 105 — Construct from Preorder + Inorder</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1028 — Recover Tree From Preorder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

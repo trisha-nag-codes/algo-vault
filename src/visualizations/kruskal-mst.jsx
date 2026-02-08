@@ -1,15 +1,15 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Input â€”â€”â€” */
+/* ——— Problem Input ——— */
 const N = 6;
 const EDGES = [[1,2,1],[1,3,2],[0,2,3],[0,1,4],[2,3,4],[2,4,5],[3,5,6],[3,4,7],[4,5,8]];
 const POS = [{x:60,y:80},{x:200,y:40},{x:200,y:180},{x:340,y:80},{x:340,y:220},{x:480,y:150}];
 
-/* â€”â€”â€” Expected Output (precomputed) â€”â€”â€” */
+/* ——— Expected Output (precomputed) ——— */
 const EXPECTED_MST = [[1,2,1],[1,3,2],[0,2,3],[2,4,5],[3,5,6]];
 const EXPECTED_COST = 17;
 
-/* â€”â€”â€” Build simulation steps â€”â€”â€” */
+/* ——— Build simulation steps ——— */
 function buildSteps() {
   const sorted = [...EDGES].sort((a, b) => a[2] - b[2]);
   const parent = Array.from({ length: N }, (_, i) => i);
@@ -22,7 +22,7 @@ function buildSteps() {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Sort Edges by Weight",
+    title: "Initialize — Sort Edges by Weight",
     detail: `${EDGES.length} edges sorted ascending: [${sorted.map(([u,v,w]) => `(${u}-${v}:${w})`).join(", ")}]. Initialize Union-Find with ${N} singleton components.`,
     parent: [...parent], rank: [...rank], mstEdges: [], edgeIdx: -1, currentEdge: null,
     phase: "init", codeHL: [0, 1, 2], mstCost: 0, sortedEdges: sorted, verdict: null,
@@ -45,11 +45,11 @@ function buildSteps() {
 
     steps.push({
       title: sameSet
-        ? `Edge ${u}â€“${v} (w=${w}) â€” Skip (Cycle)`
-        : `Edge ${u}â€“${v} (w=${w}) â€” Add to MST`,
+        ? `Edge ${u}–${v} (w=${w}) — Skip (Cycle)`
+        : `Edge ${u}–${v} (w=${w}) — Add to MST`,
       detail: sameSet
-        ? `find(${u})=${ru}, find(${v})=${rv}. Same component â€” adding would create a cycle. Skip.`
-        : `find(${u})=${ru}, find(${v})=${rv}. Different components â€” union them. MST cost so far: ${mstCost}.`,
+        ? `find(${u})=${ru}, find(${v})=${rv}. Same component — adding would create a cycle. Skip.`
+        : `find(${u})=${ru}, find(${v})=${rv}. Different components — union them. MST cost so far: ${mstCost}.`,
       parent: [...parent], rank: [...rank], mstEdges: [...mstEdges], edgeIdx: i,
       currentEdge: [u, v, w],
       phase: sameSet ? "skip" : "add",
@@ -61,7 +61,7 @@ function buildSteps() {
 
     if (mstEdges.length === N - 1) {
       steps.push({
-        title: `âœ“ MST Complete â€” ${N - 1} Edges, Cost ${mstCost}`,
+        title: `✓ MST Complete — ${N - 1} Edges, Cost ${mstCost}`,
         detail: `Found ${N - 1} edges connecting all ${N} nodes. MST: [${mstEdges.map(([a,b,c]) => `${a}-${b}:${c}`).join(", ")}]. Total weight: ${mstCost}.`,
         parent: [...parent], rank: [...rank], mstEdges: [...mstEdges], edgeIdx: i,
         currentEdge: null,
@@ -74,7 +74,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â€”â€”â€” Graph SVG â€”â€”â€” */
+/* ——— Graph SVG ——— */
 function GraphView({ step }) {
   const { mstEdges, currentEdge, verdict } = step;
   const mstSet = new Set(mstEdges.map(([u, v]) => `${Math.min(u, v)}-${Math.max(u, v)}`));
@@ -116,7 +116,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â€”â€”â€” Python Code (clean function only) â€”â€”â€” */
+/* ——— Python Code (clean function only) ——— */
 const CODE = [
   { id: 0,  text: `def kruskal(edges, n):` },
   { id: 1,  text: `    edges.sort(key=lambda e: e[2])` },
@@ -131,7 +131,7 @@ const CODE = [
   { id: 10, text: `    return mst` },
 ];
 
-/* â€”â€”â€” Input / Output Panel with progressive output â€”â€”â€” */
+/* ——— Input / Output Panel with progressive output ——— */
 function IOPanel({ step }) {
   const { phase, mstEdges, mstCost, finalized } = step;
   const done = phase === "done";
@@ -167,7 +167,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs">
           <div className="flex items-center gap-1">
@@ -199,7 +199,7 @@ function IOPanel({ step }) {
             <span className={done ? "text-emerald-300 font-bold" : mstCost > 0 ? "text-zinc-400" : "text-zinc-700"}>
               {mstCost > 0 ? mstCost : "?"}
             </span>
-            {done && mstCost === EXPECTED_COST && <span className="text-emerald-600 ml-1 text-[10px]">âœ“</span>}
+            {done && mstCost === EXPECTED_COST && <span className="text-emerald-600 ml-1 text-[10px]">✓</span>}
           </div>
         </div>
         {mstEdges.length > 0 && (
@@ -207,7 +207,7 @@ function IOPanel({ step }) {
             Edges: {mstEdges.length}/{N - 1}
             <span className="ml-2">
               {mstEdges.map(([u,v], i) => (
-                <span key={i} className="text-emerald-600 mr-1">{u}â€“{v} âœ“</span>
+                <span key={i} className="text-emerald-600 mr-1">{u}–{v} ✓</span>
               ))}
             </span>
           </div>
@@ -217,7 +217,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -244,7 +244,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -261,12 +261,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function KruskalViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -278,14 +278,14 @@ export default function KruskalViz() {
         {/* Header */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">Kruskal's Algorithm</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Minimum Spanning Tree â€¢ Greedy + Union-Find</p>
+          <p className="text-zinc-500 text-sm mt-0.5">Minimum Spanning Tree • Greedy + Union-Find</p>
         </div>
 
         {/* Core Idea */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            Kruskal's builds a minimum spanning tree by greedily processing edges in ascending weight order. For each edge, if its two endpoints belong to different components (checked via Union-Find), add it to the MST and merge the components. Skip it if it would create a cycle. Stop once Nâˆ’1 edges are selected. Classic for network design, clustering, and approximation algorithms.
+            Kruskal's builds a minimum spanning tree by greedily processing edges in ascending weight order. For each edge, if its two endpoints belong to different components (checked via Union-Find), add it to the MST and merge the components. Skip it if it would create a cycle. Stop once N−1 edges are selected. Classic for network design, clustering, and approximation algorithms.
           </p>
         </div>
 
@@ -297,12 +297,12 @@ export default function KruskalViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Graph â€”â€” */}
+          {/* —— COL 1: IO + Graph —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges â€¢ <span className="text-emerald-400">Green = MST</span></div>
+              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges • <span className="text-emerald-400">Green = MST</span></div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />MST edge</span>
@@ -311,7 +311,7 @@ export default function KruskalViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -345,11 +345,11 @@ export default function KruskalViz() {
                         isCurrent ? "text-blue-300" :
                         isPast ? (wasMST ? "text-emerald-500" : "text-zinc-700") :
                         "text-zinc-500"
-                      }`}>{u}â€“{v}</span>
+                      }`}>{u}–{v}</span>
                       <span className={isCurrent ? "text-blue-300" : isPast ? "text-zinc-700" : "text-zinc-600"}>w={w}</span>
-                      {isPast && <span className={`text-[10px] ml-auto ${wasMST ? "text-emerald-600" : "text-red-900"}`}>{wasMST ? "âœ“ added" : "âœ— cycle"}</span>}
-                      {isCurrent && <span className="text-blue-500 text-[10px] ml-auto">â—€ current</span>}
-                      {isFuture && step.phase === "done" && <span className="text-zinc-800 text-[10px] ml-auto">â€”</span>}
+                      {isPast && <span className={`text-[10px] ml-auto ${wasMST ? "text-emerald-600" : "text-red-900"}`}>{wasMST ? "✓ added" : "✗ cycle"}</span>}
+                      {isCurrent && <span className="text-blue-500 text-[10px] ml-auto">◀ current</span>}
+                      {isFuture && step.phase === "done" && <span className="text-zinc-800 text-[10px] ml-auto">—</span>}
                     </div>
                   );
                 })}
@@ -379,7 +379,7 @@ export default function KruskalViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -392,14 +392,14 @@ export default function KruskalViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Minimum spanning tree â€” connect all nodes with minimum total weight</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Sparse graphs â€” edge-centric approach, sort E edges then process</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Clustering â€” stop early at Nâˆ’k edges for k clusters</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Network design, cable laying, road construction cost minimization</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Minimum spanning tree — connect all nodes with minimum total weight</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Sparse graphs — edge-centric approach, sort E edges then process</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Clustering — stop early at N−k edges for k clusters</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Network design, cable laying, road construction cost minimization</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(E log E) â€” dominated by sorting</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(E log E) — dominated by sorting</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V) for Union-Find</div>
                 <div><span className="text-zinc-500 font-semibold">Alternative:</span> Prim's for dense graphs (adjacency matrix)</div>
               </div>
@@ -410,12 +410,12 @@ export default function KruskalViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1584 â€” Min Cost to Connect All Points</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1135 â€” Connecting Cities With Min Cost</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1489 â€” Find Critical and Pseudo-Critical Edges</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1631 â€” Path With Minimum Effort</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1168 â€” Optimize Water Distribution</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1579 â€” Remove Max Number of Edges</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1584 — Min Cost to Connect All Points</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1135 — Connecting Cities With Min Cost</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1489 — Find Critical and Pseudo-Critical Edges</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1631 — Path With Minimum Effort</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1168 — Optimize Water Distribution</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1579 — Remove Max Number of Edges</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

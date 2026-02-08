@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Inputs (two examples) â€”â€”â€” */
+/* ——— Problem Inputs (two examples) ——— */
 const EXAMPLES = {
   no_cycle: {
     title: "No Cycle (Valid)",
     numCourses: 4,
     prerequisites: [[1,0],[2,0],[3,1],[3,2]],
-    description: "4 courses: 0â†’1, 0â†’2, 1â†’3, 2â†’3",
+    description: "4 courses: 0→1, 0→2, 1→3, 2→3",
     positions: [{x:200,y:50},{x:90,y:170},{x:310,y:170},{x:200,y:290}],
     expectedOrder: [0, 1, 2, 3],
     expectedBool: true,
@@ -15,14 +15,14 @@ const EXAMPLES = {
     title: "Has Cycle (Invalid)",
     numCourses: 4,
     prerequisites: [[1,0],[2,1],[3,2],[1,3]],
-    description: "4 courses: 0â†’1, 1â†’2, 2â†’3, 3â†’1 (cycle in 1-2-3)",
+    description: "4 courses: 0→1, 1→2, 2→3, 3→1 (cycle in 1-2-3)",
     positions: [{x:80,y:170},{x:200,y:50},{x:320,y:170},{x:200,y:290}],
     expectedOrder: [],
     expectedBool: false,
   },
 };
 
-/* â€”â€”â€” Build simulation steps â€”â€”â€” */
+/* ——— Build simulation steps ——— */
 function buildSteps(numCourses, prerequisites) {
   const graph = Array.from({ length: numCourses }, () => []);
   const inDegree = new Array(numCourses).fill(0);
@@ -52,11 +52,11 @@ function buildSteps(numCourses, prerequisites) {
   }
 
   steps.push({
-    phase: "seed", title: "Seed Queue â€” In-Degree 0 Nodes",
+    phase: "seed", title: "Seed Queue — In-Degree 0 Nodes",
     inDegree: [...inDegree], prevInDegree: [...inDegree],
     queue: [...queue], processed: [], order: [],
     highlight: null, neighbors: [], changedNode: null,
-    detail: `Find all nodes with in_degree[n] == 0. These have no prerequisites â€” enqueue them: [${queue.join(", ")}].`,
+    detail: `Find all nodes with in_degree[n] == 0. These have no prerequisites — enqueue them: [${queue.join(", ")}].`,
     edges: prerequisites.map(([c, p]) => [p, c]), graph: graphSnapshot,
     codeHL: [7, 8, 9], finalized: new Set(finalized),
   });
@@ -93,13 +93,13 @@ function buildSteps(numCourses, prerequisites) {
 
       steps.push({
         phase: "update",
-        title: `Decrement in_degree[${next}]:  ${prevInDeg[next]} â†’ ${currentInDegree[next]}`,
+        title: `Decrement in_degree[${next}]:  ${prevInDeg[next]} → ${currentInDegree[next]}`,
         inDegree: [...currentInDegree], prevInDegree: prevInDeg,
         queue: queue.slice(qi), processed: [...processed], order: [...order],
         highlight: node, neighbors: [next], changedNode: next, enqueued,
         detail: enqueued
-          ? `Edge ${node}â†’${next}: in_degree[${next}] drops to 0 â€” all prerequisites done. Enqueue node ${next}!`
-          : `Edge ${node}â†’${next}: in_degree[${next}] is now ${currentInDegree[next]}. Still has unprocessed prerequisites.`,
+          ? `Edge ${node}→${next}: in_degree[${next}] drops to 0 — all prerequisites done. Enqueue node ${next}!`
+          : `Edge ${node}→${next}: in_degree[${next}] is now ${currentInDegree[next]}. Still has unprocessed prerequisites.`,
         edges: prerequisites.map(([c, p]) => [p, c]), graph: graphSnapshot,
         activeEdge: [node, next], codeHL: [14, 15, 16, 17],
         iteratingNode: node, finalized: new Set(finalized),
@@ -117,14 +117,14 @@ function buildSteps(numCourses, prerequisites) {
 
   steps.push({
     phase: "result",
-    title: hasCycle ? "âœ— Cycle Detected!" : "âœ“ Complete â€” Valid Topological Order",
+    title: hasCycle ? "✗ Cycle Detected!" : "✓ Complete — Valid Topological Order",
     inDegree: [...currentInDegree], prevInDegree: [...currentInDegree],
     queue: [], processed: [...processed], order: [...order],
     highlight: null, neighbors: [], changedNode: null,
     hasCycle, stuck,
     detail: hasCycle
-      ? `Queue is empty but only processed ${processed.length} of ${numCourses} nodes. Nodes {${stuck.join(", ")}} still have in_degree > 0 â€” trapped in a cycle.`
-      : `Processed all ${processed.length}/${numCourses} nodes. Order [${order.join(" â†’ ")}] is a valid topological ordering.`,
+      ? `Queue is empty but only processed ${processed.length} of ${numCourses} nodes. Nodes {${stuck.join(", ")}} still have in_degree > 0 — trapped in a cycle.`
+      : `Processed all ${processed.length}/${numCourses} nodes. Order [${order.join(" → ")}] is a valid topological ordering.`,
     edges: prerequisites.map(([c, p]) => [p, c]), graph: graphSnapshot,
     codeHL: [19], finalized: new Set(finalized),
   });
@@ -132,7 +132,7 @@ function buildSteps(numCourses, prerequisites) {
   return steps;
 }
 
-/* â€”â€”â€” Graph SVG â€”â€”â€” */
+/* ——— Graph SVG ——— */
 function GraphView({ positions, step }) {
   const { processed, highlight, neighbors, edges, activeEdge } = step;
 
@@ -180,7 +180,7 @@ function GraphView({ positions, step }) {
   );
 }
 
-/* â€”â€”â€” Python Code (numeric IDs, two variants) â€”â€”â€” */
+/* ——— Python Code (numeric IDs, two variants) ——— */
 const CODE_CS1 = [
   { id: 0,  text: `def canFinish(numCourses, prerequisites):` },
   { id: 1,  text: `    graph = defaultdict(list)` },
@@ -227,7 +227,7 @@ const CODE_CS2 = [
   { id: 19, text: `    return order if len(order)==n else []` },
 ];
 
-/* â€”â€”â€” Input / Output Panel with progressive output â€”â€”â€” */
+/* ——— Input / Output Panel with progressive output ——— */
 function IOPanel({ example, step, variant }) {
   const { phase, order, processed, finalized } = step;
   const { numCourses, prerequisites, expectedOrder, expectedBool } = example;
@@ -278,7 +278,7 @@ function IOPanel({ example, step, variant }) {
           {(allMatch || cycleMatch) && (
             <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
               cycleMatch ? "bg-red-900 text-red-300" : "bg-emerald-900 text-emerald-300"
-            }`}>{cycleMatch ? "âœ“ CYCLE" : "âœ“ MATCH"}</span>
+            }`}>{cycleMatch ? "✓ CYCLE" : "✓ MATCH"}</span>
           )}
         </div>
         <div className="font-mono text-xs">
@@ -298,7 +298,7 @@ function IOPanel({ example, step, variant }) {
                   ))
               }
               <span className="text-zinc-500">]</span>
-              {done && step.hasCycle && <span className="text-red-500 ml-1 text-[10px]">â†’ []</span>}
+              {done && step.hasCycle && <span className="text-red-500 ml-1 text-[10px]">→ []</span>}
             </div>
           ) : (
             <div>
@@ -309,7 +309,7 @@ function IOPanel({ example, step, variant }) {
               <span className="text-zinc-600"> / {numCourses}</span>
               {done && (
                 <span className={`ml-2 ${step.hasCycle ? "text-red-500" : "text-emerald-500"}`}>
-                  â†’ {step.hasCycle ? "False" : "True"}
+                  → {step.hasCycle ? "False" : "True"}
                 </span>
               )}
             </div>
@@ -318,11 +318,11 @@ function IOPanel({ example, step, variant }) {
         {finalized.size > 0 && (
           <div className="mt-2 text-[10px] text-zinc-600">
             Done: {[...finalized].map(n => (
-              <span key={n} className="text-emerald-600 mr-1">{n} âœ“</span>
+              <span key={n} className="text-emerald-600 mr-1">{n} ✓</span>
             ))}
             {step.hasCycle && step.stuck && step.stuck.length > 0 && (
               <span className="ml-2">Stuck: {step.stuck.map(n => (
-                <span key={n} className="text-red-600 mr-1">{n} âœ—</span>
+                <span key={n} className="text-red-600 mr-1">{n} ✗</span>
               ))}</span>
             )}
           </div>
@@ -332,7 +332,7 @@ function IOPanel({ example, step, variant }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines, variant }) {
   const lines = variant === "cs2" ? CODE_CS2 : CODE_CS1;
   const diffLines = variant === "cs2" ? [9, 13, 19] : [];
@@ -359,7 +359,7 @@ function CodePanel({ highlightLines, variant }) {
                 {line.text !== "" ? line.id + 1 : ""}
               </span>
               {line.text}
-              {isDiff && <span className="text-emerald-700 ml-2">â—€</span>}
+              {isDiff && <span className="text-emerald-700 ml-2">◀</span>}
             </div>
           );
         })}
@@ -368,7 +368,7 @@ function CodePanel({ highlightLines, variant }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -385,12 +385,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function KahnsVisualization() {
   const [exampleKey, setExampleKey] = useState("no_cycle");
   const [si, setSi] = useState(0);
@@ -429,7 +429,7 @@ export default function KahnsVisualization() {
                     ? key === "cycle" ? "bg-red-600 text-white" : "bg-emerald-600 text-white"
                     : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
                 }`}>
-                  {key === "no_cycle" ? "âœ“ No Cycle" : "âœ— Has Cycle"}
+                  {key === "no_cycle" ? "✓ No Cycle" : "✗ Has Cycle"}
                 </button>
               ))}
             </div>
@@ -440,7 +440,7 @@ export default function KahnsVisualization() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            Kahn's performs topological sort using BFS. Start by enqueuing all nodes with in-degree 0 (no prerequisites). Dequeue a node, add it to the result, and decrement in-degree for all its neighbors. When a neighbor's in-degree hits 0, enqueue it. If all nodes are processed, the graph is a DAG and the result is a valid topological order. If not â€” a cycle exists. Used in build systems, task scheduling, and course prerequisite resolution.
+            Kahn's performs topological sort using BFS. Start by enqueuing all nodes with in-degree 0 (no prerequisites). Dequeue a node, add it to the result, and decrement in-degree for all its neighbors. When a neighbor's in-degree hits 0, enqueue it. If all nodes are processed, the graph is a DAG and the result is a valid topological order. If not — a cycle exists. Used in build systems, task scheduling, and course prerequisite resolution.
           </p>
         </div>
 
@@ -452,7 +452,7 @@ export default function KahnsVisualization() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Graph â€”â€” */}
+          {/* —— COL 1: IO + Graph —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel example={example} step={step} variant={variant} />
 
@@ -468,7 +468,7 @@ export default function KahnsVisualization() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -495,12 +495,12 @@ export default function KahnsVisualization() {
                   <div className="font-mono text-xs">
                     {variant === "cs2" ? (
                       step.hasCycle
-                        ? <span><span className="text-zinc-500">len(order)={step.order.length} â‰  n={step.inDegree.length} â†’</span> <span className="text-red-400 font-bold">return []</span></span>
-                        : <span><span className="text-zinc-500">len(order)={step.order.length} == n â†’</span> <span className="text-emerald-400 font-bold">return [{step.order.join(", ")}]</span></span>
+                        ? <span><span className="text-zinc-500">len(order)={step.order.length} ≠ n={step.inDegree.length} →</span> <span className="text-red-400 font-bold">return []</span></span>
+                        : <span><span className="text-zinc-500">len(order)={step.order.length} == n →</span> <span className="text-emerald-400 font-bold">return [{step.order.join(", ")}]</span></span>
                     ) : (
                       step.hasCycle
-                        ? <span><span className="text-zinc-500">processed={step.processed.length} â‰  {step.inDegree.length} â†’</span> <span className="text-red-400 font-bold">return False</span></span>
-                        : <span><span className="text-zinc-500">processed={step.processed.length} == {step.inDegree.length} â†’</span> <span className="text-emerald-400 font-bold">return True</span></span>
+                        ? <span><span className="text-zinc-500">processed={step.processed.length} ≠ {step.inDegree.length} →</span> <span className="text-red-400 font-bold">return False</span></span>
+                        : <span><span className="text-zinc-500">processed={step.processed.length} == {step.inDegree.length} →</span> <span className="text-emerald-400 font-bold">return True</span></span>
                     )}
                   </div>
                 </div>
@@ -531,7 +531,7 @@ export default function KahnsVisualization() {
                           ? <span><span className="text-zinc-500 line-through text-[10px]">{prev}</span> {curr}</span>
                           : curr}
                       </div>
-                      {isDone && <span className="text-[8px] font-mono text-emerald-700">âœ“</span>}
+                      {isDone && <span className="text-[8px] font-mono text-emerald-700">✓</span>}
                     </div>
                   );
                 })}
@@ -550,7 +550,7 @@ export default function KahnsVisualization() {
                       isIterating ? "bg-blue-950/50 border border-blue-800" : "border border-transparent"
                     }`}>
                       <span className={`font-bold w-4 ${isIterating ? "text-blue-400" : isProcessedNode ? "text-emerald-500" : "text-zinc-400"}`}>{node}</span>
-                      <span className="text-zinc-600">â†’ [</span>
+                      <span className="text-zinc-600">→ [</span>
                       {neighbors.length === 0
                         ? <span className="text-zinc-700 italic text-[10px]">empty</span>
                         : neighbors.map((n, i) => {
@@ -566,7 +566,7 @@ export default function KahnsVisualization() {
                           })
                       }
                       <span className="text-zinc-600">]</span>
-                      {isIterating && <span className="text-blue-500 text-[10px] ml-auto">â—€ iterating</span>}
+                      {isIterating && <span className="text-blue-500 text-[10px] ml-auto">◀ iterating</span>}
                     </div>
                   );
                 })}
@@ -591,7 +591,7 @@ export default function KahnsVisualization() {
                       {step.order.length > 0 ? step.order.map((n, i) => (
                         <span key={i} className="flex items-center gap-0.5">
                           <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-emerald-950 border border-emerald-800 text-emerald-300 font-mono font-bold text-xs">{n}</span>
-                          {i < step.order.length - 1 && <span className="text-emerald-800 text-[10px]">â†’</span>}
+                          {i < step.order.length - 1 && <span className="text-emerald-800 text-[10px]">→</span>}
                         </span>
                       )) : <span className="text-[10px] text-zinc-600 italic">empty</span>}
                     </div>
@@ -610,7 +610,7 @@ export default function KahnsVisualization() {
             </div>
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} variant={variant} />
           </div>
@@ -623,10 +623,10 @@ export default function KahnsVisualization() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Topological sort â€” order nodes so all edges point forward</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Cycle detection in directed graphs â€” if not all nodes processed</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Task scheduling, build systems, dependency resolution</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Course prerequisites â€” can all courses be completed?</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Topological sort — order nodes so all edges point forward</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Cycle detection in directed graphs — if not all nodes processed</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Task scheduling, build systems, dependency resolution</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Course prerequisites — can all courses be completed?</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
@@ -641,12 +641,12 @@ export default function KahnsVisualization() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 207 â€” Course Schedule</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 210 â€” Course Schedule II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 269 â€” Alien Dictionary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1203 â€” Sort Items by Groups Respecting Deps</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2115 â€” Find All Possible Recipes</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 310 â€” Minimum Height Trees</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 207 — Course Schedule</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 210 — Course Schedule II</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 269 — Alien Dictionary</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1203 — Sort Items by Groups Respecting Deps</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2115 — Find All Possible Recipes</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 310 — Minimum Height Trees</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

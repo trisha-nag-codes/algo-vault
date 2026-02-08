@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const N = 10;
 const EDGES = [
   [0,1],[0,2],[1,3],[1,4],[2,4],[2,5],[3,6],[4,6],[4,7],[5,7],[5,8],[6,9],[7,9],[8,9],
@@ -11,7 +11,7 @@ const POS = [
 ];
 const SOURCE = 0, TARGET = 9;
 
-/* â”€â”€â”€ Adjacency list â”€â”€â”€ */
+/* ─── Adjacency list ─── */
 const ADJ = (() => {
   const adj = Array.from({ length: N }, () => []);
   for (const [u, v] of EDGES) { adj[u].push(v); adj[v].push(u); }
@@ -19,7 +19,7 @@ const ADJ = (() => {
   return adj;
 })();
 
-/* â”€â”€â”€ Precompute Expected Outputs â”€â”€â”€ */
+/* ─── Precompute Expected Outputs ─── */
 function runBidirectional() {
   const visitedF = new Set([SOURCE]), visitedB = new Set([TARGET]);
   const parentF = { [SOURCE]: null }, parentB = { [TARGET]: null };
@@ -81,7 +81,7 @@ function runStandardBFS() {
 const EXPECTED_BI = runBidirectional();
 const EXPECTED_STD = runStandardBFS();
 
-/* â”€â”€â”€ Build Bidirectional Steps â”€â”€â”€ */
+/* ─── Build Bidirectional Steps ─── */
 function buildBidirectionalSteps() {
   const steps = [];
   const visitedF = new Set([SOURCE]), visitedB = new Set([TARGET]);
@@ -91,7 +91,7 @@ function buildBidirectionalSteps() {
   let expanded = 0;
 
   steps.push({
-    title: "Initialize â€“ BFS from Both Ends",
+    title: "Initialize – BFS from Both Ends",
     detail: `Forward queue = [${SOURCE}]. Backward queue = [${TARGET}]. Alternate expansions until frontiers overlap.`,
     visitedF: new Set(visitedF), visitedB: new Set(visitedB),
     queueF: [...queueF], queueB: [...queueB],
@@ -121,8 +121,8 @@ function buildBidirectionalSteps() {
           const fullPath = [...pF, ...pB];
 
           steps.push({
-            title: `âœ“ Frontiers Meet at Node ${v}`,
-            detail: `Forward BFS reached ${v}, already in backward set. Path: ${fullPath.join("â†’")}. Length: ${fullPath.length - 1}. ${expanded} expansions total.`,
+            title: `✓ Frontiers Meet at Node ${v}`,
+            detail: `Forward BFS reached ${v}, already in backward set. Path: ${fullPath.join("→")}. Length: ${fullPath.length - 1}. ${expanded} expansions total.`,
             visitedF: new Set(visitedF), visitedB: new Set(visitedB),
             queueF: [...nextF], queueB: [...queueB],
             current: v, neighbors: [], activeEdge: [u, v],
@@ -165,8 +165,8 @@ function buildBidirectionalSteps() {
           const fullPath = [...pF, ...pB];
 
           steps.push({
-            title: `âœ“ Frontiers Meet at Node ${v}`,
-            detail: `Backward BFS reached ${v}, already in forward set. Path: ${fullPath.join("â†’")}. Length: ${fullPath.length - 1}. ${expanded} expansions total.`,
+            title: `✓ Frontiers Meet at Node ${v}`,
+            detail: `Backward BFS reached ${v}, already in forward set. Path: ${fullPath.join("→")}. Length: ${fullPath.length - 1}. ${expanded} expansions total.`,
             visitedF: new Set(visitedF), visitedB: new Set(visitedB),
             queueF: [...queueF], queueB: [...nextB],
             current: v, neighbors: [], activeEdge: [u, v],
@@ -195,7 +195,7 @@ function buildBidirectionalSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ Build Standard BFS Steps â”€â”€â”€ */
+/* ─── Build Standard BFS Steps ─── */
 function buildStandardBFSSteps() {
   const steps = [];
   const visited = new Set([SOURCE]);
@@ -204,7 +204,7 @@ function buildStandardBFSSteps() {
   let level = 0, expanded = 0;
 
   steps.push({
-    title: "Initialize â€“ Standard BFS from Source",
+    title: "Initialize – Standard BFS from Source",
     detail: `Queue = [${SOURCE}]. Single-direction BFS expands level by level until target found.`,
     visitedF: new Set(visited), visitedB: new Set(),
     queueF: [...queue], queueB: [],
@@ -228,8 +228,8 @@ function buildStandardBFSSteps() {
           found = true;
           const path = []; let c = v; while (c !== null) { path.unshift(c); c = parent[c]; }
           steps.push({
-            title: `âœ“ Target Found at Node ${v} (Level ${level})`,
-            detail: `Standard BFS reached target. Path: ${path.join("â†’")}. ${expanded} expansions â€” compare with bidirectional.`,
+            title: `✓ Target Found at Node ${v} (Level ${level})`,
+            detail: `Standard BFS reached target. Path: ${path.join("→")}. ${expanded} expansions — compare with bidirectional.`,
             visitedF: new Set(visited), visitedB: new Set(),
             queueF: [...nextQ], queueB: [],
             current: v, neighbors: [], activeEdge: [u, v],
@@ -258,7 +258,7 @@ function buildStandardBFSSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ Graph SVG â”€â”€â”€ */
+/* ─── Graph SVG ─── */
 function GraphView({ step }) {
   const { visitedF, visitedB, current, path, meetNode, neighbors, direction } = step;
   const pathSet = new Set(path.map(String));
@@ -317,7 +317,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (clean function) â”€â”€â”€ */
+/* ─── Python Code (clean function) ─── */
 const CODE = [
   { id: 0,  text: `from collections import deque` },
   { id: 1,  text: `` },
@@ -352,7 +352,7 @@ const CODE = [
   { id: 30, text: `    return None` },
 ];
 
-/* â”€â”€â”€ IO Panel â”€â”€â”€ */
+/* ─── IO Panel ─── */
 function IOPanel({ step, mode }) {
   const { phase, expanded, path, finalized } = step;
   const done = phase === "done";
@@ -390,7 +390,7 @@ function IOPanel({ step, mode }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -411,7 +411,7 @@ function IOPanel({ step, mode }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -438,7 +438,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -455,12 +455,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function BidirectionalBFSViz() {
   const [mode, setMode] = useState("bidirectional");
   const [si, setSi] = useState(0);
@@ -478,7 +478,7 @@ export default function BidirectionalBFSViz() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Bidirectional BFS</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Search from Both Ends â€“ Meet in the Middle</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Search from Both Ends – Meet in the Middle</p>
           </div>
           <div className="flex gap-2">
             <button onClick={() => switchMode("bidirectional")}
@@ -498,7 +498,7 @@ export default function BidirectionalBFSViz() {
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
             {mode === "bidirectional"
               ? "Run BFS simultaneously from source and target. When the two frontiers touch, the shortest path is found. With branching factor b and depth d, standard BFS explores O(báµˆ) nodes â€” bidirectional explores only O(báµˆâ¸Â²) from each side, an exponential reduction."
-              : "Standard BFS expands one level at a time from the source. It guarantees the shortest path in unweighted graphs, but explores all directions equally â€” often visiting many irrelevant nodes before reaching the target."
+              : "Standard BFS expands one level at a time from the source. It guarantees the shortest path in unweighted graphs, but explores all directions equally — often visiting many irrelevant nodes before reaching the target."
             }
           </p>
         </div>
@@ -511,12 +511,12 @@ export default function BidirectionalBFSViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Graph â”€â”€ */}
+          {/* ── COL 1: IO + Graph ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} mode={mode} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{N}N, {EDGES.length}E â€¢ src={SOURCE} tgt={TARGET}</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{N}N, {EDGES.length}E • src={SOURCE} tgt={TARGET}</div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#1e3a5f] border border-blue-500 inline-block" />Forward</span>
@@ -527,7 +527,7 @@ export default function BidirectionalBFSViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -588,7 +588,7 @@ export default function BidirectionalBFSViz() {
                   <div className="text-[9px] text-zinc-600">expanded</div>
                 </div>
                 <div className="flex-1 text-center">
-                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "â€”"}</div>
+                  <div className="text-xl font-bold font-mono text-emerald-400">{step.path.length > 0 ? step.path.length - 1 : "—"}</div>
                   <div className="text-[9px] text-zinc-600">path len</div>
                 </div>
               </div>
@@ -598,11 +598,11 @@ export default function BidirectionalBFSViz() {
             {step.phase === "done" && step.path.length > 0 && (
               <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-3">
                 <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">
-                  Shortest Path {SOURCE} â†’ {TARGET}
+                  Shortest Path {SOURCE} → {TARGET}
                   {step.meetNode !== null && <span className="text-zinc-500 ml-2">(meet at {step.meetNode})</span>}
                 </div>
                 <div className="font-mono text-[10px] text-emerald-300">
-                  {step.path.join(" â†’ ")}
+                  {step.path.join(" → ")}
                 </div>
                 <div className="mt-2 flex gap-4 text-[10px]">
                   <span className="text-zinc-500">Length: <span className="text-emerald-300 font-bold">{step.path.length - 1}</span></span>
@@ -613,7 +613,7 @@ export default function BidirectionalBFSViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -626,10 +626,10 @@ export default function BidirectionalBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Shortest path between two specific nodes in an unweighted graph</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Large graphs where standard BFS is too slow (social networks, word ladders)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>State-space search with known start and goal states</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>When the graph is implicitly defined (generated on the fly)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Shortest path between two specific nodes in an unweighted graph</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Large graphs where standard BFS is too slow (social networks, word ladders)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>State-space search with known start and goal states</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>When the graph is implicitly defined (generated on the fly)</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
@@ -644,12 +644,12 @@ export default function BidirectionalBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 127 â€” Word Ladder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 126 â€” Word Ladder II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 752 â€” Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 433 â€” Minimum Genetic Mutation</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1345 â€” Jump Game IV</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 815 â€” Bus Routes</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 127 — Word Ladder</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 126 — Word Ladder II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 752 — Open the Lock</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 433 — Minimum Genetic Mutation</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1345 — Jump Game IV</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 815 — Bus Routes</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

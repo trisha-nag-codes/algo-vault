@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const NODES = 5;
 const EDGES = [[0,1,6],[0,2,2],[2,1,1],[1,3,3],[2,3,5],[3,4,2],[2,4,7]];
 const POS = [{x:60,y:150},{x:180,y:50},{x:180,y:250},{x:310,y:150},{x:430,y:150}];
 const SOURCE = 0;
 
-/* â”€â”€â”€ Expected Output (precomputed) â”€â”€â”€ */
+/* ─── Expected Output (precomputed) ─── */
 const EXPECTED_DIST = [0, 3, 2, 6, 8];
 const EXPECTED_PATHS = {
   0: [0],
@@ -16,14 +16,14 @@ const EXPECTED_PATHS = {
   4: [0, 2, 1, 3, 4],
 };
 
-/* â”€â”€â”€ Adjacency list for display â”€â”€â”€ */
+/* ─── Adjacency list for display ─── */
 const ADJ = (() => {
   const g = Array.from({ length: NODES }, () => []);
   for (const [u, v, w] of EDGES) g[u].push([v, w]);
   return g;
 })();
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps() {
   const graph = Array.from({ length: NODES }, () => []);
   for (const [u, v, w] of EDGES) graph[u].push([v, w]);
@@ -36,8 +36,8 @@ function buildSteps() {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Set Source Distance to 0",
-    detail: `dist = [0, âˆž, âˆž, âˆž, âˆž]. Push (cost=0, node=0) into the min-heap.`,
+    title: "Initialize — Set Source Distance to 0",
+    detail: `dist = [0, ∞, ∞, ∞, ∞]. Push (cost=0, node=0) into the min-heap.`,
     dist: [...dist], prevDist: null, visited: new Set(visited), pq: [[0, SOURCE]],
     current: null, neighbor: null, activeEdge: null, phase: "init", codeHL: [3, 4, 5, 6, 7],
     prev: [...prev], changedNode: null, finalized: new Set(finalized),
@@ -53,7 +53,7 @@ function buildSteps() {
 
     steps.push({
       title: `Pop Node ${u} (dist=${d})`,
-      detail: `Heap-pop â†’ (${d}, ${u}). Node ${u} is unvisited, so mark visited and explore its ${graph[u].length} neighbor(s).`,
+      detail: `Heap-pop → (${d}, ${u}). Node ${u} is unvisited, so mark visited and explore its ${graph[u].length} neighbor(s).`,
       dist: [...dist], prevDist: [...dist], visited: new Set(visited), pq: pq.map(x => [...x]),
       current: u, neighbor: null, activeEdge: null, phase: "visit", codeHL: [9, 10, 11, 12, 13],
       prev: [...prev], changedNode: null, finalized: new Set(finalized),
@@ -74,11 +74,11 @@ function buildSteps() {
 
       steps.push({
         title: improved
-          ? `Relax ${u}â†’${v}: dist[${v}] = ${prevDistSnap[v] === Infinity ? "âˆž" : prevDistSnap[v]} â†’ ${newDist}`
-          : `Edge ${u}â†’${v}: No Improvement (${newDist} â‰¥ ${dist[v]})`,
+          ? `Relax ${u}→${v}: dist[${v}] = ${prevDistSnap[v] === Infinity ? "∞" : prevDistSnap[v]} → ${newDist}`
+          : `Edge ${u}→${v}: No Improvement (${newDist} ≥ ${dist[v]})`,
         detail: improved
-          ? `dist[${u}] + w(${u},${v}) = ${d} + ${w} = ${newDist} < ${prevDistSnap[v] === Infinity ? "âˆž" : prevDistSnap[v]}. Update dist[${v}] = ${newDist}, push (${newDist}, ${v}) to heap.`
-          : `dist[${u}] + w(${u},${v}) = ${d} + ${w} = ${newDist} â‰¥ ${dist[v]}. No update needed.`,
+          ? `dist[${u}] + w(${u},${v}) = ${d} + ${w} = ${newDist} < ${prevDistSnap[v] === Infinity ? "∞" : prevDistSnap[v]}. Update dist[${v}] = ${newDist}, push (${newDist}, ${v}) to heap.`
+          : `dist[${u}] + w(${u},${v}) = ${d} + ${w} = ${newDist} ≥ ${dist[v]}. No update needed.`,
         dist: [...dist], prevDist: prevDistSnap, visited: new Set(visited), pq: pq.map(x => [...x]),
         current: u, neighbor: v, activeEdge: [u, v], phase: improved ? "relax" : "skip",
         codeHL: improved ? [15, 16, 17, 18] : [15, 16],
@@ -96,7 +96,7 @@ function buildSteps() {
   }
 
   steps.push({
-    title: "âœ“ Complete â€” All Shortest Paths Found",
+    title: "✓ Complete — All Shortest Paths Found",
     detail: `dist = [${dist.join(", ")}]. Matches expected output.`,
     dist: [...dist], prevDist: [...dist], visited: new Set(visited), pq: [],
     current: null, neighbor: null, activeEdge: null, phase: "done", codeHL: [20],
@@ -106,7 +106,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â”€â”€â”€ Graph SVG â”€â”€â”€ */
+/* ─── Graph SVG ─── */
 function GraphView({ step }) {
   const { visited, current, neighbor, activeEdge } = step;
   return (
@@ -151,7 +151,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (clean function only) â”€â”€â”€ */
+/* ─── Python Code (clean function only) ─── */
 const CODE = [
   { id: 0,  text: `import heapq` },
   { id: 1,  text: `` },
@@ -176,7 +176,7 @@ const CODE = [
   { id: 20, text: `    return dist` },
 ];
 
-/* â”€â”€â”€ Input / Output Panel with progressive output â”€â”€â”€ */
+/* ─── Input / Output Panel with progressive output ─── */
 function IOPanel({ step }) {
   const { phase, dist, finalized } = step;
   const done = phase === "done";
@@ -216,14 +216,14 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs flex items-center gap-0.5">
           <span className="text-zinc-500">dist = [</span>
           {Array.from({ length: NODES }).map((_, i) => {
             const isFinal = finalized.has(i);
             const val = dist[i];
-            const displayVal = val === Infinity ? "âˆž" : val;
+            const displayVal = val === Infinity ? "∞" : val;
             const matchesExpected = isFinal && val === EXPECTED_DIST[i];
             return (
               <span key={i} className="flex items-center">
@@ -248,10 +248,10 @@ function IOPanel({ step }) {
               if (!finalized.has(n)) return null;
               return (
                 <div key={node} className="flex items-center gap-1.5 text-[10px]">
-                  <span className="text-zinc-600 w-8">{SOURCE}â†’{node}:</span>
-                  <span className="text-emerald-400/80">{path.join("â†’")}</span>
+                  <span className="text-zinc-600 w-8">{SOURCE}→{node}:</span>
+                  <span className="text-emerald-400/80">{path.join("→")}</span>
                   <span className="text-zinc-700">= {dist[n]}</span>
-                  {dist[n] === EXPECTED_DIST[n] && <span className="text-emerald-600">âœ“</span>}
+                  {dist[n] === EXPECTED_DIST[n] && <span className="text-emerald-600">✓</span>}
                 </div>
               );
             })}
@@ -262,7 +262,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -289,7 +289,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -306,12 +306,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function DijkstraViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -342,12 +342,12 @@ export default function DijkstraViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Graph â”€â”€ */}
+          {/* ── COL 1: IO + Graph ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">Source: node {SOURCE} â€¢ {NODES}N, {EDGES.length}E</div>
+              <div className="text-[10px] text-zinc-500 mb-1">Source: node {SOURCE} • {NODES}N, {EDGES.length}E</div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />Current</span>
@@ -357,7 +357,7 @@ export default function DijkstraViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -382,7 +382,7 @@ export default function DijkstraViz() {
                 {step.dist.map((d, i) => {
                   const changed = step.changedNode === i;
                   const prevVal = step.prevDist ? step.prevDist[i] : null;
-                  const val = d === Infinity ? "âˆž" : d;
+                  const val = d === Infinity ? "∞" : d;
                   const isDone = step.phase === "done";
                   const isFinal = step.finalized.has(i);
                   return (
@@ -396,10 +396,10 @@ export default function DijkstraViz() {
                         "bg-zinc-900 border-zinc-700 text-zinc-300"
                       }`}>
                         {changed && prevVal !== null
-                          ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === Infinity ? "âˆž" : prevVal}</span> {val}</span>
+                          ? <span><span className="text-zinc-600 line-through text-[10px]">{prevVal === Infinity ? "∞" : prevVal}</span> {val}</span>
                           : val}
                       </div>
-                      {isFinal && <span className="text-[8px] font-mono text-emerald-700">âœ“</span>}
+                      {isFinal && <span className="text-[8px] font-mono text-emerald-700">✓</span>}
                     </div>
                   );
                 })}
@@ -441,8 +441,8 @@ export default function DijkstraViz() {
                 <div className="space-y-0.5 font-mono text-[10px]">
                   {Object.entries(step.paths).map(([node, path]) => (
                     <div key={node} className="flex items-center gap-2">
-                      <span className="text-zinc-500 w-8">{SOURCE}â†’{node}:</span>
-                      <span className="text-emerald-300">{path.join(" â†’ ")}</span>
+                      <span className="text-zinc-500 w-8">{SOURCE}→{node}:</span>
+                      <span className="text-emerald-300">{path.join(" → ")}</span>
                       <span className="text-zinc-600 ml-auto">= {step.dist[node]}</span>
                     </div>
                   ))}
@@ -451,7 +451,7 @@ export default function DijkstraViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -464,16 +464,16 @@ export default function DijkstraViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Shortest path in graphs with non-negative edge weights</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Single-source to all destinations (or early-stop for single target)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Weighted grids â€” treat cells as nodes, moves as edges</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Network routing, GPS navigation, cost-minimization</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Shortest path in graphs with non-negative edge weights</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Single-source to all destinations (or early-stop for single target)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Weighted grids — treat cells as nodes, moves as edges</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Network routing, GPS navigation, cost-minimization</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
                 <div><span className="text-zinc-500 font-semibold">Time:</span> O((V + E) log V) with binary heap</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V)</div>
-                <div><span className="text-zinc-500 font-semibold">Won't work:</span> Negative edge weights â†’ use Bellman-Ford</div>
+                <div><span className="text-zinc-500 font-semibold">Won't work:</span> Negative edge weights → use Bellman-Ford</div>
               </div>
             </div>
           </div>
@@ -482,12 +482,12 @@ export default function DijkstraViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 743 â€” Network Delay Time</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 787 â€” Cheapest Flights Within K Stops</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1631 â€” Path With Min Effort</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 778 â€” Swim in Rising Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1514 â€” Path with Max Probability</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 882 â€” Reachable Nodes in Subdivided Graph</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 743 — Network Delay Time</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 787 — Cheapest Flights Within K Stops</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1631 — Path With Min Effort</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 778 — Swim in Rising Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1514 — Path with Max Probability</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 882 — Reachable Nodes in Subdivided Graph</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

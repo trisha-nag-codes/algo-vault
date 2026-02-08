@@ -1,16 +1,16 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Inputs â”€â”€â”€ */
+/* ─── Problem Inputs ─── */
 const EXAMPLES = {
   bipartite: {
-    label: "Bipartite âœ“", n: 6,
+    label: "Bipartite ✓", n: 6,
     edges: [[0,1],[0,3],[1,2],[2,5],[3,4],[4,5]],
     positions: [{x:60,y:60},{x:200,y:60},{x:340,y:60},{x:60,y:220},{x:200,y:220},{x:340,y:220}],
     expectedResult: true,
     expectedGroups: { A: [0, 2, 4], B: [1, 3, 5] },
   },
   not_bipartite: {
-    label: "Not Bipartite âœ—", n: 5,
+    label: "Not Bipartite ✗", n: 5,
     edges: [[0,1],[1,2],[2,0],[2,3],[3,4]],
     positions: [{x:100,y:50},{x:260,y:50},{x:200,y:170},{x:100,y:280},{x:260,y:280}],
     expectedResult: false,
@@ -18,14 +18,14 @@ const EXAMPLES = {
   },
 };
 
-/* â”€â”€â”€ Build adjacency list â”€â”€â”€ */
+/* ─── Build adjacency list ─── */
 function buildAdj(n, edges) {
   const adj = Array.from({ length: n }, () => []);
   for (const [u, v] of edges) { adj[u].push(v); adj[v].push(u); }
   return adj;
 }
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps(ex) {
   const { n, edges } = ex;
   const adj = buildAdj(n, edges);
@@ -35,7 +35,7 @@ function buildSteps(ex) {
   const coloredSoFar = [];
 
   steps.push({
-    title: "Initialize â€“ All Nodes Uncolored",
+    title: "Initialize – All Nodes Uncolored",
     detail: `${n} nodes, ${edges.length} edges. Try to assign 2 colors so no adjacent nodes share a color. Use BFS coloring.`,
     color: [...color], queue: [], current: null, neighbor: null,
     conflict: null, phase: "init", codeHL: [0, 1, 2],
@@ -45,7 +45,7 @@ function buildSteps(ex) {
   color[0] = 0; queue.push(0);
   coloredSoFar.push({ node: 0, c: 0 });
   steps.push({
-    title: "Color Node 0 â†’ Red (Color 0)",
+    title: "Color Node 0 → Red (Color 0)",
     detail: "Start BFS from node 0. Assign color 0 (red). Enqueue node 0.",
     color: [...color], queue: [...queue], current: null, neighbor: null,
     conflict: null, phase: "color", codeHL: [3, 4, 5],
@@ -69,7 +69,7 @@ function buildSteps(ex) {
         queue.push(v);
         coloredSoFar.push({ node: v, c: color[v] });
         steps.push({
-          title: `Color Node ${v} â†’ ${color[v] === 0 ? "Red" : "Blue"}`,
+          title: `Color Node ${v} → ${color[v] === 0 ? "Red" : "Blue"}`,
           detail: `Node ${v} uncolored. Assign opposite of node ${u}: ${color[v] === 0 ? "Red" : "Blue"}. Enqueue.`,
           color: [...color], queue: [...queue], current: u, neighbor: v,
           conflict: null, phase: "color", codeHL: [9, 10, 11, 12],
@@ -79,7 +79,7 @@ function buildSteps(ex) {
         conflictFound = true;
         steps.push({
           title: `Conflict! Nodes ${u} and ${v} Same Color`,
-          detail: `Node ${v} already ${color[v] === 0 ? "Red" : "Blue"} â€” same as node ${u}! Adjacent nodes share a color. NOT bipartite.`,
+          detail: `Node ${v} already ${color[v] === 0 ? "Red" : "Blue"} — same as node ${u}! Adjacent nodes share a color. NOT bipartite.`,
           color: [...color], queue: [...queue], current: u, neighbor: v,
           conflict: [u, v], phase: "conflict", codeHL: [13, 14],
           coloredSoFar: [...coloredSoFar],
@@ -93,7 +93,7 @@ function buildSteps(ex) {
     const g0 = [], g1 = [];
     color.forEach((c, i) => { if (c === 0) g0.push(i); else g1.push(i); });
     steps.push({
-      title: "âœ“ Graph Is Bipartite",
+      title: "✓ Graph Is Bipartite",
       detail: `All nodes colored with no conflicts. Group A (Red): {${g0.join(",")}}. Group B (Blue): {${g1.join(",")}}. Return true.`,
       color: [...color], queue: [], current: null, neighbor: null,
       conflict: null, phase: "done", codeHL: [16],
@@ -101,8 +101,8 @@ function buildSteps(ex) {
     });
   } else {
     steps.push({
-      title: "âœ— Graph Is NOT Bipartite",
-      detail: "An odd-length cycle exists â€” impossible to 2-color. Return false.",
+      title: "✗ Graph Is NOT Bipartite",
+      detail: "An odd-length cycle exists — impossible to 2-color. Return false.",
       color: [...color], queue: [], current: null, neighbor: null,
       conflict: null, phase: "fail", codeHL: [14],
       coloredSoFar: [...coloredSoFar],
@@ -111,7 +111,7 @@ function buildSteps(ex) {
   return steps;
 }
 
-/* â”€â”€â”€ Graph SVG â”€â”€â”€ */
+/* ─── Graph SVG ─── */
 function GraphView({ example, step }) {
   const { positions, edges } = example;
   const { color, current, neighbor, conflict } = step;
@@ -148,7 +148,7 @@ function GraphView({ example, step }) {
   );
 }
 
-/* â”€â”€â”€ Python Code â”€â”€â”€ */
+/* ─── Python Code ─── */
 const CODE = [
   { id: 0,  text: `from collections import deque` },
   { id: 1,  text: `` },
@@ -169,7 +169,7 @@ const CODE = [
   { id: 16, text: `    return True` },
 ];
 
-/* â”€â”€â”€ Input / Output Panel â”€â”€â”€ */
+/* ─── Input / Output Panel ─── */
 function IOPanel({ example, step }) {
   const { n, edges, expectedResult, expectedGroups, expectedConflict } = example;
   const { phase, color, coloredSoFar, groups } = step;
@@ -220,7 +220,7 @@ function IOPanel({ example, step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matchesExpected && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matchesExpected && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-xs flex items-center gap-0.5">
           <span className="text-zinc-500">color = [</span>
@@ -246,7 +246,7 @@ function IOPanel({ example, step }) {
                 <span className={entry.c === 0 ? "text-red-400/80" : "text-blue-400/80"}>
                   {entry.c === 0 ? "Red" : "Blue"}
                 </span>
-                <span className="text-emerald-600">âœ“</span>
+                <span className="text-emerald-600">✓</span>
               </div>
             ))}
           </div>
@@ -264,7 +264,7 @@ function IOPanel({ example, step }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -291,7 +291,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -308,12 +308,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function BipartiteViz() {
   const [exKey, setExKey] = useState("bipartite");
   const [si, setSi] = useState(0);
@@ -349,7 +349,7 @@ export default function BipartiteViz() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            A graph is <strong className="text-zinc-300">bipartite</strong> if its nodes can be split into two groups where every edge connects a node from one group to the other. BFS assigns <strong className="text-red-400">Red</strong>/<strong className="text-blue-400">Blue</strong> colors level by level â€” if a neighbor already has the <strong className="text-zinc-300">same color</strong>, an odd cycle exists and the graph isn't bipartite. This is the foundation for matching problems, scheduling, and conflict detection.
+            A graph is <strong className="text-zinc-300">bipartite</strong> if its nodes can be split into two groups where every edge connects a node from one group to the other. BFS assigns <strong className="text-red-400">Red</strong>/<strong className="text-blue-400">Blue</strong> colors level by level — if a neighbor already has the <strong className="text-zinc-300">same color</strong>, an odd cycle exists and the graph isn't bipartite. This is the foundation for matching problems, scheduling, and conflict detection.
           </p>
         </div>
 
@@ -361,7 +361,7 @@ export default function BipartiteViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Graph â”€â”€ */}
+          {/* ── COL 1: IO + Graph ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel example={example} step={step} />
 
@@ -376,7 +376,7 @@ export default function BipartiteViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -412,7 +412,7 @@ export default function BipartiteViz() {
                         c === 1 ? (isDone ? "bg-blue-950/40 border-blue-800 text-blue-300" : "bg-blue-950 border-blue-800 text-blue-300") :
                         "bg-zinc-900 border-zinc-700 text-zinc-600"
                       }`}>
-                        {c === -1 ? "â€“" : c}
+                        {c === -1 ? "–" : c}
                       </div>
                     </div>
                   );
@@ -461,7 +461,7 @@ export default function BipartiteViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -474,14 +474,14 @@ export default function BipartiteViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Check if a graph can be 2-colored (no odd cycles)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Prerequisite for bipartite matching (Hungarian, Hopcroft-Karp)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Conflict/scheduling problems â€” "can tasks be split into two shifts?"</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Detecting odd cycles in undirected graphs</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Check if a graph can be 2-colored (no odd cycles)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Prerequisite for bipartite matching (Hungarian, Hopcroft-Karp)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Conflict/scheduling problems — "can tasks be split into two shifts?"</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Detecting odd cycles in undirected graphs</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) â€” standard BFS</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V + E) — standard BFS</div>
                 <div><span className="text-zinc-500 font-semibold">Space:</span> O(V) for color array + queue</div>
                 <div><span className="text-zinc-500 font-semibold">Note:</span> For disconnected graphs, run BFS from every unvisited node</div>
               </div>
@@ -492,12 +492,12 @@ export default function BipartiteViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 785 â€” Is Graph Bipartite?</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 886 â€” Possible Bipartition</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 207 â€” Course Schedule (cycle variant)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1042 â€” Flower Planting With No Adjacent</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1349 â€” Max Students Taking Exam</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 765 â€” Couples Holding Hands</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 785 — Is Graph Bipartite?</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 886 — Possible Bipartition</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 207 — Course Schedule (cycle variant)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1042 — Flower Planting With No Adjacent</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1349 — Max Students Taking Exam</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 765 — Couples Holding Hands</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

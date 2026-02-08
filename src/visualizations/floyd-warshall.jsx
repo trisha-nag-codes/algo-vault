@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 
-/* â€”â€”â€” Problem Input â€”â€”â€” */
+/* ——— Problem Input ——— */
 const N = 4;
 const EDGES = [[0,1,3],[0,3,7],[1,0,8],[1,2,2],[2,3,1],[3,0,2]];
 const POS = [{x:80,y:80},{x:320,y:80},{x:320,y:240},{x:80,y:240}];
 const INF = 999;
 
-/* â€”â€”â€” Expected Output (precomputed) â€”â€”â€” */
+/* ——— Expected Output (precomputed) ——— */
 const EXPECTED_DIST = [
   [0, 3, 5, 6],
   [5, 0, 2, 3],
@@ -14,7 +14,7 @@ const EXPECTED_DIST = [
   [2, 5, 7, 0],
 ];
 
-/* â€”â€”â€” Build simulation steps â€”â€”â€” */
+/* ——— Build simulation steps ——— */
 function buildSteps() {
   const dist = Array.from({ length: N }, (_, i) =>
     Array.from({ length: N }, (_, j) => (i === j ? 0 : INF))
@@ -26,8 +26,8 @@ function buildSteps() {
   const completedK = new Set();       // which k-rounds are fully done
 
   steps.push({
-    title: "Initialize â€” Build Distance Matrix",
-    detail: `Set dist[i][j] = edge weight if edge exists, 0 on diagonal, âˆž otherwise. ${N}Ã—${N} matrix ready.`,
+    title: "Initialize — Build Distance Matrix",
+    detail: `Set dist[i][j] = edge weight if edge exists, 0 on diagonal, ∞ otherwise. ${N}×${N} matrix ready.`,
     dist: snap(), prevDist: null, k: -1, i: -1, j: -1,
     changed: null, phase: "init", codeHL: [1, 2, 3, 4, 5],
     completedK: new Set(completedK),
@@ -35,8 +35,8 @@ function buildSteps() {
 
   for (let k = 0; k < N; k++) {
     steps.push({
-      title: `k = ${k} â€” Consider Paths Through Node ${k}`,
-      detail: `For every pair (i,j): is going iÃ¢â€ '${k}Ã¢â€ 'j shorter than the current iÃ¢â€ 'j? Check dist[i][${k}] + dist[${k}][j] < dist[i][j].`,
+      title: `k = ${k} — Consider Paths Through Node ${k}`,
+      detail: `For every pair (i,j): is going iâ†'${k}â†'j shorter than the current iâ†'j? Check dist[i][${k}] + dist[${k}][j] < dist[i][j].`,
       dist: snap(), prevDist: snap(), k, i: -1, j: -1,
       changed: null, phase: "round", codeHL: [7, 8, 9],
       completedK: new Set(completedK),
@@ -53,8 +53,8 @@ function buildSteps() {
 
         if (improved) {
           steps.push({
-            title: `dist[${i}][${j}]: ${prev[i][j] >= INF ? "âˆž" : prev[i][j]} â†’ ${dist[i][j]}`,
-            detail: `dist[${i}][${k}] + dist[${k}][${j}] = ${prev[i][k]} + ${prev[k][j]} = ${through} < ${prev[i][j] >= INF ? "âˆž" : prev[i][j]}. Shorter path found via node ${k}!`,
+            title: `dist[${i}][${j}]: ${prev[i][j] >= INF ? "∞" : prev[i][j]} → ${dist[i][j]}`,
+            detail: `dist[${i}][${k}] + dist[${k}][${j}] = ${prev[i][k]} + ${prev[k][j]} = ${through} < ${prev[i][j] >= INF ? "∞" : prev[i][j]}. Shorter path found via node ${k}!`,
             dist: snap(), prevDist: prev, k, i, j,
             changed: [i, j], phase: "relax", codeHL: [10, 11],
             completedK: new Set(completedK),
@@ -66,8 +66,8 @@ function buildSteps() {
   }
 
   steps.push({
-    title: "âœ“ Complete â€” All-Pairs Shortest Paths Found",
-    detail: `Every dist[i][j] now holds the shortest path from i to j. ${N}Ã—${N} = ${N * N} entries computed.`,
+    title: "✓ Complete — All-Pairs Shortest Paths Found",
+    detail: `Every dist[i][j] now holds the shortest path from i to j. ${N}×${N} = ${N * N} entries computed.`,
     dist: snap(), prevDist: snap(), k: N, i: -1, j: -1,
     changed: null, phase: "done", codeHL: [13],
     completedK: new Set(completedK),
@@ -76,7 +76,7 @@ function buildSteps() {
   return steps;
 }
 
-/* â€”â€”â€” Graph SVG â€”â€”â€” */
+/* ——— Graph SVG ——— */
 function GraphView({ step }) {
   const { k, i: ci, j: cj, changed, phase } = step;
   return (
@@ -121,7 +121,7 @@ function GraphView({ step }) {
   );
 }
 
-/* â€”â€”â€” Python Code (clean function only) â€”â€”â€” */
+/* ——— Python Code (clean function only) ——— */
 const CODE = [
   { id: 0,  text: `def floyd_warshall(edges, n):` },
   { id: 1,  text: `    dist = [[float('inf')]*n for _ in range(n)]` },
@@ -139,7 +139,7 @@ const CODE = [
   { id: 13, text: `    return dist` },
 ];
 
-/* â€”â€”â€” Input / Output Panel with progressive output â€”â€”â€” */
+/* ——— Input / Output Panel with progressive output ——— */
 function IOPanel({ step }) {
   const { phase, dist, completedK } = step;
   const done = phase === "done";
@@ -178,7 +178,7 @@ function IOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-3">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           {Array.from({ length: N }).map((_, i) => (
@@ -187,7 +187,7 @@ function IOPanel({ step }) {
               <span className="text-zinc-600">[</span>
               {Array.from({ length: N }).map((_, j) => {
                 const val = dist[i][j];
-                const displayVal = val >= INF ? "âˆž" : val;
+                const displayVal = val >= INF ? "∞" : val;
                 const matchesExpected = done && val === EXPECTED_DIST[i][j];
                 const isSettled = completedK.size === N;
                 return (
@@ -214,7 +214,7 @@ function IOPanel({ step }) {
             Rounds complete: {[...completedK].map(k => (
               <span key={k} className="inline-flex items-center gap-0.5 mr-2">
                 <span className="text-purple-400">k={k}</span>
-                <span className="text-emerald-600">âœ“</span>
+                <span className="text-emerald-600">✓</span>
               </span>
             ))}
           </div>
@@ -224,7 +224,7 @@ function IOPanel({ step }) {
   );
 }
 
-/* â€”â€”â€” Distance Matrix (state panel) â€”â€”â€” */
+/* ——— Distance Matrix (state panel) ——— */
 function DistMatrix({ step }) {
   const { dist, changed, k, phase } = step;
   const isDone = phase === "done";
@@ -257,7 +257,7 @@ function DistMatrix({ step }) {
                       isK ? "bg-purple-950/30 text-purple-300" :
                       "text-zinc-400"
                     }`}>
-                      {d >= INF ? "âˆž" : d}
+                      {d >= INF ? "∞" : d}
                     </td>
                   );
                 })}
@@ -270,7 +270,7 @@ function DistMatrix({ step }) {
   );
 }
 
-/* â€”â€”â€” Code Panel â€”â€”â€” */
+/* ——— Code Panel ——— */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -297,7 +297,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â€”â€”â€” Navigation Bar â€”â€”â€” */
+/* ——— Navigation Bar ——— */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -314,12 +314,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â€”â€”â€” Main Component â€”â€”â€” */
+/* ——— Main Component ——— */
 export default function FloydWarshallViz() {
   const steps = useMemo(() => buildSteps(), []);
   const [si, setSi] = useState(0);
@@ -331,14 +331,14 @@ export default function FloydWarshallViz() {
         {/* Header */}
         <div className="mb-3">
           <h1 className="text-2xl font-bold tracking-tight">Floyd-Warshall Algorithm</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">All-Pairs Shortest Path â€¢ O(VÂ³)</p>
+          <p className="text-zinc-500 text-sm mt-0.5">All-Pairs Shortest Path • O(V³)</p>
         </div>
 
         {/* Core Idea */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3 mb-3">
           <span className="text-[10px] font-bold text-violet-400 uppercase tracking-widest">Core Idea</span>
           <p className="text-sm text-zinc-400 leading-relaxed mt-1">
-            Floyd-Warshall computes shortest paths between <em>every</em> pair of vertices by progressively considering each node as a potential intermediate waypoint. For each intermediate node k, it checks whether the path iâ†’kâ†’j is shorter than the current best iâ†’j. After considering all k, every cell dist[i][j] holds the true shortest path. Classic use cases include transitive closure, detecting negative cycles, and pre-computing route tables.
+            Floyd-Warshall computes shortest paths between <em>every</em> pair of vertices by progressively considering each node as a potential intermediate waypoint. For each intermediate node k, it checks whether the path i→k→j is shorter than the current best i→j. After considering all k, every cell dist[i][j] holds the true shortest path. Classic use cases include transitive closure, detecting negative cycles, and pre-computing route tables.
           </p>
         </div>
 
@@ -350,12 +350,12 @@ export default function FloydWarshallViz() {
         {/* â•â•â• 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â€”â€” COL 1: IO + Graph â€”â€” */}
+          {/* —— COL 1: IO + Graph —— */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges â€¢ <span className="text-purple-400">Purple = k (via)</span></div>
+              <div className="text-[10px] text-zinc-500 mb-1">{N} nodes, {EDGES.length} edges • <span className="text-purple-400">Purple = k (via)</span></div>
               <GraphView step={step} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />k (via)</span>
@@ -365,7 +365,7 @@ export default function FloydWarshallViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 2: Steps + State â€”â€” */}
+          {/* —— COL 2: Steps + State —— */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${step.phase === "done" ? "bg-emerald-950/30 border-emerald-900" : "bg-zinc-900 border-zinc-800"}`}>
@@ -401,7 +401,7 @@ export default function FloydWarshallViz() {
                         active ? "bg-purple-950/30 border-purple-700 text-purple-300 scale-110" :
                         "bg-zinc-900 border-zinc-700 text-zinc-600"
                       }`}>
-                        {completed ? "âœ“" : active ? "â–¶" : "â€”"}
+                        {completed ? "✓" : active ? "▶" : "—"}
                       </div>
                     </div>
                   );
@@ -410,7 +410,7 @@ export default function FloydWarshallViz() {
             </div>
           </div>
 
-          {/* â€”â€” COL 3: Code â€”â€” */}
+          {/* —— COL 3: Code —— */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -423,15 +423,15 @@ export default function FloydWarshallViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>All-pairs shortest path â€” need distances between every (i,j)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Dense graphs â€” adjacency matrix representation is natural</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Negative edge weights allowed (unlike Dijkstra)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Transitive closure â€” reachability between all pairs</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>All-pairs shortest path — need distances between every (i,j)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Dense graphs — adjacency matrix representation is natural</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Negative edge weights allowed (unlike Dijkstra)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Transitive closure — reachability between all pairs</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(VÂ³)</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(VÂ²)</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(V³)</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(V²)</div>
                 <div><span className="text-zinc-500 font-semibold">Negative cycle:</span> Detected if dist[i][i] &lt; 0 after run</div>
               </div>
             </div>
@@ -441,12 +441,12 @@ export default function FloydWarshallViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1334 â€” Find the City With Fewest Neighbors at Threshold</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 399 â€” Evaluate Division</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1462 â€” Course Schedule IV (Transitive Closure)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1617 â€” Count Subtrees With Max Distance</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2976 â€” Min Cost to Convert String I</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 2642 â€” Design Graph With Shortest Path Calculator</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1334 — Find the City With Fewest Neighbors at Threshold</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 399 — Evaluate Division</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1462 — Course Schedule IV (Transitive Closure)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1617 — Count Subtrees With Max Distance</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2976 — Min Cost to Convert String I</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 2642 — Design Graph With Shortest Path Calculator</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

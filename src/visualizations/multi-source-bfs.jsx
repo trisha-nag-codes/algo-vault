@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 
-/* â”€â”€â”€ Problem Input â”€â”€â”€ */
+/* ─── Problem Input ─── */
 const ROWS = 7, COLS = 8;
 const GRIDS = {
   rotting: {
     title: "Rotting Oranges",
-    coreIdea: "All rotten oranges are BFS sources seeded at distance 0. Each minute, rot spreads to adjacent fresh oranges. This is equivalent to adding a virtual super-source connected to every rotten cell â€” one BFS pass computes the answer in O(RÃ—C).",
+    coreIdea: "All rotten oranges are BFS sources seeded at distance 0. Each minute, rot spreads to adjacent fresh oranges. This is equivalent to adding a virtual super-source connected to every rotten cell — one BFS pass computes the answer in O(R×C).",
     grid: [
       [2, 1, 1, 0, 0, 1, 1, 2],
       [1, 1, 0, 0, 0, 0, 1, 1],
@@ -21,7 +21,7 @@ const GRIDS = {
   },
   gates: {
     title: "Walls and Gates",
-    coreIdea: "Every gate is a BFS source at distance 0. BFS expands level by level â€” each empty room gets the distance to its nearest gate. One pass, O(RÃ—C). No need to BFS from each gate separately.",
+    coreIdea: "Every gate is a BFS source at distance 0. BFS expands level by level — each empty room gets the distance to its nearest gate. One pass, O(R×C). No need to BFS from each gate separately.",
     grid: [
       [2, 0, 0, 1, 0, 1, 0, 2],
       [0,-1, 0,-1, 0,-1, 0, 0],
@@ -32,7 +32,7 @@ const GRIDS = {
       [2, 0, 0, 0, 0, 0, 0, 2],
     ],
     sourceVal: 2, freshVal: 0, wallVal: -1,
-    sourceLabel: "Gate ðŸšª", freshLabel: "Room", wallLabel: "Wall",
+    sourceLabel: "Gate 🚪", freshLabel: "Room", wallLabel: "Wall",
     resultLabel: "distance",
   },
 };
@@ -40,7 +40,7 @@ const GRIDS = {
 const DIRS = [[0,1],[1,0],[0,-1],[-1,0]];
 const key = (r, c) => `${r},${c}`;
 
-/* â”€â”€â”€ Precompute Expected Output â”€â”€â”€ */
+/* ─── Precompute Expected Output ─── */
 function computeExpected(example) {
   const { grid, sourceVal, freshVal, wallVal } = example;
   const dist = Array.from({ length: ROWS }, () => new Array(COLS).fill(-1));
@@ -73,7 +73,7 @@ function computeExpected(example) {
 
 const EXPECTED = { rotting: computeExpected(GRIDS.rotting), gates: computeExpected(GRIDS.gates) };
 
-/* â”€â”€â”€ Build simulation steps â”€â”€â”€ */
+/* ─── Build simulation steps ─── */
 function buildSteps(example) {
   const { grid, sourceVal, freshVal, wallVal } = example;
   const dist = Array.from({ length: ROWS }, () => new Array(COLS).fill(-1));
@@ -93,7 +93,7 @@ function buildSteps(example) {
   const snapState = () => state.map(r => [...r]);
 
   steps.push({
-    title: "Initialize â€“ Seed All Sources at dist=0",
+    title: "Initialize – Seed All Sources at dist=0",
     detail: `${sources.length} sources enqueued at distance 0. ${totalFresh} cells to reach. BFS from all sources simultaneously.`,
     dist: snapDist(), state: snapState(),
     queue: queue.map(x => [...x]), level: 0,
@@ -129,8 +129,8 @@ function buildSteps(example) {
       for (let i = 0; i < queue.length; i++) { const [r2, c2] = queue[i]; if (dist[r2][c2] >= 0) finSet.add(key(r2, c2)); }
 
       steps.push({
-        title: `Level ${level} â€“ ${newThisLevel.length} New Cells Reached`,
-        detail: `All cells at dist ${level - 1} expand. ${newThisLevel.length} fresh cells reached: [${newThisLevel.slice(0, 5).map(([r, c]) => `(${r},${c})`).join(", ")}${newThisLevel.length > 5 ? ", â€¦" : ""}]. Total: ${reached}/${totalFresh}.`,
+        title: `Level ${level} – ${newThisLevel.length} New Cells Reached`,
+        detail: `All cells at dist ${level - 1} expand. ${newThisLevel.length} fresh cells reached: [${newThisLevel.slice(0, 5).map(([r, c]) => `(${r},${c})`).join(", ")}${newThisLevel.length > 5 ? ", …" : ""}]. Total: ${reached}/${totalFresh}.`,
         dist: snapDist(), state: snapState(),
         queue: queue.slice(qi).map(x => [...x]), level,
         current: null, newCells: newThisLevel.map(([r, c]) => key(r, c)),
@@ -148,10 +148,10 @@ function buildSteps(example) {
 
   steps.push({
     title: allReached
-      ? `âœ“ Complete â€“ All Reached in ${level} ${example.resultLabel}`
-      : `âœ— Complete â€“ ${totalFresh - reached} Cells Unreachable`,
+      ? `✓ Complete – All Reached in ${level} ${example.resultLabel}`
+      : `✗ Complete – ${totalFresh - reached} Cells Unreachable`,
     detail: allReached
-      ? `Every reachable cell now has a distance. Max distance: ${level}. O(RÃ—C) single pass.`
+      ? `Every reachable cell now has a distance. Max distance: ${level}. O(R×C) single pass.`
       : `${reached}/${totalFresh} cells reached. ${totalFresh - reached} blocked by walls. Return -1.`,
     dist: snapDist(), state: snapState(),
     queue: [], level,
@@ -162,7 +162,7 @@ function buildSteps(example) {
   return steps;
 }
 
-/* â”€â”€â”€ Grid SVG â”€â”€â”€ */
+/* ─── Grid SVG ─── */
 function GridView({ step, example }) {
   const { dist, state } = step;
   const { sourceVal, freshVal, wallVal } = example;
@@ -200,7 +200,7 @@ function GridView({ step, example }) {
                 strokeWidth={isNew ? 2.5 : 0.5} rx={4} />
               {isWall && (
                 <text x={c * cellSize + cellSize / 2 + 1} y={r * cellSize + cellSize / 2 + 1}
-                  textAnchor="middle" dominantBaseline="central" fill="#3f3f46" fontSize="14">â–ª</text>
+                  textAnchor="middle" dominantBaseline="central" fill="#3f3f46" fontSize="14">▪</text>
               )}
               {isSource && (
                 <text x={c * cellSize + cellSize / 2 + 1} y={r * cellSize + cellSize / 2 + 1}
@@ -214,7 +214,7 @@ function GridView({ step, example }) {
               )}
               {isFresh && (
                 <text x={c * cellSize + cellSize / 2 + 1} y={r * cellSize + cellSize / 2 + 1}
-                  textAnchor="middle" dominantBaseline="central" fill="#3b82f680" fontSize="9">â—Œ</text>
+                  textAnchor="middle" dominantBaseline="central" fill="#3b82f680" fontSize="9">◌</text>
               )}
             </g>
           );
@@ -224,7 +224,7 @@ function GridView({ step, example }) {
   );
 }
 
-/* â”€â”€â”€ Python Code (clean function) â”€â”€â”€ */
+/* ─── Python Code (clean function) ─── */
 const CODE = [
   { id: 0,  text: `from collections import deque` },
   { id: 1,  text: `` },
@@ -246,7 +246,7 @@ const CODE = [
   { id: 17, text: `    return max(max(row) for row in dist)` },
 ];
 
-/* â”€â”€â”€ IO Panel â”€â”€â”€ */
+/* ─── IO Panel ─── */
 function IOPanel({ step, exKey, example }) {
   const { phase, reached, totalFresh, level, finalized } = step;
   const done = phase === "done";
@@ -259,7 +259,7 @@ function IOPanel({ step, exKey, example }) {
       <div>
         <div className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mb-1">Input</div>
         <div className="font-mono text-[11px] text-zinc-400 space-y-0.5" style={{ whiteSpace: "pre" }}>
-          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}Ã—{COLS}</span></div>
+          <div><span className="text-zinc-500">grid </span> = <span className="text-zinc-300">{ROWS}×{COLS}</span></div>
           <div><span className="text-zinc-500">src  </span> = <span className="text-purple-400">{exp.sources} {example.sourceLabel}s</span></div>
           <div><span className="text-zinc-500">fresh</span> = <span className="text-blue-400">{exp.totalFresh} cells</span></div>
         </div>
@@ -278,7 +278,7 @@ function IOPanel({ step, exKey, example }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {allMatch && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div>
@@ -299,7 +299,7 @@ function IOPanel({ step, exKey, example }) {
   );
 }
 
-/* â”€â”€â”€ Code Panel â”€â”€â”€ */
+/* ─── Code Panel ─── */
 function CodePanel({ highlightLines }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -326,7 +326,7 @@ function CodePanel({ highlightLines }) {
   );
 }
 
-/* â”€â”€â”€ Navigation Bar â”€â”€â”€ */
+/* ─── Navigation Bar ─── */
 function NavBar({ si, setSi, total }) {
   return (
     <div className="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-5 py-3">
@@ -343,12 +343,12 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
 
-/* â”€â”€â”€ Main Component â”€â”€â”€ */
+/* ─── Main Component ─── */
 export default function MultiSourceBFSViz() {
   const [exKey, setExKey] = useState("rotting");
   const [si, setSi] = useState(0);
@@ -364,7 +364,7 @@ export default function MultiSourceBFSViz() {
         <div className="mb-3 flex items-end justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Multi-Source BFS</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Simultaneous BFS from All Sources â€¢ O(RÃ—C) Single Pass</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Simultaneous BFS from All Sources • O(R×C) Single Pass</p>
           </div>
           <div className="flex gap-2">
             {Object.entries(GRIDS).map(([k, v]) => (
@@ -390,12 +390,12 @@ export default function MultiSourceBFSViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Grid â”€â”€ */}
+          {/* ── COL 1: IO + Grid ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel step={step} exKey={exKey} example={example} />
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}Ã—{COLS} â€¢ numbers = dist from nearest source</div>
+              <div className="text-[10px] text-zinc-500 mb-1">{ROWS}×{COLS} • numbers = dist from nearest source</div>
               <GridView step={step} example={example} />
               <div className="flex flex-wrap gap-2 justify-center mt-1 text-[9px] text-zinc-600">
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-purple-600 inline-block" />Source</span>
@@ -407,7 +407,7 @@ export default function MultiSourceBFSViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -488,7 +488,7 @@ export default function MultiSourceBFSViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel highlightLines={step.codeHL} />
           </div>
@@ -501,15 +501,15 @@ export default function MultiSourceBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Shortest distance to the nearest source" for every cell</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Spreading / infection / fire-expansion problems</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Equivalent to a virtual super-source at dist 0 to all real sources</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Anytime you'd repeat single-source BFS from multiple starts</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Shortest distance to the nearest source" for every cell</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Spreading / infection / fire-expansion problems</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Equivalent to a virtual super-source at dist 0 to all real sources</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Anytime you'd repeat single-source BFS from multiple starts</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(R Ã— C) â€” same as single-source BFS</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(R Ã— C)</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(R × C) — same as single-source BFS</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(R × C)</div>
                 <div><span className="text-zinc-500 font-semibold">Key trick:</span> Seed queue with ALL sources before BFS loop</div>
               </div>
             </div>
@@ -519,12 +519,12 @@ export default function MultiSourceBFSViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 994 â€” Rotting Oranges</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 286 â€” Walls and Gates</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 542 â€” 01 Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 1162 â€” As Far from Land as Possible</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 934 â€” Shortest Bridge</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 417 â€” Pacific Atlantic Water Flow</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 994 — Rotting Oranges</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 286 — Walls and Gates</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 542 — 01 Matrix</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 1162 — As Far from Land as Possible</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 934 — Shortest Bridge</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 417 — Pacific Atlantic Water Flow</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>

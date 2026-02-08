@@ -7,33 +7,33 @@ import { useState, useMemo } from "react";
 const PROBLEMS = {
   container: {
     title: "Container With Most Water",
-    lc: "LC 11 Â· Medium",
+    lc: "LC 11 · Medium",
     coreIdea:
-      "Start two pointers at both ends of the array. The area between them is min(height[L], height[R]) Ã— (Râˆ’L). Always move the shorter side inward â€” the taller side can never do better with a narrower width, but the shorter side might find a taller bar. This greedy shrink guarantees we never skip the optimal pair. O(n) single pass.",
+      "Start two pointers at both ends of the array. The area between them is min(height[L], height[R]) × (R−L). Always move the shorter side inward — the taller side can never do better with a narrower width, but the shorter side might find a taller bar. This greedy shrink guarantees we never skip the optimal pair. O(n) single pass.",
     arr: [1, 8, 6, 2, 5, 4, 8, 3, 7],
     category: "converge",
   },
   trapping: {
     title: "Trapping Rain Water",
-    lc: "LC 42 Â· Hard",
+    lc: "LC 42 · Hard",
     coreIdea:
-      "Water at position i = min(left_max, right_max) âˆ’ height[i]. Instead of precomputing both max arrays, use two pointers from the ends. Track left_max and right_max. If left_max â‰¤ right_max, process the left pointer (the bottleneck is the left side); otherwise process right. Each step finalizes one cell's water. O(n) time, O(1) space.",
+      "Water at position i = min(left_max, right_max) − height[i]. Instead of precomputing both max arrays, use two pointers from the ends. Track left_max and right_max. If left_max ≤ right_max, process the left pointer (the bottleneck is the left side); otherwise process right. Each step finalizes one cell's water. O(n) time, O(1) space.",
     arr: [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1],
     category: "converge",
   },
   threeSum: {
     title: "3Sum",
-    lc: "LC 15 Â· Medium",
+    lc: "LC 15 · Medium",
     coreIdea:
-      "Sort the array. Fix element nums[i], then use two pointers lo=i+1, hi=nâˆ’1 to find pairs summing to âˆ’nums[i]. If sum < 0, move lo right; if sum > 0, move hi left; if sum = 0, record triplet and skip duplicates on both sides. Outer loop also skips duplicates. O(nÂ²) total.",
+      "Sort the array. Fix element nums[i], then use two pointers lo=i+1, hi=n−1 to find pairs summing to −nums[i]. If sum < 0, move lo right; if sum > 0, move hi left; if sum = 0, record triplet and skip duplicates on both sides. Outer loop also skips duplicates. O(n²) total.",
     arr: [-1, 0, 1, 2, -1, -4],
     category: "sort+converge",
   },
   sortColors: {
     title: "Sort Colors",
-    lc: "LC 75 Â· Medium",
+    lc: "LC 75 · Medium",
     coreIdea:
-      "Dutch National Flag: maintain three pointers â€” lo (boundary for 0s), mid (scanner), hi (boundary for 2s). If nums[mid]=0, swap with lo and advance both. If nums[mid]=2, swap with hi and shrink hi (don't advance mid â€” swapped value is unexamined). If nums[mid]=1, just advance mid. One pass, O(n) time, O(1) space.",
+      "Dutch National Flag: maintain three pointers — lo (boundary for 0s), mid (scanner), hi (boundary for 2s). If nums[mid]=0, swap with lo and advance both. If nums[mid]=2, swap with hi and shrink hi (don't advance mid — swapped value is unexamined). If nums[mid]=1, just advance mid. One pass, O(n) time, O(1) space.",
     arr: [2, 0, 2, 1, 1, 0, 1, 2, 0],
     category: "partition",
   },
@@ -171,7 +171,7 @@ function computeExpected(key) {
 const EXPECTED = Object.fromEntries(Object.keys(PROBLEMS).map(k => [k, computeExpected(k)]));
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” CONTAINER WITH MOST WATER
+   BUILD STEPS — CONTAINER WITH MOST WATER
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildContainerSteps() {
@@ -182,7 +182,7 @@ function buildContainerSteps() {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Two Pointers at Both Ends",
+    title: "Initialize — Two Pointers at Both Ends",
     detail: `L=0, R=${n - 1}. Width = ${n - 1}. We'll shrink inward, always moving the shorter side.`,
     arr: [...h], l: 0, r: n - 1, best: 0, bestL: -1, bestR: -1,
     area: 0, phase: "init", codeHL: [0, 1, 2],
@@ -198,11 +198,11 @@ function buildContainerSteps() {
 
     steps.push({
       title: improved
-        ? `Area(${l},${r}) = min(${h[l]},${h[r]})Ã—${w} = ${area} â€” New Best!`
-        : `Area(${l},${r}) = min(${h[l]},${h[r]})Ã—${w} = ${area} â‰¤ ${best}`,
+        ? `Area(${l},${r}) = min(${h[l]},${h[r]})×${w} = ${area} — New Best!`
+        : `Area(${l},${r}) = min(${h[l]},${h[r]})×${w} = ${area} ≤ ${best}`,
       detail: improved
-        ? `min(height[${l}], height[${r}]) Ã— (${r}âˆ’${l}) = ${minH}Ã—${w} = ${area}. Update best = ${area}.`
-        : `min(height[${l}], height[${r}]) Ã— (${r}âˆ’${l}) = ${minH}Ã—${w} = ${area}. No improvement over ${best}.`,
+        ? `min(height[${l}], height[${r}]) × (${r}−${l}) = ${minH}×${w} = ${area}. Update best = ${area}.`
+        : `min(height[${l}], height[${r}]) × (${r}−${l}) = ${minH}×${w} = ${area}. No improvement over ${best}.`,
       arr: [...h], l, r, best, bestL, bestR,
       area, phase: improved ? "improve" : "compute",
       codeHL: [4, 5, 6, 7],
@@ -217,11 +217,11 @@ function buildContainerSteps() {
 
     steps.push({
       title: movedSide === "left"
-        ? `Move L: height[${oldL}]=${h[oldL]} < height[${oldR}]=${h[oldR]} â†’ L=${l}`
-        : `Move R: height[${oldR}]=${h[oldR]} â‰¤ height[${oldL}]=${h[oldL]} â†’ R=${r}`,
+        ? `Move L: height[${oldL}]=${h[oldL]} < height[${oldR}]=${h[oldR]} → L=${l}`
+        : `Move R: height[${oldR}]=${h[oldR]} ≤ height[${oldL}]=${h[oldL]} → R=${r}`,
       detail: movedSide === "left"
-        ? `Left side is shorter â€” it's the bottleneck. Moving it inward might find a taller bar.`
-        : `Right side is shorter (or equal) â€” move it inward to potentially find a taller bar.`,
+        ? `Left side is shorter — it's the bottleneck. Moving it inward might find a taller bar.`
+        : `Right side is shorter (or equal) — move it inward to potentially find a taller bar.`,
       arr: [...h], l, r, best, bestL, bestR,
       area: 0, phase: "move",
       codeHL: movedSide === "left" ? [9, 10] : [11, 12],
@@ -230,8 +230,8 @@ function buildContainerSteps() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Max Area = ${best}`,
-    detail: `Best pair: L=${bestL}, R=${bestR}. Area = min(${h[bestL]},${h[bestR]}) Ã— ${bestR - bestL} = ${best}.`,
+    title: `✓ Complete — Max Area = ${best}`,
+    detail: `Best pair: L=${bestL}, R=${bestR}. Area = min(${h[bestL]},${h[bestR]}) × ${bestR - bestL} = ${best}.`,
     arr: [...h], l, r, best, bestL, bestR,
     area: best, phase: "done", codeHL: [14],
     finalized: new Set(finalized),
@@ -242,7 +242,7 @@ function buildContainerSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” TRAPPING RAIN WATER
+   BUILD STEPS — TRAPPING RAIN WATER
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildTrappingSteps() {
@@ -254,7 +254,7 @@ function buildTrappingSteps() {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Pointers at Both Ends",
+    title: "Initialize — Pointers at Both Ends",
     detail: `L=0, R=${n - 1}. left_max=0, right_max=0, water=0. Process the side with the smaller max.`,
     arr: [...h], l: 0, r: n - 1, lm: 0, rm: 0, water: 0,
     waterAt: [...waterAt], phase: "init", codeHL: [0, 1, 2, 3],
@@ -285,11 +285,11 @@ function buildTrappingSteps() {
 
     steps.push({
       title: added > 0
-        ? `Process ${side} [${idx}]: h=${h[idx]}, ${side === "left" ? "l_max" : "r_max"}=${side === "left" ? lm : rm} â†’ water += ${added}`
-        : `Process ${side} [${idx}]: h=${h[idx]}, ${side === "left" ? "l_max" : "r_max"}=${side === "left" ? lm : rm} â†’ no water`,
+        ? `Process ${side} [${idx}]: h=${h[idx]}, ${side === "left" ? "l_max" : "r_max"}=${side === "left" ? lm : rm} → water += ${added}`
+        : `Process ${side} [${idx}]: h=${h[idx]}, ${side === "left" ? "l_max" : "r_max"}=${side === "left" ? lm : rm} → no water`,
       detail: side === "left"
-        ? `l_max â‰¤ r_max (${lm}â‰¤${rm}): update l_max=max(${lm},${h[idx]})=${lm}. Water at [${idx}] = ${lm}âˆ’${h[idx]} = ${added}. Total = ${water}.`
-        : `l_max > r_max: update r_max=max(${rm},${h[idx]})=${rm}. Water at [${idx}] = ${rm}âˆ’${h[idx]} = ${added}. Total = ${water}.`,
+        ? `l_max ≤ r_max (${lm}≤${rm}): update l_max=max(${lm},${h[idx]})=${lm}. Water at [${idx}] = ${lm}−${h[idx]} = ${added}. Total = ${water}.`
+        : `l_max > r_max: update r_max=max(${rm},${h[idx]})=${rm}. Water at [${idx}] = ${rm}−${h[idx]} = ${added}. Total = ${water}.`,
       arr: [...h], l, r, lm, rm, water,
       waterAt: [...waterAt], phase: added > 0 ? "fill" : "scan",
       codeHL: side === "left" ? [5, 6, 7, 8, 9] : [5, 10, 11, 12, 13],
@@ -298,7 +298,7 @@ function buildTrappingSteps() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” Total Water = ${water}`,
+    title: `✓ Complete — Total Water = ${water}`,
     detail: `Every cell processed. Water collected: [${waterAt.join(", ")}]. Sum = ${water}.`,
     arr: [...h], l, r, lm, rm, water,
     waterAt: [...waterAt], phase: "done", codeHL: [15],
@@ -309,7 +309,7 @@ function buildTrappingSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” 3SUM
+   BUILD STEPS — 3SUM
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildThreeSumSteps() {
@@ -322,7 +322,7 @@ function buildThreeSumSteps() {
 
   steps.push({
     title: "Sort the Array",
-    detail: `Original: [${original.join(", ")}] â†’ Sorted: [${nums.join(", ")}]. Sorting enables the two-pointer squeeze.`,
+    detail: `Original: [${original.join(", ")}] → Sorted: [${nums.join(", ")}]. Sorting enables the two-pointer squeeze.`,
     arr: [...nums], i: -1, lo: -1, hi: -1, sum: null,
     triplets: [], phase: "init", codeHL: [0, 1, 2],
     finalized: new Set(finalized), found: null,
@@ -355,8 +355,8 @@ function buildThreeSumSteps() {
 
       if (s < 0) {
         steps.push({
-          title: `Sum = ${nums[i]}+${nums[lo]}+${nums[hi]} = ${s} < 0 â†’ lo++`,
-          detail: `Sum too small. Move lo right to increase sum. lo: ${lo} â†’ ${lo + 1}.`,
+          title: `Sum = ${nums[i]}+${nums[lo]}+${nums[hi]} = ${s} < 0 → lo++`,
+          detail: `Sum too small. Move lo right to increase sum. lo: ${lo} → ${lo + 1}.`,
           arr: [...nums], i, lo, hi, sum: s,
           triplets: triplets.map(t => [...t]), phase: "too-low",
           codeHL: [9, 10, 11, 12], finalized: new Set(finalized), found: null,
@@ -364,8 +364,8 @@ function buildThreeSumSteps() {
         lo++;
       } else if (s > 0) {
         steps.push({
-          title: `Sum = ${nums[i]}+${nums[lo]}+${nums[hi]} = ${s} > 0 â†’ hi--`,
-          detail: `Sum too large. Move hi left to decrease sum. hi: ${hi} â†’ ${hi - 1}.`,
+          title: `Sum = ${nums[i]}+${nums[lo]}+${nums[hi]} = ${s} > 0 → hi--`,
+          detail: `Sum too large. Move hi left to decrease sum. hi: ${hi} → ${hi - 1}.`,
           arr: [...nums], i, lo, hi, sum: s,
           triplets: triplets.map(t => [...t]), phase: "too-high",
           codeHL: [9, 10, 13, 14], finalized: new Set(finalized), found: null,
@@ -377,7 +377,7 @@ function buildThreeSumSteps() {
         finalized.add(`${i},${lo},${hi}`);
 
         steps.push({
-          title: `âœ“ Found: [${triplet.join(", ")}] â€” sum = 0`,
+          title: `✓ Found: [${triplet.join(", ")}] — sum = 0`,
           detail: `nums[${i}]+nums[${lo}]+nums[${hi}] = ${nums[i]}+${nums[lo]}+${nums[hi]} = 0. Record triplet #${triplets.length}. Skip duplicates.`,
           arr: [...nums], i, lo, hi, sum: 0,
           triplets: triplets.map(t => [...t]), phase: "found",
@@ -392,7 +392,7 @@ function buildThreeSumSteps() {
   }
 
   steps.push({
-    title: `âœ“ Complete â€” ${triplets.length} Triplet${triplets.length !== 1 ? "s" : ""} Found`,
+    title: `✓ Complete — ${triplets.length} Triplet${triplets.length !== 1 ? "s" : ""} Found`,
     detail: `All unique triplets: ${triplets.map(t => `[${t.join(",")}]`).join(", ")}.`,
     arr: [...nums], i: -1, lo: -1, hi: -1, sum: null,
     triplets: triplets.map(t => [...t]), phase: "done",
@@ -403,7 +403,7 @@ function buildThreeSumSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS â€” SORT COLORS (Dutch National Flag)
+   BUILD STEPS — SORT COLORS (Dutch National Flag)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function buildSortColorsSteps() {
@@ -414,7 +414,7 @@ function buildSortColorsSteps() {
   const finalized = new Set();
 
   steps.push({
-    title: "Initialize â€” Three Pointers",
+    title: "Initialize — Three Pointers",
     detail: `lo=0 (0-boundary), mid=0 (scanner), hi=${hi} (2-boundary). Everything left of lo is 0, right of hi is 2.`,
     arr: [...arr], lo: 0, mid: 0, hi,
     phase: "init", codeHL: [0, 1],
@@ -427,8 +427,8 @@ function buildSortColorsSteps() {
       const swapWith = lo;
       [arr[lo], arr[mid]] = [arr[mid], arr[lo]];
       steps.push({
-        title: `nums[mid=${mid}]=0 â†’ Swap with lo=${swapWith}, advance both`,
-        detail: `Swap arr[${mid}]â†”arr[${swapWith}]: [${arr.join(", ")}]. lo=${lo}â†’${lo + 1}, mid=${mid}â†’${mid + 1}.`,
+        title: `nums[mid=${mid}]=0 → Swap with lo=${swapWith}, advance both`,
+        detail: `Swap arr[${mid}]↔arr[${swapWith}]: [${arr.join(", ")}]. lo=${lo}→${lo + 1}, mid=${mid}→${mid + 1}.`,
         arr: [...arr], lo: lo + 1, mid: mid + 1, hi,
         phase: "swap-0", codeHL: [3, 4, 5, 6, 7],
         finalized: new Set(finalized),
@@ -437,8 +437,8 @@ function buildSortColorsSteps() {
       lo++; mid++;
     } else if (val === 1) {
       steps.push({
-        title: `nums[mid=${mid}]=1 â†’ Already in middle, advance mid`,
-        detail: `1 is in the correct partition. mid=${mid}â†’${mid + 1}.`,
+        title: `nums[mid=${mid}]=1 → Already in middle, advance mid`,
+        detail: `1 is in the correct partition. mid=${mid}→${mid + 1}.`,
         arr: [...arr], lo, mid: mid + 1, hi,
         phase: "skip-1", codeHL: [3, 8, 9],
         finalized: new Set(finalized), swapped: null,
@@ -448,8 +448,8 @@ function buildSortColorsSteps() {
       const swapWith = hi;
       [arr[mid], arr[hi]] = [arr[hi], arr[mid]];
       steps.push({
-        title: `nums[mid=${mid}]=2 â†’ Swap with hi=${swapWith}, shrink hi`,
-        detail: `Swap arr[${mid}]â†”arr[${swapWith}]: [${arr.join(", ")}]. hi=${hi}â†’${hi - 1}. Don't advance mid â€” new value unexamined.`,
+        title: `nums[mid=${mid}]=2 → Swap with hi=${swapWith}, shrink hi`,
+        detail: `Swap arr[${mid}]↔arr[${swapWith}]: [${arr.join(", ")}]. hi=${hi}→${hi - 1}. Don't advance mid — new value unexamined.`,
         arr: [...arr], lo, mid, hi: hi - 1,
         phase: "swap-2", codeHL: [3, 10, 11, 12],
         finalized: new Set(finalized),
@@ -460,7 +460,7 @@ function buildSortColorsSteps() {
   }
 
   steps.push({
-    title: "âœ“ Complete â€” Array Sorted",
+    title: "✓ Complete — Array Sorted",
     detail: `mid > hi: all elements partitioned. Result: [${arr.join(", ")}].`,
     arr: [...arr], lo, mid, hi,
     phase: "done", codeHL: [14],
@@ -485,7 +485,7 @@ function buildSteps(key) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” CONTAINER WITH MOST WATER
+   VISUALIZATION — CONTAINER WITH MOST WATER
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function ContainerViz({ step }) {
@@ -535,7 +535,7 @@ function ContainerViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” TRAPPING RAIN WATER
+   VISUALIZATION — TRAPPING RAIN WATER
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function TrappingViz({ step }) {
@@ -581,7 +581,7 @@ function TrappingViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” 3SUM (array with pointers)
+   VISUALIZATION — 3SUM (array with pointers)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function ThreeSumViz({ step }) {
@@ -624,7 +624,7 @@ function ThreeSumViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” SORT COLORS
+   VISUALIZATION — SORT COLORS
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const COLOR_MAP = { 0: "#ef4444", 1: "#e4e4e7", 2: "#3b82f6" };
@@ -701,7 +701,7 @@ function ContainerIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && best === exp.best && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && best === exp.best && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">best</span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{best}</span>
@@ -733,7 +733,7 @@ function TrappingIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && water === exp.water && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && water === exp.water && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px] space-y-0.5">
           <div><span className="text-zinc-500">water  </span> = <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>{water}</span></div>
@@ -772,14 +772,14 @@ function ThreeSumIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && triplets.length === exp.triplets.length && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && triplets.length === exp.triplets.length && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="space-y-0.5">
           {triplets.length > 0
             ? triplets.map((t, i) => (
                 <div key={i} className="font-mono text-[11px]">
                   <span className="text-emerald-400">[{t.join(", ")}]</span>
-                  <span className="text-zinc-700 ml-1">sum=0 âœ“</span>
+                  <span className="text-zinc-700 ml-1">sum=0 ✓</span>
                 </div>
               ))
             : <span className="text-[10px] text-zinc-600 italic">none yet</span>}
@@ -816,7 +816,7 @@ function SortColorsIOPanel({ step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {matches && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           <span className="text-zinc-500">nums</span> = [
@@ -910,7 +910,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -981,15 +981,15 @@ function ThreeSumState({ step }) {
       <div className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Pointers</div>
       <div className="flex gap-4">
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold font-mono text-purple-400">{step.i >= 0 ? step.i : "â€“"}</div>
+          <div className="text-xl font-bold font-mono text-purple-400">{step.i >= 0 ? step.i : "–"}</div>
           <div className="text-[9px] text-zinc-600">i (fixed)</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold font-mono text-blue-400">{step.lo >= 0 ? step.lo : "â€“"}</div>
+          <div className="text-xl font-bold font-mono text-blue-400">{step.lo >= 0 ? step.lo : "–"}</div>
           <div className="text-[9px] text-zinc-600">lo</div>
         </div>
         <div className="flex-1 text-center">
-          <div className="text-xl font-bold font-mono text-amber-400">{step.hi >= 0 ? step.hi : "â€“"}</div>
+          <div className="text-xl font-bold font-mono text-amber-400">{step.hi >= 0 ? step.hi : "–"}</div>
           <div className="text-[9px] text-zinc-600">hi</div>
         </div>
         <div className="flex-1 text-center">
@@ -1090,7 +1090,7 @@ export default function TwoPointerViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Two Pointers</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Converge, Partition & Squeeze â€” O(n) Patterns</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Converge, Partition & Squeeze — O(n) Patterns</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -1121,7 +1121,7 @@ export default function TwoPointerViz() {
         {/* â•â•â• 4. 3-Column Grid â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Viz â”€â”€ */}
+          {/* ── COL 1: IO + Viz ── */}
           <div className="col-span-3 space-y-3">
             <IOPanelDispatch pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -1151,7 +1151,7 @@ export default function TwoPointerViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -1186,7 +1186,7 @@ export default function TwoPointerViz() {
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -1199,17 +1199,17 @@ export default function TwoPointerViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use Two Pointers</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Sorted array + find pair/triplet with target sum</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Opposite-ends shrink: maximize/minimize over all pairs</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Partition in-place (Dutch National Flag, quicksort partition)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Linked-list cycle detection (fast/slow pointers)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Merging two sorted sequences</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Sorted array + find pair/triplet with target sum</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Opposite-ends shrink: maximize/minimize over all pairs</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Partition in-place (Dutch National Flag, quicksort partition)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Linked-list cycle detection (fast/slow pointers)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Merging two sorted sequences</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(n) for single-pass; O(nÂ²) for 3Sum (outer loop Ã— inner squeeze)</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(1) â€” all problems here are in-place</div>
-                <div><span className="text-zinc-500 font-semibold">Key insight:</span> Pointer movement must be monotonic â€” each pointer only moves one direction</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(n) for single-pass; O(n²) for 3Sum (outer loop × inner squeeze)</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(1) — all problems here are in-place</div>
+                <div><span className="text-zinc-500 font-semibold">Key insight:</span> Pointer movement must be monotonic — each pointer only moves one direction</div>
               </div>
             </div>
           </div>
@@ -1218,14 +1218,14 @@ export default function TwoPointerViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 11 â€” Container With Most Water</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 15 â€” 3Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 42 â€” Trapping Rain Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 75 â€” Sort Colors</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 167 â€” Two Sum II (Sorted)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 16 â€” 3Sum Closest</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 18 â€” 4Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 407 â€” Trapping Rain Water II (3D)</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 11 — Container With Most Water</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 15 — 3Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 42 — Trapping Rain Water</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 75 — Sort Colors</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 167 — Two Sum II (Sorted)</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 16 — 3Sum Closest</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 18 — 4Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 407 — Trapping Rain Water II (3D)</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
             </div>
           </div>
         </div>

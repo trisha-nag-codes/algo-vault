@@ -1,26 +1,26 @@
 import { useState, useMemo } from "react";
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BACKTRACKING  â€”  4 Classic Problems
-   CombSum Â· N-Queens Â· Sudoku 4Ã—4 Â· Word Break II
+   BACKTRACKING  —  4 Classic Problems
+   CombSum · N-Queens · Sudoku 4×4 · Word Break II
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* â”€â”€â”€ Problem Definitions â”€â”€â”€ */
+/* ─── Problem Definitions ─── */
 const PROBLEMS = {
   combsum: {
     title: "Combination Sum",
     subtitle: "candidates=[2,3,6,7], target=7",
-    coreIdea: "Sort candidates, then recursively build combinations. At each level, pick a candidate â‰¥ the previous (to avoid duplicate sets). If remaining = 0, record the combination. If a candidate exceeds the remaining target, prune â€” all later candidates are larger, so break early. Each candidate may be reused unlimited times.",
+    coreIdea: "Sort candidates, then recursively build combinations. At each level, pick a candidate ≥ the previous (to avoid duplicate sets). If remaining = 0, record the combination. If a candidate exceeds the remaining target, prune — all later candidates are larger, so break early. Each candidate may be reused unlimited times.",
   },
   nqueens: {
     title: "N-Queens (N=4)",
-    subtitle: "Place 4 non-attacking queens on a 4Ã—4 board",
+    subtitle: "Place 4 non-attacking queens on a 4×4 board",
     coreIdea: "Place one queen per row. For each row, try every column â€” skip if the column, main diagonal (rowâˆ’col), or anti-diagonal (row+col) is already occupied. If all columns conflict, backtrack to the previous row and try the next column there. This constraint propagation prunes the 4â´ search space dramatically.",
   },
   sudoku: {
-    title: "Sudoku (4Ã—4)",
-    subtitle: "Fill a 4Ã—4 grid so each row, col, and 2Ã—2 box has 1â€“4",
-    coreIdea: "Scan cells left-to-right, top-to-bottom. At each empty cell, try digits 1â€“4. Check row, column, and 2Ã—2 box constraints. If no digit is valid, backtrack â€” undo the last placement and try the next digit. This brute-force approach with pruning solves any valid Sudoku.",
+    title: "Sudoku (4×4)",
+    subtitle: "Fill a 4×4 grid so each row, col, and 2×2 box has 1–4",
+    coreIdea: "Scan cells left-to-right, top-to-bottom. At each empty cell, try digits 1–4. Check row, column, and 2×2 box constraints. If no digit is valid, backtrack — undo the last placement and try the next digit. This brute-force approach with pruning solves any valid Sudoku.",
   },
   wordbreak: {
     title: "Word Break II",
@@ -30,7 +30,7 @@ const PROBLEMS = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   CODE PANELS  â€”  per-problem Python functions
+   CODE PANELS  —  per-problem Python functions
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const CODES = {
@@ -152,7 +152,7 @@ const EXPECTED = {
 };
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS  â€”  Combination Sum
+   BUILD STEPS  —  Combination Sum
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildCombSumSteps() {
   const candidates = [2, 3, 6, 7];
@@ -162,7 +162,7 @@ function buildCombSumSteps() {
   const finalized = [];
 
   steps.push({
-    title: "Initialize â€” candidates=[2,3,6,7], target=7",
+    title: "Initialize — candidates=[2,3,6,7], target=7",
     detail: "Candidates are sorted. Start with empty path, remaining=7. Try each candidate; reuse allowed (start index doesn't advance past current).",
     path: [], remaining: target, phase: "init", codeHL: [0, 1, 2, 15],
     results: [], trying: null, pruneReason: null, finalized: [],
@@ -183,8 +183,8 @@ function buildCombSumSteps() {
       results.push([...path]);
       finalized.push([...path]);
       snap(
-        `âœ“ Found: [${path.join(",")}]`,
-        `remaining=0 â€” record [${path.join(",")}] as solution #${results.length}.`,
+        `✓ Found: [${path.join(",")}]`,
+        `remaining=0 — record [${path.join(",")}] as solution #${results.length}.`,
         path, remaining, "found", [5, 6, 7], null, null
       );
       return;
@@ -194,22 +194,22 @@ function buildCombSumSteps() {
       if (c > remaining) {
         snap(
           `Prune: ${c} > remaining ${remaining}`,
-          `candidates[${i}]=${c} exceeds remaining=${remaining}. All subsequent candidates are â‰¥ ${c}, so break.`,
+          `candidates[${i}]=${c} exceeds remaining=${remaining}. All subsequent candidates are ≥ ${c}, so break.`,
           path, remaining, "prune", [9, 10], c, `${c} > ${remaining}`
         );
         break;
       }
       path.push(c);
       snap(
-        `Choose ${c} â†’ path=[${path.join(",")}], remaining=${remaining - c}`,
-        `Append ${c} to path. remaining = ${remaining} âˆ’ ${c} = ${remaining - c}. Recurse with start=${i}.`,
+        `Choose ${c} → path=[${path.join(",")}], remaining=${remaining - c}`,
+        `Append ${c} to path. remaining = ${remaining} − ${c} = ${remaining - c}. Recurse with start=${i}.`,
         path, remaining - c, "choose", [11, 12], c, null
       );
       solve(i, path, remaining - c);
       path.pop();
       if (steps.length <= 40) {
         snap(
-          `Undo ${c} â†’ path=[${path.join(",")}]`,
+          `Undo ${c} → path=[${path.join(",")}]`,
           `Pop ${c} from path (backtrack). Try next candidate.`,
           path, remaining, "undo", [13], c, null
         );
@@ -220,7 +220,7 @@ function buildCombSumSteps() {
   solve(0, [], target);
 
   snap(
-    `âœ“ Complete â€” ${results.length} combinations found`,
+    `✓ Complete — ${results.length} combinations found`,
     `Result: [${results.map(r => `[${r.join(",")}]`).join(", ")}]. Matches expected output.`,
     [], 0, "done", [16], null, null
   );
@@ -229,7 +229,7 @@ function buildCombSumSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS  â€”  N-Queens (N=4)
+   BUILD STEPS  —  N-Queens (N=4)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildNQueensSteps() {
   const N = 4;
@@ -238,8 +238,8 @@ function buildNQueensSteps() {
   const finalized = [];
 
   steps.push({
-    title: "Initialize â€” Place 4 queens on 4Ã—4 board",
-    detail: "One queen per row. Track occupied columns, diagonals (rowâˆ’col), and anti-diagonals (row+col). Try each column in order.",
+    title: "Initialize — Place 4 queens on 4×4 board",
+    detail: "One queen per row. Track occupied columns, diagonals (row−col), and anti-diagonals (row+col). Try each column in order.",
     board: Array.from({ length: N }, () => new Array(N).fill(0)),
     placement: [], row: 0, phase: "init", codeHL: [0, 1, 2, 22],
     results: [], tryCol: null, conflict: null, finalized: [],
@@ -273,7 +273,7 @@ function buildNQueensSteps() {
       results.push([...placement]);
       finalized.push([...placement]);
       snap(
-        `âœ“ Found solution #${results.length}: [${placement.join(",")}]`,
+        `✓ Found solution #${results.length}: [${placement.join(",")}]`,
         `All 4 queens placed! Record [${placement.join(",")}].`,
         row, "found", [5, 6, 7], null, null
       );
@@ -287,7 +287,7 @@ function buildNQueensSteps() {
       }
       if (diagSet.has(row - col)) {
         if (steps.length <= 50)
-          snap(`Row ${row}, col ${col}: diagonal conflict`, `Diagonal ${row}âˆ’${col}=${row - col} is occupied.`, row, "conflict", [8, 10], col, "diag");
+          snap(`Row ${row}, col ${col}: diagonal conflict`, `Diagonal ${row}−${col}=${row - col} is occupied.`, row, "conflict", [8, 10], col, "diag");
         continue;
       }
       if (antiSet.has(row + col)) {
@@ -314,7 +314,7 @@ function buildNQueensSteps() {
   solve(0);
 
   snap(
-    `âœ“ Complete â€” ${results.length} solutions found`,
+    `✓ Complete — ${results.length} solutions found`,
     `Solutions: [${results.map(r => `[${r.join(",")}]`).join(", ")}].`,
     0, "done", [23], null, null
   );
@@ -323,7 +323,7 @@ function buildNQueensSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS  â€”  Sudoku (4Ã—4)
+   BUILD STEPS  —  Sudoku (4×4)
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildSudokuSteps() {
   const initial = EXPECTED.sudoku.initial.map(r => [...r]);
@@ -349,7 +349,7 @@ function buildSudokuSteps() {
   }
 
   snap(
-    "Initialize â€” 4Ã—4 Sudoku with given clues",
+    "Initialize — 4×4 Sudoku with given clues",
     `${filledCells.size} cells pre-filled, ${totalEmpty} empty cells to solve. Scan left-to-right, top-to-bottom for the first empty cell.`,
     "init", [0, 11, 12, 13, 14], null, null, 0
   );
@@ -393,18 +393,18 @@ function buildSudokuSteps() {
             filledCells.delete(`${r},${c}`);
             anyFailed = true;
             snap(
-              `Undo (${r},${c})=${num} â€” backtrack`,
+              `Undo (${r},${c})=${num} — backtrack`,
               `Deeper search failed. Reset (${r},${c}) to empty, try next digit.`,
               "undo", [19], [r, c], num, filled
             );
           }
         }
         if (board[r][c] === 0) {
-          // No valid number found â€” need to backtrack further
+          // No valid number found — need to backtrack further
           if (!anyFailed) {
             snap(
-              `No valid digit for (${r},${c}) â€” backtrack`,
-              `Digits 1â€“4 all violate constraints at (${r},${c}). Return False to backtrack.`,
+              `No valid digit for (${r},${c}) — backtrack`,
+              `Digits 1–4 all violate constraints at (${r},${c}). Return False to backtrack.`,
               "dead", [20], [r, c], null, filled
             );
           }
@@ -418,8 +418,8 @@ function buildSudokuSteps() {
   solve();
 
   snap(
-    "âœ“ Complete â€” Sudoku solved",
-    `All ${totalEmpty} empty cells filled. Each row, column, and 2Ã—2 box contains {1,2,3,4}.`,
+    "✓ Complete — Sudoku solved",
+    `All ${totalEmpty} empty cells filled. Each row, column, and 2×2 box contains {1,2,3,4}.`,
     "done", [21, 24], null, null, totalEmpty
   );
 
@@ -427,7 +427,7 @@ function buildSudokuSteps() {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   BUILD STEPS  â€”  Word Break II
+   BUILD STEPS  —  Word Break II
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function buildWordBreakSteps() {
   const s = "catsanddog";
@@ -438,7 +438,7 @@ function buildWordBreakSteps() {
   const finalized = [];
 
   steps.push({
-    title: 'Initialize â€” s="catsanddog"',
+    title: 'Initialize — s="catsanddog"',
     detail: `Dictionary: {${wordDict.join(", ")}}. Try every prefix at each index; if it's a word, recurse on the suffix.`,
     path: [], index: 0, phase: "init", codeHL: [0, 1, 2, 15],
     results: [], trying: null, finalized: [],
@@ -463,7 +463,7 @@ function buildWordBreakSteps() {
       results.push(sentence);
       finalized.push(sentence);
       snap(
-        `âœ“ Found: "${sentence}"`,
+        `✓ Found: "${sentence}"`,
         `Index reached end of string. Record "${sentence}" as solution #${results.length}.`,
         path, start, "found", [5, 6, 7], null
       );
@@ -483,7 +483,7 @@ function buildWordBreakSteps() {
         path.pop();
         if (steps.length <= 35) {
           snap(
-            `Undo "${word}" â€” try longer prefix`,
+            `Undo "${word}" — try longer prefix`,
             `Pop "${word}", continue scanning prefixes from index ${start}.`,
             path, start, "undo", [13], word
           );
@@ -495,7 +495,7 @@ function buildWordBreakSteps() {
   solve(0, []);
 
   snap(
-    `âœ“ Complete â€” ${results.length} sentences found`,
+    `✓ Complete — ${results.length} sentences found`,
     `Result: [${results.map(r => `"${r}"`).join(", ")}].`,
     [], 0, "done", [16], null
   );
@@ -517,7 +517,7 @@ function buildSteps(key) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” Combination Sum
+   VISUALIZATION — Combination Sum
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function CombSumViz({ step }) {
   const { path, remaining } = step;
@@ -565,7 +565,7 @@ function CombSumViz({ step }) {
       {step.pruneReason && (
         <g>
           <rect x={20} y={150} width={280} height={20} rx={4} fill="#7f1d1d" opacity={0.5} />
-          <text x={160} y={163} textAnchor="middle" fill="#fca5a5" fontSize="9" fontFamily="monospace">âœ— {step.pruneReason}</text>
+          <text x={160} y={163} textAnchor="middle" fill="#fca5a5" fontSize="9" fontFamily="monospace">✗ {step.pruneReason}</text>
         </g>
       )}
     </svg>
@@ -573,7 +573,7 @@ function CombSumViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” N-Queens
+   VISUALIZATION — N-Queens
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function NQueensViz({ step }) {
   const { board, tryCol, row, conflict, phase } = step;
@@ -598,11 +598,11 @@ function NQueensViz({ step }) {
                 fill={fill} stroke="#52525b" strokeWidth={0.5} />
               {isQueen && (
                 <text x={off + c * cell + cell / 2} y={off + r * cell + cell / 2 + 2}
-                  textAnchor="middle" dominantBaseline="central" fontSize="24">â™›</text>
+                  textAnchor="middle" dominantBaseline="central" fontSize="24">♛</text>
               )}
               {isConflict && (
                 <text x={off + c * cell + cell / 2} y={off + r * cell + cell / 2 + 2}
-                  textAnchor="middle" dominantBaseline="central" fill="#f87171" fontSize="18" fontWeight="700">âœ—</text>
+                  textAnchor="middle" dominantBaseline="central" fill="#f87171" fontSize="18" fontWeight="700">✗</text>
               )}
             </g>
           );
@@ -620,7 +620,7 @@ function NQueensViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” Sudoku 4Ã—4
+   VISUALIZATION — Sudoku 4×4
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function SudokuViz({ step }) {
   const { board, tryCell, tryNum, phase } = step;
@@ -656,7 +656,7 @@ function SudokuViz({ step }) {
           );
         })
       )}
-      {/* 2Ã—2 box borders */}
+      {/* 2×2 box borders */}
       {[0, 2].map(r => [0, 2].map(c => (
         <rect key={`box-${r}-${c}`} x={off + c * cell} y={off + r * cell}
           width={cell * 2} height={cell * 2} fill="none" stroke="#71717a" strokeWidth={2} rx={2} />
@@ -666,7 +666,7 @@ function SudokuViz({ step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   VISUALIZATION â€” Word Break
+   VISUALIZATION — Word Break
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function WordBreakViz({ step }) {
   const s = "catsanddog";
@@ -732,7 +732,7 @@ function Visualization({ pKey, step }) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   IO PANEL  â€”  Input / Expected / Progressive Output
+   IO PANEL  —  Input / Expected / Progressive Output
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function IOPanel({ pKey, step }) {
   const done = step.phase === "done";
@@ -750,7 +750,7 @@ function IOPanel({ pKey, step }) {
             <div><span className="text-zinc-500">n</span> = <span className="text-blue-400">4</span></div>
           </>}
           {pKey === "sudoku" && <>
-            <div><span className="text-zinc-500">board</span> = <span className="text-zinc-300">4Ã—4</span></div>
+            <div><span className="text-zinc-500">board</span> = <span className="text-zinc-300">4×4</span></div>
             {EXPECTED.sudoku.initial.map((row, i) => (
               <div key={i} className="pl-4 text-zinc-300">
                 [{row.map(v => v === 0 ? "." : v).join(", ")}]
@@ -782,7 +782,7 @@ function IOPanel({ pKey, step }) {
       <div className="border-t border-zinc-800 pt-2.5">
         <div className="flex items-center gap-2 mb-1">
           <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Output (building)</div>
-          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">âœ“ MATCH</span>}
+          {done && <span className="text-[9px] bg-emerald-900 text-emerald-300 px-1.5 py-0.5 rounded font-bold">✓ MATCH</span>}
         </div>
         <div className="font-mono text-[11px]">
           {pKey === "combsum" && (
@@ -825,7 +825,7 @@ function IOPanel({ pKey, step }) {
               <span className={done ? "text-emerald-300 font-bold" : "text-zinc-300"}>
                 {step.filledCount}/{step.totalEmpty}
               </span>
-              {done && <span className="text-emerald-600 ml-1">âœ“ solved</span>}
+              {done && <span className="text-emerald-600 ml-1">✓ solved</span>}
             </div>
           )}
           {pKey === "wordbreak" && (
@@ -900,7 +900,7 @@ function NavBar({ si, setSi, total }) {
       <button
         onClick={() => setSi(Math.min(total - 1, si + 1))} disabled={si >= total - 1}
         className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-25 text-sm font-medium rounded-xl transition-colors"
-      >Next â†’</button>
+      >Next →</button>
     </div>
   );
 }
@@ -926,7 +926,7 @@ function phaseStyle(phase) {
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   STATE PANEL â€” per-problem state display
+   STATE PANEL — per-problem state display
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function StatePanel({ pKey, step }) {
   if (pKey === "combsum") {
@@ -982,12 +982,12 @@ function StatePanel({ pKey, step }) {
         <div className="flex gap-4">
           <div className="flex-1 text-center">
             <div className="text-lg font-bold font-mono text-violet-400">
-              {step.tryCell ? `(${step.tryCell[0]},${step.tryCell[1]})` : "â€”"}
+              {step.tryCell ? `(${step.tryCell[0]},${step.tryCell[1]})` : "—"}
             </div>
             <div className="text-[9px] text-zinc-600">cell</div>
           </div>
           <div className="flex-1 text-center">
-            <div className="text-lg font-bold font-mono text-blue-400">{step.tryNum ?? "â€”"}</div>
+            <div className="text-lg font-bold font-mono text-blue-400">{step.tryNum ?? "—"}</div>
             <div className="text-[9px] text-zinc-600">trying</div>
           </div>
           <div className="flex-1 text-center">
@@ -1013,7 +1013,7 @@ function StatePanel({ pKey, step }) {
           </div>
           <div className="flex-1 text-center">
             <div className="text-sm font-bold font-mono text-blue-400 truncate">
-              {step.path.length > 0 ? step.path.join(" + ") : "â€”"}
+              {step.path.length > 0 ? step.path.join(" + ") : "—"}
             </div>
             <div className="text-[9px] text-zinc-600">path</div>
           </div>
@@ -1047,7 +1047,7 @@ export default function BacktrackingViz() {
         <div className="mb-3 flex items-end justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Backtracking</h1>
-            <p className="text-zinc-500 text-sm mt-0.5">Explore All Choices â€¢ Prune Invalid Branches â€¢ Undo &amp; Retry</p>
+            <p className="text-zinc-500 text-sm mt-0.5">Explore All Choices • Prune Invalid Branches • Undo &amp; Retry</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {Object.entries(PROBLEMS).map(([k, v]) => (
@@ -1075,7 +1075,7 @@ export default function BacktrackingViz() {
         {/* â•â•â• 4. 3-COLUMN GRID â•â•â• */}
         <div className="grid grid-cols-12 gap-3">
 
-          {/* â”€â”€ COL 1: IO + Visualization â”€â”€ */}
+          {/* ── COL 1: IO + Visualization ── */}
           <div className="col-span-3 space-y-3">
             <IOPanel pKey={pKey} step={step} />
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
@@ -1084,7 +1084,7 @@ export default function BacktrackingViz() {
             </div>
           </div>
 
-          {/* â”€â”€ COL 2: Steps + State â”€â”€ */}
+          {/* ── COL 2: Steps + State ── */}
           <div className="col-span-5 space-y-3">
             {/* Step narration */}
             <div className={`rounded-2xl border p-4 ${
@@ -1112,14 +1112,14 @@ export default function BacktrackingViz() {
                 <div className="font-mono text-[11px] text-emerald-300">
                   {pKey === "combsum" && `${step.results.length} combinations: [${step.results.map(r => `[${r.join(",")}]`).join(", ")}]`}
                   {pKey === "nqueens" && `${step.results.length} solutions: [${step.results.map(r => `[${r.join(",")}]`).join(", ")}]`}
-                  {pKey === "sudoku" && `Board solved â€” all constraints satisfied.`}
+                  {pKey === "sudoku" && `Board solved — all constraints satisfied.`}
                   {pKey === "wordbreak" && `${step.results.length} sentences: ${step.results.map(r => `"${r}"`).join(", ")}`}
                 </div>
               </div>
             )}
           </div>
 
-          {/* â”€â”€ COL 3: Code â”€â”€ */}
+          {/* ── COL 3: Code ── */}
           <div className="col-span-4">
             <CodePanel pKey={pKey} highlightLines={step.codeHL} />
           </div>
@@ -1132,16 +1132,16 @@ export default function BacktrackingViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">When to Use</div>
             <ul className="space-y-1.5 text-xs text-zinc-400">
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>"Find all" or "count all" valid configurations / combinations / permutations</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Constraint satisfaction: place items subject to rules (queens, Sudoku)</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Combinatorial search with pruning â€” exponential worst-case but fast in practice</li>
-              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">â€º</span>Build solution incrementally, undo choices that lead to dead ends</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>"Find all" or "count all" valid configurations / combinations / permutations</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Constraint satisfaction: place items subject to rules (queens, Sudoku)</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Combinatorial search with pruning — exponential worst-case but fast in practice</li>
+              <li className="flex items-start gap-2"><span className="text-blue-500 mt-0.5">›</span>Build solution incrementally, undo choices that lead to dead ends</li>
             </ul>
             <div className="mt-3 pt-3 border-t border-zinc-800">
               <div className="text-[10px] text-zinc-600 space-y-1">
-                <div><span className="text-zinc-500 font-semibold">Time:</span> O(k^n) worst case â€” pruning reduces in practice</div>
-                <div><span className="text-zinc-500 font-semibold">Space:</span> O(n) recursion depth â€” path length</div>
-                <div><span className="text-zinc-500 font-semibold">Template:</span> choose â†’ explore â†’ unchoose</div>
+                <div><span className="text-zinc-500 font-semibold">Time:</span> O(k^n) worst case — pruning reduces in practice</div>
+                <div><span className="text-zinc-500 font-semibold">Space:</span> O(n) recursion depth — path length</div>
+                <div><span className="text-zinc-500 font-semibold">Template:</span> choose → explore → unchoose</div>
               </div>
             </div>
           </div>
@@ -1150,14 +1150,14 @@ export default function BacktrackingViz() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Classic Problems</div>
             <div className="space-y-1.5 text-xs">
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 39 â€” Combination Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 51 â€” N-Queens</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 37 â€” Sudoku Solver</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 140 â€” Word Break II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 46 â€” Permutations</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 78 â€” Subsets</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 79 â€” Word Search</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
-              <div className="flex items-center gap-2"><span className="text-amber-500/60">â€¢</span><span className="text-zinc-400">LC 131 â€” Palindrome Partitioning</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 39 — Combination Sum</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 51 — N-Queens</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 37 — Sudoku Solver</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 140 — Word Break II</span><span className="ml-auto text-[10px] text-red-700">Hard</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 46 — Permutations</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 78 — Subsets</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 79 — Word Search</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
+              <div className="flex items-center gap-2"><span className="text-amber-500/60">•</span><span className="text-zinc-400">LC 131 — Palindrome Partitioning</span><span className="ml-auto text-[10px] text-amber-700">Medium</span></div>
             </div>
           </div>
         </div>
